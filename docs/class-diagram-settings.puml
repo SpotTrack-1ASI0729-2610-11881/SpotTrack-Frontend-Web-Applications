@@ -1,0 +1,73 @@
+@startuml BC-11_Settings
+
+package "settings.domain.model" {
+  class SystemSettings {
+    - criticalUsageHoursThreshold: number
+    - maxIdleTimeMinutes: number
+    - peakHourBuffer: number
+    - lowBatteryThreshold: number
+    - pingIntervalSeconds: number
+    - offlineGraceMinutes: number
+    - notificationEmail: string
+    - downtimeCostPerHour: number
+    - averageMonthlyMembership: number
+    - currency: string
+    + constructor()
+  }
+}
+
+package "settings.application" {
+  class SettingsStore {
+    - settingsSignal: Signal<SystemSettings | null>
+    - settingsApi: SettingsApi
+    - settingsAssembler: SettingsAssembler
+    + settings: Signal<SystemSettings | null>
+    + loadSettings(): void
+    + saveSettings(settings: SystemSettings): void
+  }
+}
+
+package "settings.infrastructure" {
+  class SettingsApi {
+    - http: HttpClient
+    + getSettings(): Observable<SystemSettingsResource>
+    + updateSettings(resource: SystemSettingsResource): Observable<SystemSettingsResource>
+  }
+  interface SystemSettingsResource {
+    + criticalUsageHoursThreshold: number
+    + maxIdleTimeMinutes: number
+    + peakHourBuffer: number
+    + lowBatteryThreshold: number
+    + pingIntervalSeconds: number
+    + offlineGraceMinutes: number
+    + notificationEmail: string
+    + downtimeCostPerHour: number
+    + averageMonthlyMembership: number
+    + currency: string
+  }
+  class SettingsAssembler {
+    + toEntityFromResource(resource: SystemSettingsResource): SystemSettings
+    + toResourceFromEntity(settings: SystemSettings): SystemSettingsResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "settings.presentation.components" {
+  class SettingsPage <<component>> {
+    - settingsStore: SettingsStore
+    + settings: Signal<SystemSettings | null>
+    + onSaveSettings(): void
+  }
+}
+
+SettingsApi --|> BaseApi
+SettingsStore --> SettingsApi : uses
+SettingsStore --> SettingsAssembler : uses
+SettingsAssembler ..> SystemSettingsResource : transforms
+SettingsAssembler --> SystemSettings : creates
+SettingsPage --> SettingsStore : uses
+
+@enduml
