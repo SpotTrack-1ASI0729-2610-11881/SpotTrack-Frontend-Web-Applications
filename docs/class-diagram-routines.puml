@@ -1,0 +1,118 @@
+@startuml BC-07_Routines
+
+package "routines.domain.model" {
+  class Routine {
+    - id: string
+    - userId: string
+    - name: string
+    - exercises: Exercise[]
+    + constructor()
+  }
+  class Exercise {
+    - id: string
+    - name: string
+    - machineId: string
+    - machineName: string
+    - muscleGroup: MuscleGroup
+    - difficulty: ExerciseDifficulty
+    - availabilityStatus: EquipmentAvailabilityStatus
+    - alternatives: Exercise[]
+    + constructor()
+  }
+  enum MuscleGroup {
+    CHEST
+    LEGS
+    BACK
+    SHOULDERS
+    ARMS
+  }
+  enum ExerciseDifficulty {
+    BEGINNER
+    INTERMEDIATE
+    ADVANCED
+  }
+  enum EquipmentAvailabilityStatus {
+    FREE
+    OCCUPIED
+    RESERVED
+    MAINTENANCE
+  }
+}
+
+package "routines.application" {
+  class RoutineStore {
+    - routinesSignal: Signal<Routine[]>
+    - suggestionsSignal: Signal<Exercise[]>
+    - routineApi: RoutineApi
+    - routineAssembler: RoutineAssembler
+    + routines: Signal<Routine[]>
+    + suggestions: Signal<Exercise[]>
+    + loadRoutines(): void
+    + searchAlternatives(exerciseId: string): void
+    + filterByMuscleGroup(group: MuscleGroup): void
+    + createRoutine(routine: Routine): void
+  }
+}
+
+package "routines.infrastructure" {
+  class RoutineApi {
+    - http: HttpClient
+    + getRoutines(userId: string): Observable<RoutineResource[]>
+    + getAlternatives(exerciseId: string): Observable<ExerciseResource[]>
+    + createRoutine(resource: RoutineResource): Observable<RoutineResource>
+  }
+  interface ExerciseResource {
+    + id: string
+    + name: string
+    + machineId: string
+    + machineName: string
+    + muscleGroup: string
+    + difficulty: string
+    + availabilityStatus: string
+  }
+  interface RoutineResource {
+    + id: string
+    + userId: string
+    + name: string
+    + exercises: ExerciseResource[]
+  }
+  class RoutineAssembler {
+    + toEntityFromResource(resource: RoutineResource): Routine
+    + toExerciseFromResource(resource: ExerciseResource): Exercise
+    + toResourceFromEntity(routine: Routine): RoutineResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "routines.presentation.components" {
+  class MobileRoutinesPage <<component>> {
+    - routineStore: RoutineStore
+    + routines: Signal<Routine[]>
+    + suggestions: Signal<Exercise[]>
+    # muscleGroupFilter: MuscleGroup
+    # searchQuery: string
+    + onSearchAlternatives(exerciseId: string): void
+    + onFilterByMuscleGroup(group: MuscleGroup): void
+    + onCreateRoutine(): void
+    + onViewOnMap(machineId: string): void
+  }
+}
+
+RoutineApi --|> BaseApi
+RoutineStore --> RoutineApi : uses
+RoutineStore --> RoutineAssembler : uses
+RoutineAssembler ..> RoutineResource : transforms
+RoutineAssembler ..> ExerciseResource : transforms
+RoutineAssembler --> Routine : creates
+RoutineAssembler --> Exercise : creates
+MobileRoutinesPage --> RoutineStore : uses
+Routine "1" *-- "n" Exercise
+Exercise "1" --> "n" Exercise : alternatives
+Exercise --> MuscleGroup
+Exercise --> ExerciseDifficulty
+Exercise --> EquipmentAvailabilityStatus
+
+@enduml

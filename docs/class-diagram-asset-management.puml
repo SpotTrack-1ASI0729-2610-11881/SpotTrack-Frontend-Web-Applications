@@ -1,0 +1,94 @@
+@startuml BC-03_Assets
+
+package "assets.domain.model" {
+  class Machine {
+    - id: string
+    - name: string
+    - type: MachineType
+    - locationId: string
+    - sensorId: string
+    - status: MachineStatus
+    - usageHours: number
+    - utilizationRate: number
+    - branchId: string
+    + constructor()
+  }
+  enum MachineType {
+    CARDIO
+    STRENGTH
+    FUNCTIONAL
+  }
+  enum MachineStatus {
+    ACTIVE
+    MAINTENANCE
+    INACTIVE
+  }
+}
+
+package "assets.application" {
+class AssetStore {
+  - machinesSignal: Signal<Machine[]>
+  - assetApi: AssetApi
+  - machineAssembler: MachineAssembler
+  + machines: Signal<Machine[]>
+  + filteredMachines: Signal<Machine[]>
+  + loadMachines(): void
+  + filterByBranch(branchId: string): void
+  + filterByType(type: MachineType): void
+  + filterByDateRange(from: string, to: string): void
+  + registerMachine(machine: Machine): void
+  + updateMachine(machine: Machine): void
+  + deleteMachine(machineId: string): void
+}
+}
+
+package "assets.infrastructure" {
+  class AssetApi {
+    - http: HttpClient
+    + getMachines(): Observable<MachineResource[]>
+    + registerMachine(resource: MachineResource): Observable<MachineResource>
+    + updateMachine(resource: MachineResource): Observable<MachineResource>
+    + deleteMachine(machineId: string): Observable<void>
+  }
+  interface MachineResource {
+    + id: string
+    + name: string
+    + type: string
+    + locationId: string
+    + sensorId: string
+    + status: string
+    + usageHours: number
+    + branchId: string
+  }
+  class MachineAssembler {
+    + toEntityFromResource(resource: MachineResource): Machine
+    + toResourceFromEntity(machine: Machine): MachineResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "assets.presentation.components" {
+  class AssetManagementPage <<component>> {
+    - assetStore: AssetStore
+    + machines: Signal<Machine[]>
+    + onRegisterMachine(): void
+    + onUpdateMachine(machine: Machine): void
+    + onDeleteMachine(machineId: string): void
+    + onFilterByBranch(branchId: string): void
+    + onFilterByType(type: MachineType): void
+  }
+}
+
+AssetApi --|> BaseApi
+AssetStore --> AssetApi : uses
+AssetStore --> MachineAssembler : uses
+MachineAssembler ..> MachineResource : transforms
+MachineAssembler --> Machine : creates
+AssetManagementPage --> AssetStore : uses
+Machine --> MachineType
+Machine --> MachineStatus
+
+@enduml

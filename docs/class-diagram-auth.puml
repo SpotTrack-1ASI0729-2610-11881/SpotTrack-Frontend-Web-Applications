@@ -1,0 +1,86 @@
+@startuml BC-01_IAM
+
+package "iam.domain.model" {
+  class User {
+    - id: string
+    - email: string
+    - passwordHash: string
+    - role: UserRole
+    + constructor()
+  }
+  enum UserRole {
+    ADMIN
+    CLIENT
+  }
+}
+
+package "iam.application" {
+  class AuthStore {
+    - currentUserSignal: Signal<User | null>
+    - tokenSignal: Signal<string | null>
+    - authApi: AuthApi
+    - userAssembler: UserAssembler
+    + currentUser: Signal<User | null>
+    + token: Signal<string | null>
+    + isAuthenticated: Signal<boolean>
+    + login(email: string, password: string): void
+    + logout(): void
+    + register(email: string, password: string, role: UserRole): void
+  }
+}
+
+package "iam.infrastructure" {
+  class AuthApi {
+    - http: HttpClient
+    - authEndopint: string
+    - baseUrl: string
+    + login(email: string, password: string): Observable<AuthResponse>
+    + register(email: string, password: string, role: UserRole): Observable<AuthResponse>
+  }
+  interface AuthResponse {
+    + token: string
+    + user: UserResource
+  }
+  interface UserResource {
+    + id: string
+    + email: string
+    + role: string
+  }
+  class UserAssembler {
+    + toEntityFromResource(resource: UserResource): User
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+
+
+}
+
+package "iam.presentation.components" {
+  class LoginPage <<component>> {
+    # email: string
+    - password: string
+    - authStore: AuthStore
+    + onLogin(): void
+  }
+  class RegisterPage <<component>> {
+    # email: string
+    - password: string
+    # role: UserRole
+    - authStore: AuthStore
+    + onRegister(): void
+  }
+}
+
+AuthApi --|> BaseApi
+AuthApi ..> AuthResponse : returns
+AuthResponse *-- UserResource : contains
+AuthStore --> AuthApi : uses
+AuthStore --> UserAssembler : uses
+UserAssembler ..> UserResource : transforms
+UserAssembler --> User : creates
+LoginPage --> AuthStore : uses
+RegisterPage --> AuthStore : uses
+User --> UserRole
+@enduml

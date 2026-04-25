@@ -1,0 +1,149 @@
+@startuml BC-00_Shared
+
+package "app" {
+  class App <<component>> {
+    + title: Signal<string>
+  }
+}
+
+package "shared.infrastructure" {
+  class I18nService {
+    - translateService: TranslateService
+    + setLanguage(lang: string): void
+    + translate(key: string): string
+    + getAvailableLanguages(): string[]
+  }
+  class AuthInterceptor {
+    + intercept(req: HttpRequest, next: HttpHandler): Observable<HttpEvent>
+  }
+}
+
+package "shared.application" {
+  class LanguageStore {
+    - currentLangSignal: Signal<string>
+    - i18nService: I18nService
+    + currentLang: Signal<string>
+    + availableLanguages: string[]
+    + changeLanguage(lang: string): void
+  }
+}
+
+package "shared.presentation.components" {
+
+  class Layout <<component>> {
+    - authStore: AuthStore
+    + ngOnInit(): void
+  }
+
+  class DashboardLayout <<component>> {
+    - authStore: AuthStore
+  }
+
+  class SidebarComponent <<component>> {
+    # navItems: NavItem[]
+    # activeRoute: string
+  }
+
+  class HeaderComponent <<component>> {
+    # searchQuery: string
+    + onSearch(): void
+  }
+
+  class LanguageSwitcher <<component>> {
+    - languageStore: LanguageStore
+    + currentLang: Signal<string>
+    + onChangeLanguage(lang: string): void
+  }
+
+  class Footer <<component>> {
+  }
+
+  ' ---- IAM pages ----
+  class LoginPage <<component>> {
+  }
+  class RegisterPage <<component>> {
+  }
+
+  ' ---- Profiles pages ----
+  class ProfilePage <<component>> {
+  }
+
+  ' ---- Assets pages ----
+  class AssetManagementPage <<component>> {
+  }
+
+  ' ---- IoT pages ----
+  class IoTMonitoringPage <<component>> {
+  }
+
+  ' ---- Maintenance pages ----
+  class MaintenancePage <<component>> {
+  }
+
+  ' ---- Availability pages ----
+  class MobileHomePage <<component>> {
+  }
+  class MobileReservationsPage <<component>> {
+  }
+
+  ' ---- Routines pages ----
+  class MobileRoutinesPage <<component>> {
+  }
+
+  ' ---- Notifications pages ----
+  class MobileNotificationsPage <<component>> {
+  }
+
+  ' ---- Reports pages ----
+  class ReportsPage <<component>> {
+  }
+
+  ' ---- Financial pages ----
+  class FinancialImpactPage <<component>> {
+  }
+
+  ' ---- Settings pages ----
+  class SettingsPage <<component>> {
+  }
+
+  ' ---- Dashboard overview ----
+  class AdminDashboardPage <<component>> {
+  }
+
+
+}
+
+' App root
+App *-- Layout : composes
+
+' Layout is the root shell — composes structural components
+Layout *-- DashboardLayout : composes
+Layout *-- LanguageSwitcher : composes
+Layout *-- Footer : composes
+
+' Dashboard shell composes nav
+DashboardLayout *-- SidebarComponent : composes
+DashboardLayout *-- HeaderComponent : composes
+
+' Layout routes to all pages
+Layout *-- LandingPage : composes
+Layout *-- LoginPage : composes
+Layout *-- RegisterPage : composes
+Layout *-- ProfilePage : composes
+Layout *-- AdminDashboardPage : composes
+Layout *-- AssetManagementPage : composes
+Layout *-- IoTMonitoringPage : composes
+Layout *-- MaintenancePage : composes
+Layout *-- ReportsPage : composes
+Layout *-- FinancialImpactPage : composes
+Layout *-- SettingsPage : composes
+Layout *-- MobileHomePage : composes
+Layout *-- MobileReservationsPage : composes
+Layout *-- MobileRoutinesPage : composes
+Layout *-- MobileNotificationsPage : composes
+
+' i18n
+LanguageStore --> I18nService : uses
+LanguageSwitcher --> LanguageStore : uses
+
+@enduml

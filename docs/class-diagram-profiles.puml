@@ -1,0 +1,89 @@
+@startuml BC-02_Profiles
+
+package "profiles.domain.model" {
+  class Profile {
+    - id: string
+    - userId: string
+    - fullName: string
+    - phone: string
+    - preferredLanguage: string
+    - accumulatedPoints: number
+    - plan: SubscriptionPlan
+    - notificationPreferences: NotificationPreferences
+    + constructor()
+  }
+  class NotificationPreferences {
+    - availabilityAlerts: boolean
+    - scheduledMaintenance: boolean
+    - rewardPoints: boolean
+  }
+  enum SubscriptionPlan {
+    BASIC
+    MID
+    PLATINUM
+  }
+}
+
+package "profiles.application" {
+  class ProfileStore {
+    - profileSignal: Signal<Profile | null>
+    - profileApi: ProfileApi
+    - profileAssembler: ProfileAssembler
+    + profile: Signal<Profile | null>
+    + loadProfile(userId: string): void
+    + updateProfile(profile: Profile): void
+    + changePassword(oldPassword: string, newPassword: string): void
+    + updateNotificationPreferences(prefs: NotificationPreferences): void
+  }
+}
+
+package "profiles.infrastructure" {
+  class ProfileApi {
+    - http: HttpClient
+    + getProfile(userId: string): Observable<ProfileResource>
+    + updateProfile(resource: ProfileResource): Observable<ProfileResource>
+    + changePassword(userId: string, oldPwd: string, newPwd: string): Observable<void>
+  }
+  interface ProfileResource {
+    + id: string
+    + userId: string
+    + fullName: string
+    + phone: string
+    + preferredLanguage: string
+    + accumulatedPoints: number
+    + plan: string
+    + availabilityAlerts: boolean
+    + scheduledMaintenance: boolean
+    + rewardPoints: boolean
+  }
+  class ProfileAssembler {
+    + toEntityFromResource(resource: ProfileResource): Profile
+    + toResourceFromEntity(profile: Profile): ProfileResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "profiles.presentation.components" {
+  class ProfilePage <<component>> {
+    - profileStore: ProfileStore
+    + profile: Signal<Profile | null>
+    + onSaveChanges(): void
+    + onChangePassword(): void
+    + onChangeLanguage(lang: string): void
+    + onLogout(): void
+  }
+}
+
+ProfileApi --|> BaseApi
+ProfileStore --> ProfileApi : uses
+ProfileStore --> ProfileAssembler : uses
+ProfileAssembler ..> ProfileResource : transforms
+ProfileAssembler --> Profile : creates
+ProfilePage --> ProfileStore : uses
+Profile "1" *-- "1" NotificationPreferences
+Profile --> SubscriptionPlan
+
+@enduml
