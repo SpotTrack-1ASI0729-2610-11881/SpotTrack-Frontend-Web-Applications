@@ -1,0 +1,105 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="dialog-title">
+      {{ (isEditMode ? 'equipment.dialog.editTitle' : 'equipment.dialog.addTitle') | translate }}
+    </h2>
+    <button mat-icon-button class="close-btn" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="dialog-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.name' | translate }}</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.type' | translate }}</mat-label>
+        <mat-select formControlName="type">
+          @for (type of equipmentTypes; track type) {
+            <mat-option [value]="type">{{ 'equipment.type.' + type | translate }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.type.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.locationId' | translate }}</mat-label>
+        <input matInput formControlName="locationId" />
+        @if (form.controls.locationId.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.sensorId' | translate }}</mat-label>
+        <input matInput formControlName="sensorId" />
+        @if (form.controls.sensorId.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.branchId' | translate }}</mat-label>
+        <input matInput formControlName="branchId" />
+        @if (form.controls.branchId.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.status' | translate }}</mat-label>
+        <mat-select formControlName="status">
+          @for (s of equipmentStatuses; track s) {
+            <mat-option [value]="s">{{ 'equipment.status.' + s | translate }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.status.hasError('required')) {
+          <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.usageHours' | translate }}</mat-label>
+        <input matInput type="number" formControlName="usageHours" min="0" />
+        @if (form.controls.usageHours.hasError('required') || form.controls.usageHours.hasError('min')) {
+          <mat-error>{{ 'equipment.dialog.validation.min' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'equipment.dialog.fields.utilizationRate' | translate }}</mat-label>
+        <input matInput type="number" formControlName="utilizationRate" min="0" max="100" />
+        <mat-hint>0 – 100%</mat-hint>
+        @if (form.controls.utilizationRate.hasError('min')) {
+          <mat-error>{{ 'equipment.dialog.validation.min' | translate }}</mat-error>
+        }
+        @if (form.controls.utilizationRate.hasError('max')) {
+          <mat-error>{{ 'equipment.dialog.validation.max' | translate }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()">
+        {{ 'equipment.actions.cancel' | translate }}
+      </button>
+      <button mat-flat-button type="submit" class="btn-save" [disabled]="form.invalid">
+        {{ 'equipment.actions.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,71 @@
+{
+  "equipment": {
+    "title": "Gestión de Equipos",
+    "subtitle": "Monitorea y gestiona todos los equipos del gimnasio",
+    "search": "Buscar por nombre o ID...",
+    "filter": {
+      "allTypes": "Todos los tipos",
+      "allStatuses": "Todos los estados",
+      "type": "Tipo de equipo",
+      "status": "Estado"
+    },
+    "actions": {
+      "register": "Registrar Equipo",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "type": "Tipo",
+      "location": "Ubicación",
+      "sensor": "Sensor",
+      "status": "Estado",
+      "usageHours": "Horas de Uso",
+      "utilizationRate": "Utilización",
+      "branch": "Sede",
+      "actions": "Acciones",
+      "noData": "No se encontraron equipos"
+    },
+    "stats": {
+      "total": "Total Equipos",
+      "active": "Activos",
+      "maintenance": "En Mantenimiento",
+      "inactive": "Inactivos"
+    },
+    "type": {
+      "CARDIO": "Cardio",
+      "STRENGTH": "Fuerza",
+      "FUNCTIONAL": "Funcional"
+    },
+    "status": {
+      "ACTIVE": "Activo",
+      "MAINTENANCE": "Mantenimiento",
+      "INACTIVE": "Inactivo"
+    },
+    "dialog": {
+      "addTitle": "Registrar Nuevo Equipo",
+      "editTitle": "Editar Equipo",
+      "deleteTitle": "Eliminar Equipo",
+      "deleteMessage": "¿Estás seguro de que deseas eliminar este equipo? Esta acción no se puede deshacer.",
+      "fields": {
+        "name": "Nombre del equipo",
+        "type": "Tipo de equipo",
+        "locationId": "ID de ubicación",
+        "sensorId": "ID de sensor",
+        "usageHours": "Horas de uso",
+        "utilizationRate": "Tasa de utilización (%)",
+        "branchId": "ID de sede",
+        "status": "Estado"
+      },
+      "validation": {
+        "required": "Este campo es obligatorio",
+        "min": "El valor debe ser 0 o mayor",
+        "max": "El valor debe ser 100 o menor"
+      }
+    }
+  }
+}

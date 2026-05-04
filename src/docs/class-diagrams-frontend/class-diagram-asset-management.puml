@@ -1,0 +1,103 @@
+@startuml BC-03_Equipment
+
+package "equipment.domain.model" {
+  class Equipment {
+    - id: string
+    - name: string
+    - type: EquipmentType
+    - locationId: string
+    - sensorId: string
+    - status: EquipmentStatus
+    - usageHours: number
+    - utilizationRate: number
+    - branchId: string
+    + constructor()
+    + id(): string
+    + name(): string
+    + type(): EquipmentType
+    + locationId(): string
+    + sensorId(): string
+    + status(): EquipmentStatus
+    + usageHours(): number
+    + utilizationRate(): number
+    + branchId(): string
+  }
+  enum EquipmentType {
+    CARDIO
+    STRENGTH
+    FUNCTIONAL
+  }
+  enum EquipmentStatus {
+    ACTIVE
+    MAINTENANCE
+    INACTIVE
+  }
+}
+
+package "equipment.application" {
+class EquipmentStore {
+  - equipmentSignal: Signal<Equipment[]>
+  - equipmentApi: EquipmentApi
+  - equipmentAssembler: EquipmentAssembler
+  + equipment: Signal<Equipment[]>
+  + filteredEquipment: Signal<Equipment[]>
+  + loadEquipment(): void
+  + filterByBranch(branchId: string): void
+  + filterByType(type: EquipmentType): void
+  + filterByDateRange(from: string, to: string): void
+  + registerEquipment(equipment: Equipment): void
+  + updateEquipment(equipment: Equipment): void
+  + deleteEquipment(equipmentId: string): void
+}
+}
+
+package "equipment.infrastructure" {
+  class EquipmentApi {
+    - http: HttpClient
+    + getEquipment(): Observable<EquipmentResource[]>
+    + registerEquipment(resource: EquipmentResource): Observable<EquipmentResource>
+    + updateEquipment(resource: EquipmentResource): Observable<EquipmentResource>
+    + deleteEquipment(equipmentId: string): Observable<void>
+  }
+  interface EquipmentResource {
+    + id: string
+    + name: string
+    + type: string
+    + locationId: string
+    + sensorId: string
+    + status: string
+    + usageHours: number
+    + branchId: string
+  }
+  class EquipmentAssembler {
+    + toEntityFromResource(resource: EquipmentResource): Equipment
+    + toResourceFromEntity(equipment: Equipment): EquipmentResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "equipment.presentation.components" {
+  class EquipmentManagementPage <<component>> {
+    - equipmentStore: EquipmentStore
+    + equipment: Signal<Equipment[]>
+    + onRegisterEquipment(): void
+    + onUpdateEquipment(equipment: Equipment): void
+    + onDeleteEquipment(equipmentId: string): void
+    + onFilterByBranch(branchId: string): void
+    + onFilterByType(type: EquipmentType): void
+  }
+}
+
+EquipmentApi --|> BaseApi
+EquipmentStore --> EquipmentApi : uses
+EquipmentStore --> EquipmentAssembler : uses
+EquipmentAssembler ..> EquipmentResource : transforms
+EquipmentAssembler --> Equipment : creates
+EquipmentManagementPage --> EquipmentStore : uses
+Equipment --> EquipmentType
+Equipment --> EquipmentStatus
+
+@enduml

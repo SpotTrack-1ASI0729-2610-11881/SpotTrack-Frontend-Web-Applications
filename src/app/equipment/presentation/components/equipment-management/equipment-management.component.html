@@ -1,0 +1,188 @@
+<div class="eq-page">
+
+  <!-- Page Header -->
+  <div class="eq-header">
+    <div class="eq-header__text">
+      <h1 class="eq-header__title">{{ 'equipment.title' | translate }}</h1>
+      <p class="eq-header__subtitle">{{ 'equipment.subtitle' | translate }}</p>
+    </div>
+    <button class="btn-register" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      {{ 'equipment.actions.register' | translate }}
+    </button>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="eq-stats">
+    <div class="stat-card stat-card--total">
+      <span class="stat-card__value">{{ totalEquipment() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.total' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--active">
+      <mat-icon>check_circle</mat-icon>
+      <span class="stat-card__value">{{ activeCount() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.active' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--maintenance">
+      <mat-icon>build</mat-icon>
+      <span class="stat-card__value">{{ maintenanceCount() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.maintenance' | translate }}</span>
+    </div>
+    <div class="stat-card stat-card--inactive">
+      <mat-icon>cancel</mat-icon>
+      <span class="stat-card__value">{{ inactiveCount() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.inactive' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="eq-filters">
+    <div class="eq-search">
+      <mat-icon class="eq-search__icon">search</mat-icon>
+      <input
+        class="eq-search__input"
+        type="text"
+        [placeholder]="'equipment.search' | translate"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+      />
+    </div>
+
+    <mat-form-field appearance="outline" class="filter-select">
+      <mat-label>{{ 'equipment.filter.type' | translate }}</mat-label>
+      <mat-select [ngModel]="selectedType()" (ngModelChange)="onTypeChange($event)">
+        <mat-option value="">{{ 'equipment.filter.allTypes' | translate }}</mat-option>
+        @for (type of equipmentTypes; track type) {
+          <mat-option [value]="type">{{ 'equipment.type.' + type | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-select">
+      <mat-label>{{ 'equipment.filter.status' | translate }}</mat-label>
+      <mat-select [ngModel]="selectedStatus()" (ngModelChange)="onStatusChange($event)">
+        <mat-option value="">{{ 'equipment.filter.allStatuses' | translate }}</mat-option>
+        @for (s of equipmentStatuses; track s) {
+          <mat-option [value]="s">{{ 'equipment.status.' + s | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Table Card -->
+  <div class="eq-card">
+    <table mat-table [dataSource]="filteredEquipment()" class="eq-table">
+
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.id' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="cell-id">{{ row.id }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.name' | translate }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+
+      <!-- Type -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.type' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="badge" [ngClass]="'badge--type-' + row.type.toLowerCase()">
+            {{ 'equipment.type.' + row.type | translate }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Location -->
+      <ng-container matColumnDef="locationId">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.location' | translate }}</th>
+        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.locationId }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.status' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="badge badge--status" [ngClass]="'badge--status-' + row.status.toLowerCase()">
+            @switch (row.status) {
+              @case (EquipmentStatus.ACTIVE) { <mat-icon>check_circle</mat-icon> }
+              @case (EquipmentStatus.MAINTENANCE) { <mat-icon>build</mat-icon> }
+              @case (EquipmentStatus.INACTIVE) { <mat-icon>cancel</mat-icon> }
+            }
+            {{ 'equipment.status.' + row.status | translate }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Usage Hours -->
+      <ng-container matColumnDef="usageHours">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.usageHours' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="cell-numeric">{{ row.usageHours }}h</span>
+        </td>
+      </ng-container>
+
+      <!-- Utilization Rate -->
+      <ng-container matColumnDef="utilizationRate">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.utilizationRate' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="utilization-cell">
+            <mat-progress-bar
+              class="utilization-bar"
+              [ngClass]="getUtilizationClass(row.utilizationRate)"
+              mode="determinate"
+              [value]="row.utilizationRate"
+            ></mat-progress-bar>
+            <span class="utilization-label">{{ row.utilizationRate }}%</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Branch -->
+      <ng-container matColumnDef="branchId">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.branch' | translate }}</th>
+        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.branchId }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.actions' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="actions-cell">
+            <button
+              mat-icon-button
+              class="action-btn action-btn--edit"
+              [matTooltip]="'equipment.actions.edit' | translate"
+              (click)="openEditDialog(row)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="action-btn action-btn--delete"
+              [matTooltip]="'equipment.actions.delete' | translate"
+              (click)="deleteEquipment(row.id)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="eq-row"></tr>
+
+      <tr class="mat-mdc-no-data-row" *matNoDataRow>
+        <td [colSpan]="displayedColumns.length" class="no-data-cell">
+          <mat-icon>inventory_2</mat-icon>
+          <span>{{ 'equipment.table.noData' | translate }}</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>

@@ -1,0 +1,130 @@
+@startuml BC-06_Availability
+
+package "availability.domain.model" {
+  class MachineAvailability {
+    - machineId: string
+    - machineName: string
+    - status: AvailabilityStatus
+    - locationId: string
+    - type: EquipmentType
+    - reservedUntil: string
+    + constructor()
+  }
+  class Reservation {
+    - id: string
+    - machineId: string
+    - userId: string
+    - date: string
+    - startTime: string
+    - durationMinutes: number
+    - status: ReservationStatus
+    + constructor()
+  }
+  enum AvailabilityStatus {
+    FREE
+    OCCUPIED
+    RESERVED
+    MAINTENANCE
+  }
+  enum ReservationStatus {
+    ACTIVE
+    CANCELLED
+    EXPIRED
+  }
+  enum EquipmentType {
+    CARDIO
+    STRENGTH
+    FUNCTIONAL
+  }
+}
+
+package "availability.application" {
+  class AvailabilityStore {
+    - machinesSignal: Signal<MachineAvailability[]>
+    - reservationsSignal: Signal<Reservation[]>
+    - availabilityApi: AvailabilityApi
+    - availabilityAssembler: AvailabilityAssembler
+    + machines: Signal<MachineAvailability[]>
+    + myReservations: Signal<Reservation[]>
+    + filteredByType: Signal<MachineAvailability[]>
+    + currentBranchId: Signal<string>
+    + loadAvailability(branchId: string): void
+    + filterByType(type: EquipmentType): void
+    + filterByBranch(branchId: string): void
+    + createReservation(reservation: Reservation): void
+    + cancelReservation(reservationId: string): void
+    + reportMachineStatus(machineId: string, status: AvailabilityStatus): void
+    + notifyWhenFree(machineId: string): void
+  }
+}
+
+package "availability.infrastructure" {
+  class AvailabilityApi {
+    - http: HttpClient
+    + getMachineAvailability(branchId: string): Observable<MachineAvailabilityResource[]>
+    + createReservation(resource: ReservationResource): Observable<ReservationResource>
+    + cancelReservation(reservationId: string): Observable<void>
+    + reportStatus(machineId: string, status: string): Observable<void>
+  }
+  interface MachineAvailabilityResource {
+    + machineId: string
+    + machineName: string
+    + status: string
+    + locationId: string
+    + type: string
+    + reservedUntil: string
+  }
+  interface ReservationResource {
+    + id: string
+    + machineId: string
+    + userId: string
+    + date: string
+    + startTime: string
+    + durationMinutes: number
+    + status: string
+  }
+  class AvailabilityAssembler {
+    + toMachineAvailabilityFromResource(resource: MachineAvailabilityResource): MachineAvailability
+    + toReservationFromResource(resource: ReservationResource): Reservation
+    + toReservationResourceFromEntity(reservation: Reservation): ReservationResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "availability.presentation.components" {
+  class MobileHomePage <<component>> {
+    - availabilityStore: AvailabilityStore
+    + machines: Signal<MachineAvailability[]>
+    # selectedBranch: string
+    # typeFilter: EquipmentType
+    + onFilterByType(type: EquipmentType): void
+    + onChangeBranch(branchId: string): void
+    + onReportStatus(machineId: string, status: AvailabilityStatus): void
+    + onNotifyWhenFree(machineId: string): void
+  }
+  class MobileReservationsPage <<component>> {
+    - availabilityStore: AvailabilityStore
+    + reservations: Signal<Reservation[]>
+    + onCreateReservation(): void
+    + onCancelReservation(reservationId: string): void
+  }
+}
+
+AvailabilityApi --|> BaseApi
+AvailabilityStore --> AvailabilityApi : uses
+AvailabilityStore --> AvailabilityAssembler : uses
+AvailabilityAssembler ..> MachineAvailabilityResource : transforms
+AvailabilityAssembler ..> ReservationResource : transforms
+AvailabilityAssembler --> MachineAvailability : creates
+AvailabilityAssembler --> Reservation : creates
+MobileHomePage --> AvailabilityStore : uses
+MobileReservationsPage --> AvailabilityStore : uses
+Reservation "n" --> "1" MachineAvailability : books
+MachineAvailability --> AvailabilityStatus
+MachineAvailability --> EquipmentType
+Reservation --> ReservationStatus
+
+@enduml

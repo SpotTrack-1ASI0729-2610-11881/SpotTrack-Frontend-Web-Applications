@@ -1,0 +1,79 @@
+@startuml BC-08_Notifications
+
+package "notifications.domain.model" {
+  class Notification {
+    - id: string
+    - userId: string
+    - type: NotificationType
+    - title: string
+    - message: string
+    - timestamp: string
+    - read: boolean
+    + constructor()
+  }
+  enum NotificationType {
+    MACHINE_FREE
+    MACHINE_OCCUPIED
+    MAINTENANCE_SCHEDULED
+    MAINTENANCE_RESOLVED
+    REWARD_EARNED
+    PENALTY_APPLIED
+  }
+}
+
+package "notifications.application" {
+  class NotificationStore {
+    - notificationsSignal: Signal<Notification[]>
+    - notificationApi: NotificationApi
+    - notificationAssembler: NotificationAssembler
+    + notifications: Signal<Notification[]>
+    + unreadCount: Signal<number>
+    + loadNotifications(): void
+    + markAsRead(notificationId: string): void
+    + markAllAsRead(): void
+  }
+}
+
+package "notifications.infrastructure" {
+  class NotificationApi {
+    - http: HttpClient
+    + getNotifications(userId: string): Observable<NotificationResource[]>
+    + markAsRead(notificationId: string): Observable<void>
+  }
+  interface NotificationResource {
+    + id: string
+    + userId: string
+    + type: string
+    + title: string
+    + message: string
+    + timestamp: string
+    + read: boolean
+  }
+  class NotificationAssembler {
+    + toEntityFromResource(resource: NotificationResource): Notification
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "notifications.presentation.components" {
+  class MobileNotificationsPage <<component>> {
+    - notificationStore: NotificationStore
+    + notifications: Signal<Notification[]>
+    + unreadCount: Signal<number>
+    + onMarkAsRead(notificationId: string): void
+    + onMarkAllAsRead(): void
+  }
+}
+
+NotificationApi --|> BaseApi
+NotificationStore --> NotificationApi : uses
+NotificationStore --> NotificationAssembler : uses
+NotificationAssembler ..> NotificationResource : transforms
+NotificationAssembler --> Notification : creates
+MobileNotificationsPage --> NotificationStore : uses
+Notification --> NotificationType
+
+@enduml
