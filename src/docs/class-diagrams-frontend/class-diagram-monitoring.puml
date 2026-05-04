@@ -1,0 +1,112 @@
+@startuml BC-04_IoT
+
+package "iot.domain.model" {
+  class Sensor {
+    - id: string
+    - machineId: string
+    - status: SensorStatus
+    - lastPing: string
+    - batteryLevel: number
+    - signalStrength: number
+    - firmwareVersion: string
+    + constructor()
+  }
+  class SensorAlert {
+    - id: string
+    - sensorId: string
+    - machineId: string
+    - type: AlertType
+    - message: string
+    - timestamp: string
+    + constructor()
+  }
+  enum SensorStatus {
+    ONLINE
+    OFFLINE
+    WARNING
+  }
+  enum AlertType {
+    DISCONNECTED
+    LOW_BATTERY
+    WEAK_SIGNAL
+  }
+}
+
+package "iot.application" {
+  class IoTStore {
+    - sensorsSignal: Signal<Sensor[]>
+    - alertsSignal: Signal<SensorAlert[]>
+    - iotApi: IoTApi
+    - sensorAssembler: SensorAssembler
+    + sensors: Signal<Sensor[]>
+    + alerts: Signal<SensorAlert[]>
+    + sensorsOnline: Signal<number>
+    + sensorsOffline: Signal<number>
+    + averageBattery: Signal<number>
+    + loadSensors(): void
+    + refreshSensors(): void
+    + investigateAlert(alertId: string): void
+    + scheduleReplacement(sensorId: string): void
+  }
+}
+
+package "iot.infrastructure" {
+  class IoTApi {
+    - http: HttpClient
+    + getSensors(): Observable<SensorResource[]>
+    + getSensorAlerts(): Observable<SensorAlertResource[]>
+    + updateSensorStatus(sensorId: string, status: string): Observable<void>
+  }
+  interface SensorResource {
+    + id: string
+    + machineId: string
+    + status: string
+    + lastPing: string
+    + batteryLevel: number
+    + signalStrength: number
+    + firmwareVersion: string
+  }
+  interface SensorAlertResource {
+    + id: string
+    + sensorId: string
+    + machineId: string
+    + type: string
+    + message: string
+    + timestamp: string
+  }
+  class SensorAssembler {
+    + toSensorFromResource(resource: SensorResource): Sensor
+    + toAlertFromResource(resource: SensorAlertResource): SensorAlert
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "iot.presentation.components" {
+  class IoTMonitoringPage <<component>> {
+    - iotStore: IoTStore
+    + sensors: Signal<Sensor[]>
+    + alerts: Signal<SensorAlert[]>
+    # searchQuery: string
+    # statusFilter: SensorStatus
+    + onRefresh(): void
+    + onInvestigateAlert(alertId: string): void
+    + onScheduleReplacement(sensorId: string): void
+  }
+}
+
+IoTApi --|> BaseApi
+IoTStore --> IoTApi : uses
+IoTStore --> SensorAssembler : uses
+SensorAssembler ..> SensorResource : transforms
+SensorAssembler ..> SensorAlertResource : transforms
+SensorAssembler --> Sensor : creates
+SensorAssembler --> SensorAlert : creates
+IoTMonitoringPage --> IoTStore : uses
+Sensor "1" -- "n" SensorAlert : generates
+Sensor --> SensorStatus
+SensorAlert --> AlertType
+
+@enduml

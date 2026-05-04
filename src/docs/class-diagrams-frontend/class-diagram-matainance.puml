@@ -1,0 +1,95 @@
+@startuml BC-05_Maintenance
+
+package "maintenance.domain.model" {
+  class MaintenanceTicket {
+    - id: string
+    - machineId: string
+    - description: string
+    - priority: TicketPriority
+    - status: TicketStatus
+    - estimatedHours: number
+    - assignedTo: string
+    - createdAt: string
+    - completedAt: string
+    + constructor()
+  }
+  enum TicketPriority {
+    LOW
+    MEDIUM
+    HIGH
+    URGENT
+  }
+  enum TicketStatus {
+    PENDING
+    IN_PROGRESS
+    COMPLETED
+  }
+}
+
+package "maintenance.application" {
+  class MaintenanceStore {
+    - ticketsSignal: Signal<MaintenanceTicket[]>
+    - maintenanceApi: MaintenanceApi
+    - ticketAssembler: MaintenanceTicketAssembler
+    + tickets: Signal<MaintenanceTicket[]>
+    + pendingTickets: Signal<MaintenanceTicket[]>
+    + inProgressTickets: Signal<MaintenanceTicket[]>
+    + completedTickets: Signal<MaintenanceTicket[]>
+    + totalTickets: Signal<number>
+    + loadTickets(): void
+    + createTicket(ticket: MaintenanceTicket): void
+    + startTicket(ticketId: string): void
+    + completeTicket(ticketId: string): void
+  }
+}
+
+package "maintenance.infrastructure" {
+  class MaintenanceApi {
+    - http: HttpClient
+    + getTickets(): Observable<MaintenanceTicketResource[]>
+    + createTicket(resource: MaintenanceTicketResource): Observable<MaintenanceTicketResource>
+    + updateTicketStatus(ticketId: string, status: string): Observable<void>
+  }
+  interface MaintenanceTicketResource {
+    + id: string
+    + machineId: string
+    + description: string
+    + priority: string
+    + status: string
+    + estimatedHours: number
+    + assignedTo: string
+    + createdAt: string
+    + completedAt: string
+  }
+  class MaintenanceTicketAssembler {
+    + toEntityFromResource(resource: MaintenanceTicketResource): MaintenanceTicket
+    + toResourceFromEntity(ticket: MaintenanceTicket): MaintenanceTicketResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "maintenance.presentation.components" {
+  class MaintenancePage <<component>> {
+    - maintenanceStore: MaintenanceStore
+    + tickets: Signal<MaintenanceTicket[]>
+    # searchQuery: string
+    # priorityFilter: TicketPriority
+    + onCreateTicket(): void
+    + onStartTicket(ticketId: string): void
+    + onCompleteTicket(ticketId: string): void
+  }
+}
+
+MaintenanceApi --|> BaseApi
+MaintenanceStore --> MaintenanceApi : uses
+MaintenanceStore --> MaintenanceTicketAssembler : uses
+MaintenanceTicketAssembler ..> MaintenanceTicketResource : transforms
+MaintenanceTicketAssembler --> MaintenanceTicket : creates
+MaintenancePage --> MaintenanceStore : uses
+MaintenanceTicket --> TicketPriority
+MaintenanceTicket --> TicketStatus
+
+@enduml

@@ -1,0 +1,90 @@
+@startuml BC-10_Financial
+
+package "financial.domain.model" {
+  class FinancialSummary {
+    - inactivityLoss: number
+    - maintenanceCost: number
+    - potentialSavings: number
+    - roiMonths: number
+    - maintenanceBreakdown: MaintenanceBreakdown
+    + constructor()
+  }
+  class MaintenanceBreakdown {
+    - corrective: number
+    - preventive: number
+    - spareParts: number
+  }
+  class RoiSimulation {
+    - machineCost: number
+    - unsatisfiedDemand: number
+    - revenuePerUser: number
+    - projectedRoiMonths: number
+    + constructor()
+  }
+}
+
+package "financial.application" {
+  class FinancialStore {
+    - summarySignal: Signal<FinancialSummary | null>
+    - simulationSignal: Signal<RoiSimulation | null>
+    - financialApi: FinancialApi
+    - financialAssembler: FinancialAssembler
+    + summary: Signal<FinancialSummary | null>
+    + simulation: Signal<RoiSimulation | null>
+    + loadSummary(): void
+    + calculateRoi(simulation: RoiSimulation): void
+  }
+}
+
+package "financial.infrastructure" {
+  class FinancialApi {
+    - http: HttpClient
+    + getSummary(): Observable<FinancialSummaryResource>
+    + calculateRoi(resource: RoiSimulationResource): Observable<RoiSimulationResource>
+  }
+  interface FinancialSummaryResource {
+    + inactivityLoss: number
+    + maintenanceCost: number
+    + potentialSavings: number
+    + roiMonths: number
+    + corrective: number
+    + preventive: number
+    + spareParts: number
+  }
+  interface RoiSimulationResource {
+    + machineCost: number
+    + unsatisfiedDemand: number
+    + revenuePerUser: number
+    + projectedRoiMonths: number
+  }
+  class FinancialAssembler {
+    + toSummaryFromResource(resource: FinancialSummaryResource): FinancialSummary
+    + toSimulationFromResource(resource: RoiSimulationResource): RoiSimulation
+    + toSimulationResourceFromEntity(simulation: RoiSimulation): RoiSimulationResource
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "financial.presentation.components" {
+  class FinancialImpactPage <<component>> {
+    - financialStore: FinancialStore
+    + summary: Signal<FinancialSummary | null>
+    + simulation: Signal<RoiSimulation | null>
+    + onCalculateRoi(): void
+  }
+}
+
+FinancialApi --|> BaseApi
+FinancialStore --> FinancialApi : uses
+FinancialStore --> FinancialAssembler : uses
+FinancialAssembler ..> FinancialSummaryResource : transforms
+FinancialAssembler ..> RoiSimulationResource : transforms
+FinancialAssembler --> FinancialSummary : creates
+FinancialAssembler --> RoiSimulation : creates
+FinancialImpactPage --> FinancialStore : uses
+FinancialSummary "1" *-- "1" MaintenanceBreakdown
+
+@enduml

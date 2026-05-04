@@ -1,0 +1,95 @@
+@startuml BC-09_Reports
+
+package "reports.domain.model" {
+  class UsageReport {
+    - id: string
+    - branchId: string
+    - period: string
+    - totalUsageHours: number
+    - occupancyRate: number
+    - peakHour: string
+    - idleHours: number
+    - machineDistribution: MachineDistribution[]
+    - stressPeaks: StressPeak[]
+    + constructor()
+  }
+  class MachineDistribution {
+    - type: EquipmentCategory
+    - percentage: number
+  }
+  class StressPeak {
+    - hour: string
+    - occupancyRate: number
+  }
+  enum EquipmentCategory {
+    CARDIO
+    STRENGTH
+    FUNCTIONAL
+  }
+}
+
+package "reports.application" {
+  class ReportsStore {
+    - reportSignal: Signal<UsageReport | null>
+    - reportsApi: ReportsApi
+    - reportsAssembler: ReportsAssembler
+    + report: Signal<UsageReport | null>
+    + loadReport(branchId: string, period: string): void
+    + exportCsv(): void
+    + generatePdf(): void
+    + filterByBranch(branchId: string): void
+    + filterByDateRange(from: string, to: string): void
+  }
+}
+
+package "reports.infrastructure" {
+  class ReportsApi {
+    - http: HttpClient
+    + getReport(branchId: string, period: string): Observable<UsageReportResource>
+    + exportCsv(reportId: string): Observable<Blob>
+    + generatePdf(reportId: string): Observable<Blob>
+  }
+  interface UsageReportResource {
+    + id: string
+    + branchId: string
+    + period: string
+    + totalUsageHours: number
+    + occupancyRate: number
+    + peakHour: string
+    + idleHours: number
+    + machineDistribution: object[]
+    + stressPeaks: object[]
+  }
+  class ReportsAssembler {
+    + toEntityFromResource(resource: UsageReportResource): UsageReport
+  }
+  class BaseApi {
+    # http: HttpClient
+    # getAuthHeaders(): HttpHeaders
+  }
+}
+
+package "reports.presentation.components" {
+  class ReportsPage <<component>> {
+    - reportsStore: ReportsStore
+    + report: Signal<UsageReport | null>
+    # branchFilter: string
+    # periodFilter: string
+    + onExportCsv(): void
+    + onGeneratePdf(): void
+    + onFilterByBranch(branchId: string): void
+    + onFilterByDateRange(from: string, to: string): void
+  }
+}
+
+ReportsApi --|> BaseApi
+ReportsStore --> ReportsApi : uses
+ReportsStore --> ReportsAssembler : uses
+ReportsAssembler ..> UsageReportResource : transforms
+ReportsAssembler --> UsageReport : creates
+ReportsPage --> ReportsStore : uses
+UsageReport "1" *-- "n" MachineDistribution
+UsageReport "1" *-- "n" StressPeak
+MachineDistribution --> EquipmentCategory
+
+@enduml
