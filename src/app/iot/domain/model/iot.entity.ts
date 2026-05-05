@@ -1,18 +1,43 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 
-export class Iot {
-  private id : number;
-  private equipment_id : number;
-  private mac_address : string;
-  private status: string;
-  private last_hearbeat: string; //switch to a date format in the future
+export enum IotStatus {
+  ACTIVE   = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
 
-  constructor(id : number, equipment_id: number, mac_address : string, status : string, last_hearbeat: string) {
-    this.id = id;
-    this.equipment_id = equipment_id;
-    this.mac_address = mac_address;
-    this.status = status;
-    this.last_hearbeat = last_hearbeat;
+export class Iot implements BaseEntity {
+  private _id:            number;
+  private _equipmentId:   number;
+  private _macAddress:    string;
+  private _status:        IotStatus;
+  private _lastHeartbeat: string;
 
+  constructor(props: {
+    id:            number;
+    equipmentId:   number;
+    macAddress:    string;
+    status:        IotStatus;
+    lastHeartbeat: string;
+  }) {
+    this._id            = props.id;
+    this._equipmentId   = props.equipmentId;
+    this._macAddress    = props.macAddress;
+    this._status        = props.status;
+    this._lastHeartbeat = props.lastHeartbeat;
   }
+
+  get id():            number    { return this._id; }
+  set id(value:        number)   { this._id = value; }
+
+  get equipmentId():   number    { return this._equipmentId; }
+  set equipmentId(value: number) { this._equipmentId = value; }
+
+  get macAddress():    string    { return this._macAddress; }
+  set macAddress(value: string)  { this._macAddress = value; }
+
+  get status():        IotStatus { return this._status; }
+  set status(value:    IotStatus){ this._status = value; }
+
+  get lastHeartbeat(): string    { return this._lastHeartbeat; }
+  set lastHeartbeat(value: string) { this._lastHeartbeat = value; }
 }
