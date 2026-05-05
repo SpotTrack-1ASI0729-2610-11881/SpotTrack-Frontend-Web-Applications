@@ -1,5 +1,6 @@
 {
   "nav": {
+    "dashboard": "Panel Principal",
     "equipment": "Equipos",
     "iot": "Monitoreo IoT",
     "maintenance": "Mantenimiento",
