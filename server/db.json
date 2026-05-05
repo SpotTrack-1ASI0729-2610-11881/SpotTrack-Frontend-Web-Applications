@@ -58,21 +58,12 @@
   ],
   "equipments": [
     {
-      "id": 1,
-      "zone_id": 1,
-      "name": "Treadmill",
-      "brand": "Life Fitness",
-      "model": "T5 Track",
-      "purchase_price": 3500.00,
-      "status": "OPERATIONAL"
-    },
-    {
       "id": 2,
       "zone_id": 1,
       "name": "Stationary Bike",
       "brand": "Technogym",
       "model": "Bike Excite",
-      "purchase_price": 2800.00,
+      "purchase_price": 2800,
       "status": "MAINTENANCE"
     },
     {
@@ -81,7 +72,7 @@
       "name": "Chest Press Machine",
       "brand": "Hammer Strength",
       "model": "ISO Bench",
-      "purchase_price": 4200.00,
+      "purchase_price": 4200,
       "status": "OPERATIONAL"
     },
     {
@@ -90,7 +81,7 @@
       "name": "Lat Pulldown Machine",
       "brand": "Matrix",
       "model": "G3",
-      "purchase_price": 3100.00,
+      "purchase_price": 3100,
       "status": "OUT_OF_ORDER"
     }
   ],
@@ -130,14 +121,14 @@
       "device_id": 1,
       "timestamp": "2026-05-04T09:05:00Z",
       "occupancy_detected": false,
-      "vibration_index": 0.10
+      "vibration_index": 0.1
     },
     {
       "id": 3,
       "device_id": 2,
       "timestamp": "2026-05-04T09:10:00Z",
       "occupancy_detected": true,
-      "vibration_index": 0.60
+      "vibration_index": 0.6
     }
   ],
   "usage_sessions": [
@@ -153,7 +144,7 @@
       "equipment_id": 3,
       "start_time": "2026-05-04T08:45:00Z",
       "end_time": "2026-05-04T09:10:00Z",
-      "calories_burned_est": 180.0
+      "calories_burned_est": 180
     }
   ],
   "equipment_usage_stats": [
@@ -167,7 +158,7 @@
     {
       "id": 2,
       "equipment_id": 3,
-      "total_usage_hours": 95.0,
+      "total_usage_hours": 95,
       "usage_count_daily": 6,
       "estimated_wear_level": 0.28
     }
@@ -187,7 +178,7 @@
       "id": 1,
       "ticket_id": 1,
       "action_description": "Replaced internal belt",
-      "cost": 150.0,
+      "cost": 150,
       "completed_at": "2026-05-04T15:00:00Z"
     }
   ],
@@ -205,7 +196,7 @@
       "gym_id": 1,
       "part_name": "Treadmill Belt",
       "stock_quantity": 5,
-      "unit_cost": 80.0
+      "unit_cost": 80
     }
   ],
   "alerts": [

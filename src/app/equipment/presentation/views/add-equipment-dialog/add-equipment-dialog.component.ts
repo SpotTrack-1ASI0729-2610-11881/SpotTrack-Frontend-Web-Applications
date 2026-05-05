@@ -8,11 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Equipment, EquipmentStatus } from '../../../domain/model/equipment.entity';
-import { EquipmentApi } from '../../../infrastructure/equipment.api';
+import { EquipmentStore } from '../../../application/equipment.store';
 import { EquipmentRow } from '../equipment-management/equipment-management.component';
-import { signal } from '@angular/core';
 
 export interface EquipmentFormData {
   id?:           number;
@@ -36,7 +34,6 @@ export interface EquipmentFormData {
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
   ],
   templateUrl: './add-equipment-dialog.component.html',
   styleUrl: './add-equipment-dialog.component.scss',
@@ -45,10 +42,9 @@ export class AddEquipmentDialogComponent {
   private fb     = inject(FormBuilder);
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
-  private api    = inject(EquipmentApi);
+  private store  = inject(EquipmentStore);
 
   readonly equipmentStatuses = Object.values(EquipmentStatus);
-  isSaving = signal(false);
 
   private existing: EquipmentRow | undefined = (history.state as { equipment?: EquipmentRow }).equipment;
   readonly isEditMode = !!this.route.snapshot.paramMap.get('id');
@@ -64,8 +60,6 @@ export class AddEquipmentDialogComponent {
 
   submit(): void {
     if (this.form.invalid) return;
-    this.isSaving.set(true);
-
     const val = this.form.getRawValue();
     const entity = new Equipment({
       id:            this.existing?.id ?? 0,
@@ -77,14 +71,13 @@ export class AddEquipmentDialogComponent {
       status:        val.status,
     });
 
-    const op$ = this.isEditMode
-      ? this.api.updateEquipment(entity)
-      : this.api.registerEquipment(entity);
+    if (this.isEditMode) {
+      this.store.updateEquipment(entity);
+    } else {
+      this.store.addEquipment(entity);
+    }
 
-    op$.subscribe({
-      next:  () => this.router.navigate(['equipment']),
-      error: () => this.isSaving.set(false),
-    });
+    this.router.navigate(['equipment']);
   }
 
   cancel(): void {

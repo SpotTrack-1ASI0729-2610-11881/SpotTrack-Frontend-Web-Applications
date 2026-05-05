@@ -1,15 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
-
-/* Equipment management dialog overrides */
-.eq-dialog-panel .mat-mdc-dialog-container {
-  background: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 0;
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #121212;
 }
 
-.eq-dialog-backdrop {
-  background: rgba(0, 0, 0, 0.72);
+app-root,
+app-layout {
+  display: block;
+  height: 100%;
 }
 
 /* Mat-select panel dark theme */
@@ -23,4 +21,10 @@
 
 .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
   background: #2a2a2a !important;
+}
+
+/* Input text color for Material 3 (MDC) */
+.mdc-text-field__input {
+  color: #fff !important;
+  caret-color: #fff !important;
 }
