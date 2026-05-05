@@ -1,6 +1,11 @@
-
-<main class="layout-content">
-    <app-language-switcher></app-language-switcher>
-
-  <router-outlet></router-outlet>
-</main>
+<div class="shell">
+  <app-sidebar></app-sidebar>
+  <div class="shell__body">
+    <header class="shell__topbar">
+      <app-language-switcher></app-language-switcher>
+    </header>
+    <main class="shell__content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

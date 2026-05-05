@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "equipment": "Equipos",
+    "iot": "Monitoreo IoT",
+    "maintenance": "Mantenimiento",
+    "analytics": "Analítica",
+    "alerts": "Alertas"
+  },
   "equipment": {
     "title": "Gestión de Equipos",
     "subtitle": "Monitorea y gestiona todos los equipos del gimnasio",

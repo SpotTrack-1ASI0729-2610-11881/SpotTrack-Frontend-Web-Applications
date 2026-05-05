@@ -1,0 +1,18 @@
+<aside class="sidebar">
+  <div class="sidebar__brand">
+    <span class="sidebar__brand-text">SpotTrack</span>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.path) {
+      <a
+        class="sidebar__item"
+        [routerLink]="item.path"
+        routerLinkActive="sidebar__item--active"
+      >
+        <mat-icon class="sidebar__icon">{{ item.icon }}</mat-icon>
+        <span class="sidebar__label">{{ item.labelKey | translate }}</span>
+      </a>
+    }
+  </nav>
+</aside>
