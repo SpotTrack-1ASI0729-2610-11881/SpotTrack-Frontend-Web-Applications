@@ -2,11 +2,9 @@
   "equipment": {
     "title": "Equipment Management",
     "subtitle": "Monitor and manage all gym equipment",
-    "search": "Search by name or ID...",
+    "search": "Search by name, brand or model...",
     "filter": {
-      "allTypes": "All types",
       "allStatuses": "All statuses",
-      "type": "Equipment type",
       "status": "Status"
     },
     "actions": {
@@ -20,31 +18,24 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "type": "Type",
-      "location": "Location",
-      "sensor": "Sensor",
+      "brand": "Brand",
+      "model": "Model",
+      "zoneId": "Zone",
+      "purchasePrice": "Purchase Price",
       "status": "Status",
-      "usageHours": "Usage Hours",
-      "utilizationRate": "Utilization",
-      "branch": "Branch",
       "actions": "Actions",
       "noData": "No equipment found"
     },
     "stats": {
       "total": "Total Equipment",
-      "active": "Active",
+      "operational": "Operational",
       "maintenance": "In Maintenance",
-      "inactive": "Inactive"
-    },
-    "type": {
-      "CARDIO": "Cardio",
-      "STRENGTH": "Strength",
-      "FUNCTIONAL": "Functional"
+      "outOfOrder": "Out of Order"
     },
     "status": {
-      "ACTIVE": "Active",
+      "OPERATIONAL": "Operational",
       "MAINTENANCE": "Maintenance",
-      "INACTIVE": "Inactive"
+      "OUT_OF_ORDER": "Out of Order"
     },
     "dialog": {
       "addTitle": "Register New Equipment",
@@ -53,18 +44,15 @@
       "deleteMessage": "Are you sure you want to delete this equipment? This action cannot be undone.",
       "fields": {
         "name": "Equipment name",
-        "type": "Equipment type",
-        "locationId": "Location ID",
-        "sensorId": "Sensor ID",
-        "usageHours": "Usage hours",
-        "utilizationRate": "Utilization rate (%)",
-        "branchId": "Branch ID",
+        "brand": "Brand",
+        "model": "Model",
+        "zoneId": "Zone ID",
+        "purchasePrice": "Purchase price ($)",
         "status": "Status"
       },
       "validation": {
         "required": "This field is required",
-        "min": "Value must be 0 or greater",
-        "max": "Value must be 100 or less"
+        "min": "Value must be 0 or greater"
       }
     }
   }

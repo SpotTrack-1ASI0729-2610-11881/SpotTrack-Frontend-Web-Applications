@@ -4,7 +4,11 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:www.plantuml.com)",
       "Bash(gh api *)",
-      "mcp__claude_ai_Figma__get_design_context"
+      "mcp__claude_ai_Figma__get_design_context",
+      "Bash(cmd.exe *)",
+      "Bash(npm install *)",
+      "Bash(npx ng *)",
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\Users\\\\DELL\\\\Desktop\\\\Mierda2\\\\Estudio\\\\UPC\\\\CICLO 2026 - 1\\\\OPEN SOURCE\\\\SpotTrack-Frontend-Web-Applications\\\\src\\\\app\\\\equipment\\\\presentation\\\\components\")"
     ]
   }
 }
