@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "equipment": "Equipment",
+    "iot": "IoT Monitoring",
+    "maintenance": "Maintenance",
+    "analytics": "Analytics",
+    "alerts": "Alerts"
+  },
   "equipment": {
     "title": "Equipment Management",
     "subtitle": "Monitor and manage all gym equipment",
