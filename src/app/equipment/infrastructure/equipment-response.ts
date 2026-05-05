@@ -1,5 +1,4 @@
 import { BaseResource } from '../../shared/infrastructure/base-response';
-import {BaseResponse} from '../../shared/infrastructure/base-response';
 
 export interface EquipmentResource extends BaseResource {
   id : number;
@@ -11,4 +10,4 @@ export interface EquipmentResource extends BaseResource {
 }
 
 
-export type EquipmentResponse = EquipmentResource[];
+export interface EquipmentResponse extends Array<BaseResource> {}

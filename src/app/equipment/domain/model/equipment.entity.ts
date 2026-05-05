@@ -10,7 +10,7 @@ export enum EquipmentStatus {
   INACTIVE = 'INACTIVE'
 }
 
-export class Equipment {
+export class Equipment  {
   private _id: string;
   private _name: string;
   private _type: EquipmentType;
