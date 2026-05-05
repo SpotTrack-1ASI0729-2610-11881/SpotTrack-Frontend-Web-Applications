@@ -18,20 +18,20 @@
       <span class="stat-card__value">{{ totalEquipment() }}</span>
       <span class="stat-card__label">{{ 'equipment.stats.total' | translate }}</span>
     </div>
-    <div class="stat-card stat-card--active">
+    <div class="stat-card stat-card--operational">
       <mat-icon>check_circle</mat-icon>
-      <span class="stat-card__value">{{ activeCount() }}</span>
-      <span class="stat-card__label">{{ 'equipment.stats.active' | translate }}</span>
+      <span class="stat-card__value">{{ operationalCount() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.operational' | translate }}</span>
     </div>
     <div class="stat-card stat-card--maintenance">
       <mat-icon>build</mat-icon>
       <span class="stat-card__value">{{ maintenanceCount() }}</span>
       <span class="stat-card__label">{{ 'equipment.stats.maintenance' | translate }}</span>
     </div>
-    <div class="stat-card stat-card--inactive">
+    <div class="stat-card stat-card--out-of-order">
       <mat-icon>cancel</mat-icon>
-      <span class="stat-card__value">{{ inactiveCount() }}</span>
-      <span class="stat-card__label">{{ 'equipment.stats.inactive' | translate }}</span>
+      <span class="stat-card__value">{{ outOfOrderCount() }}</span>
+      <span class="stat-card__label">{{ 'equipment.stats.outOfOrder' | translate }}</span>
     </div>
   </div>
 
@@ -49,16 +49,6 @@
     </div>
 
     <mat-form-field appearance="outline" class="filter-select">
-      <mat-label>{{ 'equipment.filter.type' | translate }}</mat-label>
-      <mat-select [ngModel]="selectedType()" (ngModelChange)="onTypeChange($event)">
-        <mat-option value="">{{ 'equipment.filter.allTypes' | translate }}</mat-option>
-        @for (type of equipmentTypes; track type) {
-          <mat-option [value]="type">{{ 'equipment.type.' + type | translate }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="filter-select">
       <mat-label>{{ 'equipment.filter.status' | translate }}</mat-label>
       <mat-select [ngModel]="selectedStatus()" (ngModelChange)="onStatusChange($event)">
         <mat-option value="">{{ 'equipment.filter.allStatuses' | translate }}</mat-option>
@@ -71,6 +61,11 @@
 
   <!-- Table Card -->
   <div class="eq-card">
+    @if (isLoading()) {
+      <div class="eq-loading">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    }
     <table mat-table [dataSource]="filteredEquipment()" class="eq-table">
 
       <!-- ID -->
@@ -87,20 +82,30 @@
         <td mat-cell *matCellDef="let row">{{ row.name }}</td>
       </ng-container>
 
-      <!-- Type -->
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.type' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="badge" [ngClass]="'badge--type-' + row.type.toLowerCase()">
-            {{ 'equipment.type.' + row.type | translate }}
-          </span>
-        </td>
+      <!-- Brand -->
+      <ng-container matColumnDef="brand">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.brand' | translate }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.brand }}</td>
       </ng-container>
 
-      <!-- Location -->
-      <ng-container matColumnDef="locationId">
-        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.location' | translate }}</th>
-        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.locationId }}</td>
+      <!-- Model -->
+      <ng-container matColumnDef="model">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.model' | translate }}</th>
+        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.model }}</td>
+      </ng-container>
+
+      <!-- Zone -->
+      <ng-container matColumnDef="zoneId">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.zoneId' | translate }}</th>
+        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.zoneId }}</td>
+      </ng-container>
+
+      <!-- Purchase Price -->
+      <ng-container matColumnDef="purchasePrice">
+        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.purchasePrice' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="cell-numeric">${{ row.purchasePrice | number }}</span>
+        </td>
       </ng-container>
 
       <!-- Status -->
@@ -109,43 +114,13 @@
         <td mat-cell *matCellDef="let row">
           <span class="badge badge--status" [ngClass]="'badge--status-' + row.status.toLowerCase()">
             @switch (row.status) {
-              @case (EquipmentStatus.ACTIVE) { <mat-icon>check_circle</mat-icon> }
-              @case (EquipmentStatus.MAINTENANCE) { <mat-icon>build</mat-icon> }
-              @case (EquipmentStatus.INACTIVE) { <mat-icon>cancel</mat-icon> }
+              @case (EquipmentStatus.OPERATIONAL) { <mat-icon>check_circle</mat-icon> }
+              @case (EquipmentStatus.MAINTENANCE)  { <mat-icon>build</mat-icon> }
+              @case (EquipmentStatus.OUT_OF_ORDER) { <mat-icon>cancel</mat-icon> }
             }
             {{ 'equipment.status.' + row.status | translate }}
           </span>
         </td>
-      </ng-container>
-
-      <!-- Usage Hours -->
-      <ng-container matColumnDef="usageHours">
-        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.usageHours' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="cell-numeric">{{ row.usageHours }}h</span>
-        </td>
-      </ng-container>
-
-      <!-- Utilization Rate -->
-      <ng-container matColumnDef="utilizationRate">
-        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.utilizationRate' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <div class="utilization-cell">
-            <mat-progress-bar
-              class="utilization-bar"
-              [ngClass]="getUtilizationClass(row.utilizationRate)"
-              mode="determinate"
-              [value]="row.utilizationRate"
-            ></mat-progress-bar>
-            <span class="utilization-label">{{ row.utilizationRate }}%</span>
-          </div>
-        </td>
-      </ng-container>
-
-      <!-- Branch -->
-      <ng-container matColumnDef="branchId">
-        <th mat-header-cell *matHeaderCellDef>{{ 'equipment.table.branch' | translate }}</th>
-        <td mat-cell *matCellDef="let row" class="cell-secondary">{{ row.branchId }}</td>
       </ng-container>
 
       <!-- Actions -->

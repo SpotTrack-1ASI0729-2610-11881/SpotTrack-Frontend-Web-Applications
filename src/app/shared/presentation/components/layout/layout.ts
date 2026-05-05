@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-import {
-  EquipmentManagementComponent
-} from '../../../../equipment/presentation/views/equipment-management/equipment-management.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
-  imports: [EquipmentManagementComponent],
+  imports: [RouterOutlet],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })

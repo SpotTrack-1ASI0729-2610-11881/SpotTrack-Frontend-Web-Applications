@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,31 +10,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { EquipmentType, EquipmentStatus } from '../../../domain/model/equipment.entity';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EquipmentStatus } from '../../../domain/model/equipment.entity';
+import { EquipmentApi } from '../../../infrastructure/equipment.api';
 
 export interface EquipmentRow {
-  id: string;
-  name: string;
-  type: EquipmentType;
-  locationId: string;
-  sensorId: string;
-  status: EquipmentStatus;
-  usageHours: number;
-  utilizationRate: number;
-  branchId: string;
+  id:            number;
+  zoneId:        number;
+  name:          string;
+  brand:         string;
+  model:         string;
+  purchasePrice: number;
+  status:        EquipmentStatus;
 }
-
-const MOCK_EQUIPMENT: EquipmentRow[] = [
-  { id: 'EQ-001', name: 'Cinta 3',         type: EquipmentType.CARDIO,     locationId: 'Zona Cardio',    sensorId: 'SNS-101', status: EquipmentStatus.ACTIVE,      usageHours: 500, utilizationRate: 82, branchId: 'BR-01' },
-  { id: 'EQ-002', name: 'Prensa Piernas',  type: EquipmentType.STRENGTH,   locationId: 'Zona Fuerza',    sensorId: 'SNS-102', status: EquipmentStatus.MAINTENANCE, usageHours: 480, utilizationRate: 45, branchId: 'BR-01' },
-  { id: 'EQ-003', name: 'Elíptica 2',      type: EquipmentType.CARDIO,     locationId: 'Zona Cardio',    sensorId: 'SNS-103', status: EquipmentStatus.ACTIVE,      usageHours: 320, utilizationRate: 71, branchId: 'BR-02' },
-  { id: 'EQ-004', name: 'Rack Sentadilla', type: EquipmentType.STRENGTH,   locationId: 'Zona Fuerza',    sensorId: 'SNS-104', status: EquipmentStatus.ACTIVE,      usageHours: 610, utilizationRate: 90, branchId: 'BR-01' },
-  { id: 'EQ-005', name: 'Banco Pecho',     type: EquipmentType.FUNCTIONAL, locationId: 'Zona Funcional', sensorId: 'SNS-105', status: EquipmentStatus.INACTIVE,    usageHours: 55,  utilizationRate: 18, branchId: 'BR-02' },
-  { id: 'EQ-006', name: 'Polea Alta',      type: EquipmentType.STRENGTH,   locationId: 'Zona Fuerza',    sensorId: 'SNS-106', status: EquipmentStatus.ACTIVE,      usageHours: 395, utilizationRate: 66, branchId: 'BR-03' },
-  { id: 'EQ-007', name: 'Bicicleta 1',    type: EquipmentType.CARDIO,     locationId: 'Zona Cardio',    sensorId: 'SNS-107', status: EquipmentStatus.MAINTENANCE, usageHours: 200, utilizationRate: 30, branchId: 'BR-03' },
-  { id: 'EQ-008', name: 'Cuerda Batida',   type: EquipmentType.FUNCTIONAL, locationId: 'Zona Funcional', sensorId: 'SNS-108', status: EquipmentStatus.ACTIVE,      usageHours: 140, utilizationRate: 55, branchId: 'BR-01' },
-];
 
 @Component({
   selector: 'app-equipment-management',
@@ -50,40 +38,57 @@ const MOCK_EQUIPMENT: EquipmentRow[] = [
     MatFormFieldModule,
     MatSelectModule,
     MatTooltipModule,
-    MatProgressBarModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './equipment-management.component.html',
   styleUrl: './equipment-management.component.scss',
 })
-export class EquipmentManagementComponent {
+export class EquipmentManagementComponent implements OnInit {
   private router = inject(Router);
+  private api    = inject(EquipmentApi);
 
-  readonly EquipmentType = EquipmentType;
-  readonly EquipmentStatus = EquipmentStatus;
-  readonly equipmentTypes = Object.values(EquipmentType);
+  readonly EquipmentStatus   = EquipmentStatus;
   readonly equipmentStatuses = Object.values(EquipmentStatus);
-  readonly displayedColumns = ['id', 'name', 'type', 'locationId', 'status', 'usageHours', 'utilizationRate', 'branchId', 'actions'];
+  readonly displayedColumns  = ['id', 'name', 'brand', 'model', 'zoneId', 'purchasePrice', 'status', 'actions'];
 
-  private allEquipment = signal<EquipmentRow[]>(MOCK_EQUIPMENT);
-  searchQuery   = signal('');
-  selectedType  = signal<EquipmentType | ''>('');
-  selectedStatus = signal<EquipmentStatus | ''>('');
+  private allEquipment = signal<EquipmentRow[]>([]);
+  isLoading            = signal(true);
+  searchQuery          = signal('');
+  selectedStatus       = signal<EquipmentStatus | ''>('');
 
   filteredEquipment = computed(() => {
     const query  = this.searchQuery().toLowerCase();
-    const type   = this.selectedType();
     const status = this.selectedStatus();
     return this.allEquipment().filter(eq =>
-      (!query  || eq.id.toLowerCase().includes(query) || eq.name.toLowerCase().includes(query)) &&
-      (!type   || eq.type === type) &&
+      (!query  || eq.name.toLowerCase().includes(query) ||
+                  eq.brand.toLowerCase().includes(query) ||
+                  eq.model.toLowerCase().includes(query)) &&
       (!status || eq.status === status)
     );
   });
 
   totalEquipment   = computed(() => this.allEquipment().length);
-  activeCount      = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.ACTIVE).length);
+  operationalCount = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.OPERATIONAL).length);
   maintenanceCount = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.MAINTENANCE).length);
-  inactiveCount    = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.INACTIVE).length);
+  outOfOrderCount  = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.OUT_OF_ORDER).length);
+
+  ngOnInit(): void {
+    this.api.getEquipment().subscribe({
+      next: (list) => {
+        this.allEquipment.set(list.map(e => ({
+          id:            e.id,
+          zoneId:        e.zoneId,
+          name:          e.name,
+          brand:         e.brand,
+          model:         e.model,
+          purchasePrice: e.purchasePrice,
+          status:        e.status,
+        })));
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
 
   navigateToNew(): void {
     this.router.navigate(['equipment', 'new']);
@@ -93,17 +98,12 @@ export class EquipmentManagementComponent {
     this.router.navigate(['equipment', row.id, 'edit'], { state: { equipment: row } });
   }
 
-  deleteEquipment(id: string): void {
-    this.allEquipment.update(list => list.filter(eq => eq.id !== id));
+  deleteEquipment(id: number): void {
+    this.api.deleteEquipment(id.toString()).subscribe(() => {
+      this.allEquipment.update(list => list.filter(eq => eq.id !== id));
+    });
   }
 
-  onSearchChange(value: string): void  { this.searchQuery.set(value); }
-  onTypeChange(value: EquipmentType | ''): void   { this.selectedType.set(value); }
+  onSearchChange(value: string): void              { this.searchQuery.set(value); }
   onStatusChange(value: EquipmentStatus | ''): void { this.selectedStatus.set(value); }
-
-  getUtilizationClass(rate: number): string {
-    if (rate >= 70) return 'util--high';
-    if (rate >= 40) return 'util--medium';
-    return 'util--low';
-  }
 }

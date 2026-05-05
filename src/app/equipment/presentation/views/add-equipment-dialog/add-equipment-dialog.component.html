@@ -24,13 +24,9 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.type' | translate }}</mat-label>
-          <mat-select formControlName="type">
-            @for (type of equipmentTypes; track type) {
-              <mat-option [value]="type">{{ 'equipment.type.' + type | translate }}</mat-option>
-            }
-          </mat-select>
-          @if (form.controls.type.hasError('required')) {
+          <mat-label>{{ 'equipment.dialog.fields.brand' | translate }}</mat-label>
+          <input matInput formControlName="brand" />
+          @if (form.controls.brand.hasError('required')) {
             <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
           }
         </mat-form-field>
@@ -38,17 +34,17 @@
 
       <div class="form-row">
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.locationId' | translate }}</mat-label>
-          <input matInput formControlName="locationId" />
-          @if (form.controls.locationId.hasError('required')) {
+          <mat-label>{{ 'equipment.dialog.fields.model' | translate }}</mat-label>
+          <input matInput formControlName="model" />
+          @if (form.controls.model.hasError('required')) {
             <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.sensorId' | translate }}</mat-label>
-          <input matInput formControlName="sensorId" />
-          @if (form.controls.sensorId.hasError('required')) {
+          <mat-label>{{ 'equipment.dialog.fields.zoneId' | translate }}</mat-label>
+          <input matInput type="number" formControlName="zoneId" min="1" />
+          @if (form.controls.zoneId.hasError('required')) {
             <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
           }
         </mat-form-field>
@@ -56,10 +52,10 @@
 
       <div class="form-row">
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.branchId' | translate }}</mat-label>
-          <input matInput formControlName="branchId" />
-          @if (form.controls.branchId.hasError('required')) {
-            <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+          <mat-label>{{ 'equipment.dialog.fields.purchasePrice' | translate }}</mat-label>
+          <input matInput type="number" formControlName="purchasePrice" min="0" />
+          @if (form.controls.purchasePrice.hasError('required') || form.controls.purchasePrice.hasError('min')) {
+            <mat-error>{{ 'equipment.dialog.validation.min' | translate }}</mat-error>
           }
         </mat-form-field>
 
@@ -76,34 +72,16 @@
         </mat-form-field>
       </div>
 
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.usageHours' | translate }}</mat-label>
-          <input matInput type="number" formControlName="usageHours" min="0" />
-          @if (form.controls.usageHours.hasError('required') || form.controls.usageHours.hasError('min')) {
-            <mat-error>{{ 'equipment.dialog.validation.min' | translate }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="form-field">
-          <mat-label>{{ 'equipment.dialog.fields.utilizationRate' | translate }}</mat-label>
-          <input matInput type="number" formControlName="utilizationRate" min="0" max="100" />
-          <mat-hint>0 – 100%</mat-hint>
-          @if (form.controls.utilizationRate.hasError('min')) {
-            <mat-error>{{ 'equipment.dialog.validation.min' | translate }}</mat-error>
-          }
-          @if (form.controls.utilizationRate.hasError('max')) {
-            <mat-error>{{ 'equipment.dialog.validation.max' | translate }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-
       <div class="form-actions">
-        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()">
+        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()" [disabled]="isSaving()">
           {{ 'equipment.actions.cancel' | translate }}
         </button>
-        <button mat-flat-button type="submit" class="btn-save" [disabled]="form.invalid">
-          {{ 'equipment.actions.save' | translate }}
+        <button mat-flat-button type="submit" class="btn-save" [disabled]="form.invalid || isSaving()">
+          @if (isSaving()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            {{ 'equipment.actions.save' | translate }}
+          }
         </button>
       </div>
 
