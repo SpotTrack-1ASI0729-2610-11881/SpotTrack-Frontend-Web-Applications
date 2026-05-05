@@ -83,6 +83,15 @@
       "model": "G3",
       "purchase_price": 3100,
       "status": "OUT_OF_ORDER"
+    },
+    {
+      "zone_id": 1,
+      "name": "Machine A",
+      "brand": "Trackers",
+      "model": "Model A",
+      "purchase_price": 1999,
+      "status": "OPERATIONAL",
+      "id": 5
     }
   ],
   "iot_devices": [
