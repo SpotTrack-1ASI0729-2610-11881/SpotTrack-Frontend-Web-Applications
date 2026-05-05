@@ -8,6 +8,28 @@
     "alerts": "Alertas",
     "configuration": "Configuración"
   },
+  "iot": {
+    "title": "Monitoreo IoT",
+    "subtitle": "Monitorea el estado de los dispositivos IoT en todos los equipos",
+    "search": "Buscar por dirección MAC o ID de equipo...",
+    "stats": {
+      "total": "Total Dispositivos",
+      "active": "Activos",
+      "inactive": "Inactivos"
+    },
+    "table": {
+      "id": "ID",
+      "equipmentId": "Equipo",
+      "macAddress": "Dirección MAC",
+      "status": "Estado",
+      "lastHeartbeat": "Último Heartbeat",
+      "noData": "No se encontraron dispositivos"
+    },
+    "status": {
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo"
+    }
+  },
   "equipment": {
     "title": "Gestión de Equipos",
     "subtitle": "Monitorea y gestiona todos los equipos del gimnasio",

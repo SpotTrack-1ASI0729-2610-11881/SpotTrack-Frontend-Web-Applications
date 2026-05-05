@@ -1,0 +1,160 @@
+.iot-page {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.iot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iot-header__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.iot-header__subtitle {
+  margin: 4px 0 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.iot-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+}
+
+.stat-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+
+.stat-card__label {
+  font-size: 0.8rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-card--total  { border-left: 3px solid #4fc3f7; }
+.stat-card--active { border-left: 3px solid #66bb6a; }
+.stat-card--inactive { border-left: 3px solid #ef5350; }
+
+.stat-card--active mat-icon   { color: #66bb6a; }
+.stat-card--inactive mat-icon { color: #ef5350; }
+
+.iot-filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.iot-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0 12px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.iot-search__icon { color: #aaa; font-size: 20px; }
+
+.iot-search__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 10px 0;
+}
+
+.iot-card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+  position: relative;
+}
+
+.iot-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.iot-table {
+  width: 100%;
+  background: transparent;
+}
+
+.iot-row:hover { background: rgba(255,255,255,0.03); }
+
+.cell-id {
+  font-weight: 600;
+  color: #4fc3f7;
+}
+
+.cell-mac {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+.cell-secondary { color: #aaa; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+}
+
+.badge--active {
+  background: rgba(102, 187, 106, 0.15);
+  color: #66bb6a;
+}
+
+.badge--inactive {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+}
+
+.no-data-cell {
+  padding: 48px;
+  text-align: center;
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  mat-icon { font-size: 48px; width: 48px; height: 48px; }
+}
