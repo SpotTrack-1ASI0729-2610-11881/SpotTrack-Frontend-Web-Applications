@@ -5,7 +5,8 @@
     "iot": "IoT Monitoring",
     "maintenance": "Maintenance",
     "analytics": "Analytics",
-    "alerts": "Alerts"
+    "alerts": "Alerts",
+    "configuration": "Configuration"
   },
   "equipment": {
     "title": "Equipment Management",

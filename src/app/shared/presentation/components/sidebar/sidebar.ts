@@ -24,5 +24,6 @@ export class Sidebar {
     { path: '/maintenance', icon: 'build',           labelKey: 'nav.maintenance' },
     { path: '/analytics',   icon: 'bar_chart',       labelKey: 'nav.analytics' },
     { path: '/alerts',      icon: 'notifications',   labelKey: 'nav.alerts' },
+    { path: '/configuration', icon: 'settings',      labelKey: 'nav.configuration' },
   ];
 }
