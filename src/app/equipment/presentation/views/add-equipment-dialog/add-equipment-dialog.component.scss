@@ -1,0 +1,83 @@
+:host { display: block; }
+
+.form-page {
+  background: #121212;
+  min-height: 100%;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #fff;
+}
+
+.form-page__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  color: #9ca3af;
+  &:hover { color: #f5bc36; }
+}
+
+.form-page__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.form-page__card {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 800px;
+}
+
+.eq-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  .form-field { flex: 1; }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+.btn-cancel {
+  color: #9ca3af;
+  border-color: #333;
+}
+
+.btn-save {
+  background-color: #f5bc36;
+  color: #000;
+  font-weight: 700;
+  &:disabled { background-color: #333; color: #9ca3af; }
+}
+
+::ng-deep .mat-mdc-form-field {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing { border-color: #333 !important; }
+
+  &:hover .mdc-notched-outline__leading,
+  &:hover .mdc-notched-outline__notch,
+  &:hover .mdc-notched-outline__trailing { border-color: #f5bc36 !important; }
+
+  .mdc-floating-label  { color: #9ca3af; }
+  .mat-mdc-input-element { color: #fff; }
+  .mat-mdc-select-value  { color: #fff; }
+}
