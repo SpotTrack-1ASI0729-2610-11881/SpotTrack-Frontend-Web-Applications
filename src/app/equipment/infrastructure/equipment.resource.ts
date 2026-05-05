@@ -1,11 +1,9 @@
 export interface EquipmentResource {
-  id:              string;
-  name:            string;
-  type:            string;
-  locationId:      string;
-  sensorId:        string;
-  status:          string;
-  usageHours:      number;
-  utilizationRate: number;
-  branchId:        string;
+  id:             number;
+  zone_id:        number;
+  name:           string;
+  brand:          string;
+  model:          string;
+  purchase_price: number;
+  status:         string;
 }

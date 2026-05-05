@@ -1,13 +1,12 @@
-import { BaseResource } from '../../shared/infrastructure/base-response';
-
-export interface EquipmentResource extends BaseResource {
-  id : number;
-  zone_id: number;
-  name: string;
-  model : string;
+export interface EquipmentResource {
+  id:             number;
+  zone_id:        number;
+  name:           string;
+  brand:          string;
+  model:          string;
   purchase_price: number;
-  status: string;
+  status:         string;
 }
 
-
-export interface EquipmentResponse extends Array<BaseResource> {}
+// json-server returns a plain array — no envelope wrapper
+export type EquipmentResponse = EquipmentResource[];

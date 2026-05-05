@@ -1,36 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Equipment, EquipmentType, EquipmentStatus } from '../domain/model/equipment.entity';
+import { Equipment, EquipmentStatus } from '../domain/model/equipment.entity';
 import { EquipmentResource } from './equipment.resource';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentAssembler {
   toEntityFromResource(resource: EquipmentResource): Equipment {
-    const entity = new Equipment();
-    Object.assign(entity, {
-      _id:              resource.id,
-      _name:            resource.name,
-      _type:            resource.type as EquipmentType,
-      _locationId:      resource.locationId,
-      _sensorId:        resource.sensorId,
-      _status:          resource.status as EquipmentStatus,
-      _usageHours:      resource.usageHours,
-      _utilizationRate: resource.utilizationRate,
-      _branchId:        resource.branchId,
+    return new Equipment({
+      id:            resource.id,
+      zoneId:        resource.zone_id,
+      name:          resource.name,
+      brand:         resource.brand,
+      model:         resource.model,
+      purchasePrice: resource.purchase_price,
+      status:        resource.status as EquipmentStatus,
     });
-    return entity;
   }
 
   toResourceFromEntity(entity: Equipment): EquipmentResource {
     return {
-      id:              entity.id,
-      name:            entity.name,
-      type:            entity.type,
-      locationId:      entity.locationId,
-      sensorId:        entity.sensorId,
-      status:          entity.status,
-      usageHours:      entity.usageHours,
-      utilizationRate: entity.utilizationRate,
-      branchId:        entity.branchId,
+      id:             entity.id,
+      zone_id:        entity.zoneId,
+      name:           entity.name,
+      brand:          entity.brand,
+      model:          entity.model,
+      purchase_price: entity.purchasePrice,
+      status:         entity.status,
     };
   }
 }

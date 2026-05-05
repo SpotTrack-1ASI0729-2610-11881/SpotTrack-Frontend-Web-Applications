@@ -8,19 +8,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { EquipmentType, EquipmentStatus } from '../../../domain/model/equipment.entity';
+import { EquipmentStatus } from '../../../domain/model/equipment.entity';
 import { EquipmentRow } from '../equipment-management/equipment-management.component';
 
 export interface EquipmentFormData {
-  id?: string;
-  name: string;
-  type: EquipmentType;
-  locationId: string;
-  sensorId: string;
-  status: EquipmentStatus;
-  usageHours: number;
-  utilizationRate: number;
-  branchId: string;
+  id?:           number;
+  name:          string;
+  brand:         string;
+  model:         string;
+  zoneId:        number;
+  purchasePrice: number;
+  status:        EquipmentStatus;
 }
 
 @Component({
@@ -44,22 +42,18 @@ export class AddEquipmentDialogComponent {
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
 
-  readonly equipmentTypes    = Object.values(EquipmentType);
   readonly equipmentStatuses = Object.values(EquipmentStatus);
 
-  // Data passed via router state when navigating to edit
   private existing: EquipmentRow | undefined = (history.state as { equipment?: EquipmentRow }).equipment;
   readonly isEditMode = !!this.route.snapshot.paramMap.get('id');
 
   form = this.fb.nonNullable.group({
-    name:            [this.existing?.name            ?? '',                    Validators.required],
-    type:            [this.existing?.type            ?? EquipmentType.CARDIO,  Validators.required],
-    locationId:      [this.existing?.locationId      ?? '',                    Validators.required],
-    sensorId:        [this.existing?.sensorId        ?? '',                    Validators.required],
-    status:          [this.existing?.status          ?? EquipmentStatus.ACTIVE, Validators.required],
-    usageHours:      [this.existing?.usageHours      ?? 0,  [Validators.required, Validators.min(0)]],
-    utilizationRate: [this.existing?.utilizationRate ?? 0,  [Validators.required, Validators.min(0), Validators.max(100)]],
-    branchId:        [this.existing?.branchId        ?? '',                    Validators.required],
+    name:          [this.existing?.name          ?? '',                        Validators.required],
+    brand:         [this.existing?.brand         ?? '',                        Validators.required],
+    model:         [this.existing?.model         ?? '',                        Validators.required],
+    zoneId:        [this.existing?.zoneId        ?? null as unknown as number, Validators.required],
+    purchasePrice: [this.existing?.purchasePrice ?? null as unknown as number, [Validators.required, Validators.min(0)]],
+    status:        [this.existing?.status        ?? EquipmentStatus.OPERATIONAL, Validators.required],
   });
 
   submit(): void {

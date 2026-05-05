@@ -7,7 +7,7 @@ import { Equipment } from '../domain/model/equipment.entity';
 import { EquipmentResource } from './equipment.resource';
 import { EquipmentAssembler } from './equipment.assembler';
 
-const BASE_URL = 'http://localhost:3000/equipment';
+const BASE_URL = 'http://localhost:3000/api/v1/equipments';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentApi extends BaseApi {
