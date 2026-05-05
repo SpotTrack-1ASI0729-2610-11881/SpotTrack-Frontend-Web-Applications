@@ -61,6 +61,11 @@
 
   <!-- Table Card -->
   <div class="eq-card">
+    @if (isLoading()) {
+      <div class="eq-loading">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    }
     <table mat-table [dataSource]="filteredEquipment()" class="eq-table">
 
       <!-- ID -->
