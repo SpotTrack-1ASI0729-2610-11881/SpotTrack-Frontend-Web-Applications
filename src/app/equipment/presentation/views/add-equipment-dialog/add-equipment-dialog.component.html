@@ -73,15 +73,11 @@
       </div>
 
       <div class="form-actions">
-        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()" [disabled]="isSaving()">
+        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()">
           {{ 'equipment.actions.cancel' | translate }}
         </button>
-        <button mat-flat-button type="submit" class="btn-save" [disabled]="form.invalid || isSaving()">
-          @if (isSaving()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            {{ 'equipment.actions.save' | translate }}
-          }
+        <button mat-flat-button type="submit" class="btn-save" [disabled]="form.invalid">
+          {{ 'equipment.actions.save' | translate }}
         </button>
       </div>
 

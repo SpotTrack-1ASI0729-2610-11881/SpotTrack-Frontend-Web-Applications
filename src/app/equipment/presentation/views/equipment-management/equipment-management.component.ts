@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EquipmentStatus } from '../../../domain/model/equipment.entity';
-import { EquipmentApi } from '../../../infrastructure/equipment.api';
+import { EquipmentStore } from '../../../application/equipment.store';
 
 export interface EquipmentRow {
   id:            number;
@@ -43,52 +43,43 @@ export interface EquipmentRow {
   templateUrl: './equipment-management.component.html',
   styleUrl: './equipment-management.component.scss',
 })
-export class EquipmentManagementComponent implements OnInit {
+export class EquipmentManagementComponent {
   private router = inject(Router);
-  private api    = inject(EquipmentApi);
+  private store  = inject(EquipmentStore);
 
   readonly EquipmentStatus   = EquipmentStatus;
   readonly equipmentStatuses = Object.values(EquipmentStatus);
   readonly displayedColumns  = ['id', 'name', 'brand', 'model', 'zoneId', 'purchasePrice', 'status', 'actions'];
 
-  private allEquipment = signal<EquipmentRow[]>([]);
-  isLoading            = signal(true);
-  searchQuery          = signal('');
-  selectedStatus       = signal<EquipmentStatus | ''>('');
+  searchQuery    = signal('');
+  selectedStatus = signal<EquipmentStatus | ''>('');
+
+  readonly isLoading       = this.store.loading;
+  readonly totalEquipment   = this.store.equipmentCount;
+  readonly operationalCount = this.store.operationalCount;
+  readonly maintenanceCount = this.store.maintenanceCount;
+  readonly outOfOrderCount  = this.store.outOfOrderCount;
 
   filteredEquipment = computed(() => {
     const query  = this.searchQuery().toLowerCase();
     const status = this.selectedStatus();
-    return this.allEquipment().filter(eq =>
-      (!query  || eq.name.toLowerCase().includes(query) ||
-                  eq.brand.toLowerCase().includes(query) ||
-                  eq.model.toLowerCase().includes(query)) &&
-      (!status || eq.status === status)
-    );
+    return this.store.equipment()
+      .filter(e =>
+        (!query  || e.name.toLowerCase().includes(query) ||
+                    e.brand.toLowerCase().includes(query) ||
+                    e.model.toLowerCase().includes(query)) &&
+        (!status || e.status === status)
+      )
+      .map(e => ({
+        id:            e.id,
+        zoneId:        e.zoneId,
+        name:          e.name,
+        brand:         e.brand,
+        model:         e.model,
+        purchasePrice: e.purchasePrice,
+        status:        e.status,
+      } as EquipmentRow));
   });
-
-  totalEquipment   = computed(() => this.allEquipment().length);
-  operationalCount = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.OPERATIONAL).length);
-  maintenanceCount = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.MAINTENANCE).length);
-  outOfOrderCount  = computed(() => this.allEquipment().filter(e => e.status === EquipmentStatus.OUT_OF_ORDER).length);
-
-  ngOnInit(): void {
-    this.api.getEquipment().subscribe({
-      next: (list) => {
-        this.allEquipment.set(list.map(e => ({
-          id:            e.id,
-          zoneId:        e.zoneId,
-          name:          e.name,
-          brand:         e.brand,
-          model:         e.model,
-          purchasePrice: e.purchasePrice,
-          status:        e.status,
-        })));
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
-  }
 
   navigateToNew(): void {
     this.router.navigate(['equipment', 'new']);
@@ -99,11 +90,9 @@ export class EquipmentManagementComponent implements OnInit {
   }
 
   deleteEquipment(id: number): void {
-    this.api.deleteEquipment(id.toString()).subscribe(() => {
-      this.allEquipment.update(list => list.filter(eq => eq.id !== id));
-    });
+    this.store.deleteEquipment(id);
   }
 
-  onSearchChange(value: string): void              { this.searchQuery.set(value); }
+  onSearchChange(value: string): void               { this.searchQuery.set(value); }
   onStatusChange(value: EquipmentStatus | ''): void { this.selectedStatus.set(value); }
 }
