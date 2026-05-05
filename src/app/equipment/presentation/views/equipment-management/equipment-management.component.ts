@@ -14,6 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EquipmentStatus } from '../../../domain/model/equipment.entity';
 import { EquipmentStore } from '../../../application/equipment.store';
 
+
+
 export interface EquipmentRow {
   id:            number;
   zoneId:        number;
@@ -47,6 +49,7 @@ export class EquipmentManagementComponent {
   private router = inject(Router);
   private store  = inject(EquipmentStore);
 
+
   readonly EquipmentStatus   = EquipmentStatus;
   readonly equipmentStatuses = Object.values(EquipmentStatus);
   readonly displayedColumns  = ['id', 'name', 'brand', 'model', 'zoneId', 'purchasePrice', 'status', 'actions'];
@@ -60,7 +63,7 @@ export class EquipmentManagementComponent {
   readonly maintenanceCount = this.store.maintenanceCount;
   readonly outOfOrderCount  = this.store.outOfOrderCount;
 
-  filteredEquipment = computed(() => {
+    filteredEquipment = computed(() => {
     const query  = this.searchQuery().toLowerCase();
     const status = this.selectedStatus();
     return this.store.equipment()

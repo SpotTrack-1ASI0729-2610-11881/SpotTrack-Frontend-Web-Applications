@@ -62,7 +62,7 @@ export class EquipmentStore {
   deleteEquipment(id: number): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.api.deleteEquipment(id.toString()).pipe(retry(2)).subscribe({
+    this.api.deleteEquipment(id).pipe(retry(2)).subscribe({
       next: () => {
         this.equipmentSignal.update(list => list.filter(e => e.id !== id));
         this.loadingSignal.set(false);
@@ -77,6 +77,7 @@ export class EquipmentStore {
   private loadEquipment(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
+
     this.api.getEquipment().pipe(takeUntilDestroyed()).subscribe({
       next: list => {
         this.equipmentSignal.set(list);
@@ -88,6 +89,8 @@ export class EquipmentStore {
       },
     });
   }
+
+
 
   private formatError(error: unknown, fallback: string): string {
     if (error instanceof Error) return error.message || fallback;

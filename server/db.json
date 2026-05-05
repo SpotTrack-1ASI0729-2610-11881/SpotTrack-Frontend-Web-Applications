@@ -58,15 +58,6 @@
   ],
   "equipments": [
     {
-      "id": 2,
-      "zone_id": 1,
-      "name": "Stationary Bike",
-      "brand": "Technogym",
-      "model": "Bike Excite",
-      "purchase_price": 2800,
-      "status": "MAINTENANCE"
-    },
-    {
       "id": 3,
       "zone_id": 2,
       "name": "Chest Press Machine",

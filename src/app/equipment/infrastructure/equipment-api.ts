@@ -1,40 +1,32 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { Equipment } from '../domain/model/equipment.entity';
-import { EquipmentResource} from './equipment-response';
-import {EquipmentAssembler} from './equipment-assembler';
-
-const BASE_URL = 'http://localhost:3000/api/v1/equipments';
+import { EquipmentApiEndpoint } from './equipment-api-endpoint';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentApi extends BaseApi {
-  private http       = inject(HttpClient);
-  private assembler  = inject(EquipmentAssembler);
+  private readonly endpoint: EquipmentApiEndpoint;
+
+  constructor(http: HttpClient) {
+    super();
+    this.endpoint = new EquipmentApiEndpoint(http);
+  }
 
   getEquipment(): Observable<Equipment[]> {
-    return this.http.get<EquipmentResource[]>(BASE_URL).pipe(
-      map(resources => resources.map(r => this.assembler.toEntityFromResource(r)))
-    );
+    return this.endpoint.getAll();
   }
 
   registerEquipment(entity: Equipment): Observable<Equipment> {
-    const resource = this.assembler.toResourceFromEntity(entity);
-    return this.http.post<EquipmentResource>(BASE_URL, resource).pipe(
-      map(r => this.assembler.toEntityFromResource(r))
-    );
+    return this.endpoint.create(entity);
   }
 
   updateEquipment(entity: Equipment): Observable<Equipment> {
-    const resource = this.assembler.toResourceFromEntity(entity);
-    return this.http.put<EquipmentResource>(`${BASE_URL}/${resource.id}`, resource).pipe(
-      map(r => this.assembler.toEntityFromResource(r))
-    );
+    return this.endpoint.update(entity, entity.id);
   }
 
-  deleteEquipment(equipmentId: string): Observable<void> {
-    return this.http.delete<void>(`${BASE_URL}/${equipmentId}`);
+  deleteEquipment(id: number): Observable<void> {
+    return this.endpoint.delete(id);
   }
 }
