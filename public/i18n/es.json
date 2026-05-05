@@ -2,11 +2,9 @@
   "equipment": {
     "title": "Gestión de Equipos",
     "subtitle": "Monitorea y gestiona todos los equipos del gimnasio",
-    "search": "Buscar por nombre o ID...",
+    "search": "Buscar por nombre, marca o modelo...",
     "filter": {
-      "allTypes": "Todos los tipos",
       "allStatuses": "Todos los estados",
-      "type": "Tipo de equipo",
       "status": "Estado"
     },
     "actions": {
@@ -20,31 +18,24 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "type": "Tipo",
-      "location": "Ubicación",
-      "sensor": "Sensor",
+      "brand": "Marca",
+      "model": "Modelo",
+      "zoneId": "Zona",
+      "purchasePrice": "Precio de Compra",
       "status": "Estado",
-      "usageHours": "Horas de Uso",
-      "utilizationRate": "Utilización",
-      "branch": "Sede",
       "actions": "Acciones",
       "noData": "No se encontraron equipos"
     },
     "stats": {
       "total": "Total Equipos",
-      "active": "Activos",
+      "operational": "Operativos",
       "maintenance": "En Mantenimiento",
-      "inactive": "Inactivos"
-    },
-    "type": {
-      "CARDIO": "Cardio",
-      "STRENGTH": "Fuerza",
-      "FUNCTIONAL": "Funcional"
+      "outOfOrder": "Fuera de Servicio"
     },
     "status": {
-      "ACTIVE": "Activo",
+      "OPERATIONAL": "Operativo",
       "MAINTENANCE": "Mantenimiento",
-      "INACTIVE": "Inactivo"
+      "OUT_OF_ORDER": "Fuera de Servicio"
     },
     "dialog": {
       "addTitle": "Registrar Nuevo Equipo",
@@ -53,18 +44,15 @@
       "deleteMessage": "¿Estás seguro de que deseas eliminar este equipo? Esta acción no se puede deshacer.",
       "fields": {
         "name": "Nombre del equipo",
-        "type": "Tipo de equipo",
-        "locationId": "ID de ubicación",
-        "sensorId": "ID de sensor",
-        "usageHours": "Horas de uso",
-        "utilizationRate": "Tasa de utilización (%)",
-        "branchId": "ID de sede",
+        "brand": "Marca",
+        "model": "Modelo",
+        "zoneId": "ID de zona",
+        "purchasePrice": "Precio de compra ($)",
         "status": "Estado"
       },
       "validation": {
         "required": "Este campo es obligatorio",
-        "min": "El valor debe ser 0 o mayor",
-        "max": "El valor debe ser 100 o menor"
+        "min": "El valor debe ser 0 o mayor"
       }
     }
   }
