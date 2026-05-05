@@ -18,6 +18,7 @@ interface NavItem {
 })
 export class Sidebar {
   readonly navItems: NavItem[] = [
+    { path: '/dashboard',   icon: 'home', labelKey: 'nav.dashboard' },
     { path: '/equipment',   icon: 'fitness_center', labelKey: 'nav.equipment' },
     { path: '/iot',         icon: 'sensors',        labelKey: 'nav.iot' },
     { path: '/maintenance', icon: 'build',           labelKey: 'nav.maintenance' },

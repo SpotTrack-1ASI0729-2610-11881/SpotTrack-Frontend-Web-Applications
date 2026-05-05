@@ -2,7 +2,12 @@ import { Routes } from '@angular/router';
 import { equipmentRoutes } from './equipment/presentation/views/equipment.routes';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'equipment', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/presentation/views/dashboard.component').then(m => m.DashboardComponent),
+  },
   ...equipmentRoutes,
   {
     path: 'iot',
