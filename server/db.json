@@ -83,6 +83,15 @@
       "purchase_price": 1999,
       "status": "OPERATIONAL",
       "id": 5
+    },
+    {
+      "zone_id": 1,
+      "name": "Running Equipment",
+      "brand": "Trackers",
+      "model": "Model A-21",
+      "purchase_price": 2999,
+      "status": "OPERATIONAL",
+      "id": 6
     }
   ],
   "iot_devices": [
