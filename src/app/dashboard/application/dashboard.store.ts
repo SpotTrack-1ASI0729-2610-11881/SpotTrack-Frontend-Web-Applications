@@ -29,7 +29,7 @@ export class DashboardStore {
   readonly error      = this.errorSignal.asReadonly();
 
   // ── KPI summary cards ─────────────────────────────────────────────────────
-  readonly operationalCount = computed(() => this.equipmentStore.availableCount());
+  readonly operationalCount = computed(() => this.equipmentStore.operationalCount());
   readonly maintenanceCount = computed(() => this.equipmentStore.maintenanceCount());
   readonly outOfOrderCount  = computed(() => this.equipmentStore.outOfServiceCount());
   readonly totalTickets     = computed(() => this.maintenanceStore.totalTickets());
@@ -108,7 +108,7 @@ export class DashboardStore {
 
     const maxHours = Math.max(...stats.map(s => s.totalUsageHours), 1);
     return stats.map(s => {
-      const eq = equipments.find(e => e.id === s.equipmentId);
+      const eq = equipments.find(e => e.uuid === String(s.equipmentId));
       return {
         name:    eq?.name ?? `Equipo #${s.equipmentId}`,
         hours:   s.totalUsageHours,
@@ -130,13 +130,13 @@ export class DashboardStore {
     return stats
       .filter(s => s.totalUsageHours < 130)
       .map(s => {
-        const eq   = equipments.find(e => e.id === s.equipmentId);
-        const zone = eq?.zoneId === 1 ? 'Zona Cardio' : 'Zona Fuerza';
+        const eq   = equipments.find(e => e.uuid === String(s.equipmentId));
+        const zone = 'Zona Fuerza';
         const roi: 'Bajo' | 'Medio' | 'Alto' =
           s.totalUsageHours < 80  ? 'Bajo'  :
           s.totalUsageHours < 110 ? 'Medio' : 'Alto';
         return {
-          machineId: `M-${String(eq?.id ?? s.equipmentId).padStart(3, '0')}`,
+          machineId: eq?.uuid.slice(0, 8) ?? String(s.equipmentId),
           name:      eq?.name ?? `Equipo #${s.equipmentId}`,
           location:  zone,
           hours:     `${s.totalUsageHours}h`,
