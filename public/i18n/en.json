@@ -195,7 +195,6 @@
     "newReservation": "New Reservation",
     "timeRemaining": "Time remaining",
     "activationWindow": "Activation window",
-    "activate": "Start Reservation",
     "pending": {
       "title": "Waiting for activation",
       "subtitle": "Activate within the time limit or it will be cancelled"
@@ -312,6 +311,8 @@
       "title": "Session Tracking",
       "subtitle": "Usage detection, inactivity, and session time calculation",
       "equipmentId": "Equipment ID",
+      "equipment": "Equipment",
+      "client": "Client",
       "reservationId": "Reservation ID",
       "walkUp": "Walk-up usage",
       "continuousActivity": "Continuous Activity",
@@ -329,6 +330,7 @@
       "verify": "Verify Usage",
       "end": "End Session",
       "calculateTime": "Calculate Time",
+      "calculatedTimeResult": "Current true activity",
       "cameraMotion": "Camera — Motion Detection",
       "motionSensor": "Motion Sensor — Reading",
       "motionDetected": "Motion Detected",
