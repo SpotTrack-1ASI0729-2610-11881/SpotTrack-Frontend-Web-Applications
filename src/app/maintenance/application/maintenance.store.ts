@@ -52,14 +52,18 @@ export class MaintenanceStore {
   }
 
   completeTicket(ticketId: string, completedBy = 'Admin'): void {
-    this.ticketsSignal.update(list =>
-      list.map(t => {
-        if (t.id !== ticketId) return t;
-        t.status      = TicketStatus.RESOLVED;
-        t.completedBy = completedBy;
-        return t;
-      })
-    );
+    this.loadingSignal.set(true);
+    this.api.completeTicket(ticketId)
+      .pipe(retry(2))
+      .subscribe({
+        next: () => {
+          this.loadAll();
+        },
+        error: err => {
+          this.errorSignal.set(this.formatError(err, 'Failed to complete ticket'));
+          this.loadingSignal.set(false);
+        },
+      });
   }
 
   createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): void {
@@ -110,5 +114,10 @@ export class MaintenanceStore {
       .subscribe({ next: l => this.ticketsSignal.set(l), error: () => {} });
     this.api.getSchedules().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: l => { this.schedulesSignal.set(l); this.loadingSignal.set(false); }, error: () => this.loadingSignal.set(false) });
+  }
+
+  private formatError(error: unknown, fallback: string): string {
+    if (error instanceof Error) return error.message || fallback;
+    return fallback;
   }
 }
