@@ -387,6 +387,8 @@
       "equipment": "Equipo",
       "status": "Estado",
       "registeredAt": "Registrado",
+      "actions": "Acciones",
+      "simulateMotion": "Simular Movimiento",
       "noData": "No se encontraron sensores"
     }
   },
