@@ -40,7 +40,7 @@ export class MaintenanceStore {
     return PEAK_RANGES.some(([s, e]) => hours >= s && hours < e);
   }
 
-  startTicket(ticketId: number): void {
+  startTicket(ticketId: string): void {
     this.ticketsSignal.update(list =>
       list.map(t => {
         if (t.id !== ticketId) return t;
@@ -50,7 +50,7 @@ export class MaintenanceStore {
     );
   }
 
-  completeTicket(ticketId: number, completedBy = 'Admin'): void {
+  completeTicket(ticketId: string, completedBy = 'Admin'): void {
     this.ticketsSignal.update(list =>
       list.map(t => {
         if (t.id !== ticketId) return t;
@@ -61,8 +61,10 @@ export class MaintenanceStore {
     );
   }
 
-  createTicket(equipmentId: number, description: string, priority: TicketPriority, type: TicketType): void {
-    const id = Date.now();
+  createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): void {
+    const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `local-${Date.now()}`;
     const ticket = new MaintenanceTicket({
       id,
       equipmentId,

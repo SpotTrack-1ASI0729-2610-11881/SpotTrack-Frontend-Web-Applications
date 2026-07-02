@@ -11,7 +11,7 @@ import { EquipmentStore } from '../../../../gym/application/equipment.store';
 import { TicketPriority, TicketType } from '../../../domain/model/maintenance-ticket.entity';
 
 interface NewTicketForm {
-  equipmentId:     number | null;
+  equipmentId:     string | null;
   description:     string;
   priority:        TicketPriority | '';
   type:            TicketType | '';
@@ -49,8 +49,8 @@ export class NewTicketComponent {
   };
 
   get selectedEquipmentId(): string {
-    const eq = this.equipmentStore.equipment().find(e => e.id === this.form.equipmentId);
-    return eq ? `M-${eq.id.toString().padStart(3, '0')}` : '';
+    const eq = this.equipmentStore.equipment().find(e => e.uuid === this.form.equipmentId);
+    return eq ? eq.name : '';
   }
 
   onTimeChange(): void { this.selectedTime.set(this.form.time); }

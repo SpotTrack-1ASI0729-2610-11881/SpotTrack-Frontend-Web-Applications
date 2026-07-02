@@ -20,10 +20,6 @@ export class MaintenanceApi extends BaseApi {
   }
 
   getTickets(): Observable<MaintenanceTicket[]>                                    { return this.ticketEndpoint.getAll(); }
-  getTicketById(id: number): Observable<MaintenanceTicket>                         { return this.ticketEndpoint.getById(id); }
-  createTicket(ticket: MaintenanceTicket): Observable<MaintenanceTicket>           { return this.ticketEndpoint.create(ticket); }
-  updateTicket(ticket: MaintenanceTicket): Observable<MaintenanceTicket>           { return this.ticketEndpoint.update(ticket, ticket.id); }
-  deleteTicket(id: number): Observable<void>                                       { return this.ticketEndpoint.delete(id); }
 
   getSchedules(): Observable<MaintenanceSchedule[]>                                { return this.scheduleEndpoint.getAll(); }
   getScheduleById(id: number): Observable<MaintenanceSchedule>                     { return this.scheduleEndpoint.getById(id); }

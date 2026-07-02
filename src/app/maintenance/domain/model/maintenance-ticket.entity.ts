@@ -1,5 +1,3 @@
-import { BaseEntity } from '../../../shared/infrastructure/base-entity';
-
 export enum TicketStatus {
   OPEN        = 'OPEN',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -18,9 +16,9 @@ export enum TicketType {
   PREVENTIVE = 'PREVENTIVE',
 }
 
-export class MaintenanceTicket implements BaseEntity {
-  private _id:          number;
-  private _equipmentId: number;
+export class MaintenanceTicket {
+  private _id:          string;
+  private _equipmentId: string;
   private _status:      TicketStatus;
   private _priority:    TicketPriority;
   private _type:        TicketType;
@@ -30,8 +28,8 @@ export class MaintenanceTicket implements BaseEntity {
   private _completedBy: string;
 
   constructor(props: {
-    id:          number;
-    equipmentId: number;
+    id:          string;
+    equipmentId: string;
     status:      TicketStatus;
     priority:    TicketPriority;
     type:        TicketType;
@@ -47,13 +45,12 @@ export class MaintenanceTicket implements BaseEntity {
     this._type        = props.type;
     this._createdAt   = props.createdAt;
     this._description = props.description;
-    this._assignee    = props.assignee;
+    this._assignee     = props.assignee;
     this._completedBy = props.completedBy;
   }
 
-  get id():          number          { return this._id; }
-  set id(v:          number)         { this._id = v; }
-  get equipmentId(): number          { return this._equipmentId; }
+  get id():          string          { return this._id; }
+  get equipmentId(): string          { return this._equipmentId; }
   get status():      TicketStatus    { return this._status; }
   set status(v:      TicketStatus)   { this._status = v; }
   get priority():    TicketPriority  { return this._priority; }

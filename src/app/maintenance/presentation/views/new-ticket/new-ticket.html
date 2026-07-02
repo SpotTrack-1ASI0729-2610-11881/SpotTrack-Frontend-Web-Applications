@@ -36,8 +36,8 @@
         <label class="field__label">{{ 'maintenance.form.equipment' | translate }} *</label>
         <mat-form-field appearance="outline" class="field__mat">
           <mat-select [(ngModel)]="form.equipmentId" name="eq" required>
-            @for (eq of equipmentStore.equipment(); track eq.id) {
-              <mat-option [value]="eq.id">{{ eq.name }}</mat-option>
+            @for (eq of equipmentStore.equipment(); track eq.uuid) {
+              <mat-option [value]="eq.uuid">{{ eq.name }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
