@@ -358,7 +358,7 @@
   "iot": {
     "title": "IoT Monitoring",
     "subtitle": "Real-time status of Edge IoT sensors installed on equipment",
-    "search": "Search by sensor ID, machine or zone...",
+    "search": "Search by sensor ID or equipment...",
     "actions": {
       "refresh": "Refresh"
     },
@@ -367,53 +367,25 @@
       "reportAnomaly": "Report Anomaly"
     },
     "filter": {
-      "status": "Status",
-      "allStatuses": "All Statuses"
+      "type": "Type",
+      "allTypes": "All Types",
+      "camera": "Camera",
+      "motion": "Motion"
     },
     "stats": {
-      "total": "Total Devices",
-      "online": "Sensors Online",
-      "offline": "Disconnected",
-      "avgBattery": "Average Battery",
-      "activeAlerts": "Active Alerts",
-      "ofTotal": "of {{total}} total"
+      "totalSensors": "Total Sensors",
+      "cameraSensors": "Camera Sensors",
+      "motionSensors": "Motion Sensors",
+      "activeSessions": "Active Sessions"
     },
     "table": {
       "title": "Sensor Status",
       "id": "Sensor ID",
-      "machine": "Machine",
-      "location": "Location",
+      "type": "Type",
+      "equipment": "Equipment",
       "status": "Status",
-      "lastPing": "Last Ping",
-      "battery": "Battery",
-      "signal": "Signal",
-      "firmware": "Firmware",
-      "noData": "No devices found"
-    },
-    "status": {
-      "ONLINE": "Online",
-      "OFFLINE": "Disconnected",
-      "WARNING": "Warning",
-      "ACTIVE": "Online",
-      "INACTIVE": "Disconnected"
-    },
-    "alerts": {
-      "title": "Active Alerts",
-      "disconnectedTitle": "{{sensor}} - Sensor Disconnected",
-      "lowBatteryTitle": "{{sensor}} - Low Battery",
-      "lastPing": "Last ping:",
-      "battery": "Battery:",
-      "signal": "Signal:",
-      "investigate": "Investigate",
-      "scheduleReplacement": "Schedule Replacement",
-      "severity": {
-        "critical": "Critical",
-        "warning": "Warning"
-      }
-    },
-    "modal": {
-      "title": "Machine Reconnected",
-      "close": "Close"
+      "registeredAt": "Registered At",
+      "noData": "No sensors found"
     }
   },
   "configuration": {
@@ -524,7 +496,10 @@
       "AVAILABLE": "Available",
       "IN_USE": "In Use",
       "MAINTENANCE": "Maintenance",
-      "OUT_OF_SERVICE": "Out of Service"
+      "OUT_OF_SERVICE": "Out of Service",
+      "OCCUPIED": "Occupied",
+      "ACTIVE": "Active",
+      "DECOMMISSIONED": "Decommissioned"
     },
     "dialog": {
       "addTitle": "Register New Equipment",
