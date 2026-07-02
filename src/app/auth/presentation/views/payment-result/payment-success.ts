@@ -14,8 +14,7 @@ export class PaymentSuccessComponent {
   private router = inject(Router);
 
   continue(): void {
-    // localStorage session (set during registration) survives the Stripe
-    // redirect, so routing falls through the guards to the right home page.
-    this.router.navigate(['/']);
+    // No session exists here — the account is created by the webhook after payment.
+    this.router.navigate(['/login']);
   }
 }
