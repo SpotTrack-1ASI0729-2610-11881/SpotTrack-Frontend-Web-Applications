@@ -16,18 +16,23 @@ export class EquipmentStore {
   private readonly errorSignal = signal<string | null>(null);
   readonly error = this.errorSignal.asReadonly();
 
-  readonly equipmentCount    = computed(() => this.equipment().length);
-  readonly availableCount    = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.AVAILABLE).length);
-  readonly inUseCount        = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.IN_USE).length);
-  readonly maintenanceCount  = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.MAINTENANCE).length);
-  readonly outOfServiceCount = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.OUT_OF_SERVICE).length);
+  readonly equipmentCount     = computed(() => this.equipment().length);
+  readonly availableCount     = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.AVAILABLE).length);
+  readonly occupiedCount      = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.OCCUPIED).length);
+  readonly activeCount        = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.ACTIVE).length);
+  readonly maintenanceCount   = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.MAINTENANCE).length);
+  readonly outOfServiceCount  = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.OUT_OF_SERVICE).length);
+  readonly decommissionedCount = computed(() => this.equipment().filter(e => e.status === EquipmentStatus.DECOMMISSIONED).length);
+
+  /** Equipment that's usable right now: available, occupied by a user, or otherwise active — not sidelined by maintenance/decommission. */
+  readonly operationalCount = computed(() => this.equipment().filter(e =>
+    e.status === EquipmentStatus.AVAILABLE ||
+    e.status === EquipmentStatus.OCCUPIED ||
+    e.status === EquipmentStatus.ACTIVE
+  ).length);
 
   constructor(private api: EquipmentApi) {
     this.loadEquipment();
-  }
-
-  getEquipmentById(id: number): Signal<Equipment | undefined> {
-    return computed(() => this.equipment().find(e => e.id === id));
   }
 
   addEquipment(entity: Equipment): void {
@@ -35,7 +40,7 @@ export class EquipmentStore {
     this.errorSignal.set(null);
     this.api.registerEquipment(entity).pipe(retry(2)).subscribe({
       next: created => {
-        const registered = (created && created.id) ? created : entity;
+        const registered = (created && created.uuid) ? created : entity;
         this.equipmentSignal.update(list => [...list, registered]);
         this.loadingSignal.set(false);
       },
@@ -47,28 +52,28 @@ export class EquipmentStore {
     });
   }
 
-  updateEquipmentStatus(id: number, status: EquipmentStatus): void {
+  updateEquipmentStatus(uuid: string, status: EquipmentStatus): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.api.updateEquipmentStatus(id, status).pipe(retry(2)).subscribe({
+    this.api.updateEquipmentStatus(uuid, status).pipe(retry(2)).subscribe({
       next: updated => {
-        this.equipmentSignal.update(list => list.map(e => e.id === updated.id ? updated : e));
+        this.equipmentSignal.update(list => list.map(e => e.uuid === updated.uuid ? updated : e));
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.equipmentSignal.update(list => list.map(e => e.id === id ? Object.assign(Object.create(Object.getPrototypeOf(e)), e, { _status: status } as any) : e));
+        this.equipmentSignal.update(list => list.map(e => e.uuid === uuid ? Object.assign(Object.create(Object.getPrototypeOf(e)), e, { _status: status } as any) : e));
         this.errorSignal.set(this.formatError(err, 'Failed to update equipment status'));
         this.loadingSignal.set(false);
       },
     });
   }
 
-  decommissionEquipment(id: number): void {
+  decommissionEquipment(uuid: string): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.api.decommissionEquipment(id).pipe(retry(2)).subscribe({
+    this.api.decommissionEquipment(uuid).pipe(retry(2)).subscribe({
       next: () => {
-        this.equipmentSignal.update(list => list.filter(e => e.id !== id));
+        this.equipmentSignal.update(list => list.filter(e => e.uuid !== uuid));
         this.loadingSignal.set(false);
       },
       error: err => {
