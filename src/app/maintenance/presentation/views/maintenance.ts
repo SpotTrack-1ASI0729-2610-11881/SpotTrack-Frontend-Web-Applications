@@ -45,7 +45,7 @@ export class MaintenanceComponent {
   readonly resolvedFiltered   = computed(() => this.filteredTickets().filter(t => t.status === TicketStatus.RESOLVED));
 
   ticketId(t: MaintenanceTicket): string {
-    return `T-${t.id.toString().padStart(3, '0')}`;
+    return `T-${t.id.slice(0, 8)}`;
   }
 
   ticketAge(t: MaintenanceTicket): string {
@@ -55,12 +55,12 @@ export class MaintenanceComponent {
     return `${Math.floor(h / 24)}d`;
   }
 
-  equipmentName(id: number): string {
-    return this.equipmentStore.equipment().find(e => e.id === id)?.name ?? `Equipo #${id}`;
+  equipmentName(id: string): string {
+    return this.equipmentStore.equipment().find(e => e.uuid === id)?.name ?? id;
   }
 
-  startTicket(id: number): void    { this.store.startTicket(id); }
-  completeTicket(id: number): void { this.store.completeTicket(id); }
+  startTicket(id: string): void    { this.store.startTicket(id); }
+  completeTicket(id: string): void { this.store.completeTicket(id); }
 
   pendingMenu(t: MaintenanceTicket): ContextMenuItem[] {
     return [
