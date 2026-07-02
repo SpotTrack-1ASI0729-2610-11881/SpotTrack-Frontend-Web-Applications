@@ -171,8 +171,11 @@
             <button type="button" class="tracked-row"
                     [class.tracked-row--selected]="s.sessionTrackerId === selectedSessionId()"
                     (click)="selectSession(s.sessionTrackerId)">
-              <span class="mono">{{ s.sessionTrackerId }}</span>
-              <span class="tag">{{ s.reservationId ? ('monitoring.sessionTracking.reservationId' | translate) + ': ' + s.reservationId : ('monitoring.sessionTracking.walkUp' | translate) }}</span>
+              <div class="tracked-row__main">
+                <span class="tracked-row__equipment">{{ s.equipmentName ?? s.equipmentId }}</span>
+                <span class="mono tracked-row__id">{{ s.sessionTrackerId }}</span>
+              </div>
+              <span class="tag">{{ s.clientName ? s.clientName : (s.reservationId ? ('monitoring.sessionTracking.reservationId' | translate) + ': ' + s.reservationId : ('monitoring.sessionTracking.walkUp' | translate)) }}</span>
               @if (s.sessionIsActive) {
                 <span class="status-badge status-badge--active">
                   <mat-icon>play_circle</mat-icon>
@@ -201,8 +204,12 @@
 
         <div class="status-strip">
           <div class="status-cell">
-            <span class="status-cell__label">{{ 'monitoring.sessionTracking.equipmentId' | translate }}</span>
-            <span class="mono">{{ session.equipmentId }}</span>
+            <span class="status-cell__label">{{ 'monitoring.sessionTracking.equipment' | translate }}</span>
+            <span>{{ session.equipmentName ?? session.equipmentId }}</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-cell__label">{{ 'monitoring.sessionTracking.client' | translate }}</span>
+            <span>{{ session.clientName ?? ('monitoring.sessionTracking.walkUp' | translate) }}</span>
           </div>
           <div class="status-cell">
             <span class="status-cell__label">{{ 'monitoring.sessionTracking.reservationId' | translate }}</span>
@@ -253,6 +260,12 @@
                 <mat-icon>timer</mat-icon>{{ 'monitoring.sessionTracking.calculateTime' | translate }}
               </button>
             </div>
+            @if (lastCalculatedTime(); as calculated) {
+              <p class="calculated-time-hint">
+                <mat-icon>info</mat-icon>
+                {{ 'monitoring.sessionTracking.calculatedTimeResult' | translate }}: <span class="mono">{{ calculated }}</span>
+              </p>
+            }
           </div>
 
           <div class="action-group">

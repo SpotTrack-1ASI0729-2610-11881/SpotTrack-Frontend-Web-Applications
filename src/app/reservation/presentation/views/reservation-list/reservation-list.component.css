@@ -683,34 +683,6 @@
   height: 16px;
 }
 
-.btn-activate-manual {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background-color: transparent;
-  color: #ff9800;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid rgba(255, 152, 0, 0.4);
-  border-radius: 8px;
-  padding: 7px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.15s, border-color 0.15s;
-  flex-shrink: 0;
-}
-
-.btn-activate-manual:hover {
-  background-color: rgba(255, 152, 0, 0.1);
-  border-color: #ff9800;
-}
-
-.btn-activate-manual mat-icon {
-  font-size: 15px;
-  width: 15px;
-  height: 15px;
-}
-
 /* ===================== SCAN FEEDBACK TOAST ===================== */
 .scan-feedback {
   display: flex;

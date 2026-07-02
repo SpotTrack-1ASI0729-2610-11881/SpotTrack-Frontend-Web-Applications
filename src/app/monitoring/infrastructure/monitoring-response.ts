@@ -31,17 +31,25 @@ export interface AnomalyResource extends BaseResource {
 }
 
 /**
- * Shape returned by the get-all / verify / end / capture-motion session-tracker
+ * Shape returned by the get-all / verify / end / capture-motion / time session-tracker
  * endpoints (via SessionTrackerResourceFromEntity on the backend).
- * reservationId is null for walk-up usage (equipment used without a booked
+ * reservationId (and clientId/clientName, which are only resolvable from a
+ * reservation) are null for walk-up usage (equipment used without a booked
  * reservation) — still real usage data worth tracking.
+ * calculatedTrueActivity is only populated by the /time (calculate time)
+ * endpoint — a read-only preview of current true activity that does NOT end
+ * or delete the tracker.
  */
 export interface SessionTrackerResource {
-  sessionTrackerId:     string;
-  equipmentId:          string;
-  reservationId:        string | null;
-  continouosActivitiy:  string;
-  seconds:              string;
-  sessionIsActive:      boolean;
-  sessionIsInactive:    boolean;
+  sessionTrackerId:        string;
+  equipmentId:             string;
+  equipmentName:           string | null;
+  reservationId:           string | null;
+  clientId:                number | null;
+  clientName:              string | null;
+  continouosActivitiy:     string;
+  seconds:                 string;
+  sessionIsActive:         boolean;
+  sessionIsInactive:       boolean;
+  calculatedTrueActivity:  string | null;
 }

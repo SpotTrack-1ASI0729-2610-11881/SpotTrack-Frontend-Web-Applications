@@ -195,7 +195,6 @@
     "newReservation": "Nueva Reserva",
     "timeRemaining": "Tiempo restante",
     "activationWindow": "Ventana de activación",
-    "activate": "Iniciar Reserva",
     "pending": {
       "title": "Esperando activación",
       "subtitle": "Activa antes del límite de tiempo o será cancelada"
@@ -312,6 +311,8 @@
       "title": "Rastreo de Sesiones",
       "subtitle": "Detección de uso, inactividad y cálculo de tiempo de sesión",
       "equipmentId": "ID de Equipo",
+      "equipment": "Equipo",
+      "client": "Cliente",
       "reservationId": "ID de Reserva",
       "walkUp": "Uso sin reserva",
       "continuousActivity": "Actividad Continua",
@@ -329,6 +330,7 @@
       "verify": "Verificar Uso",
       "end": "Finalizar Sesión",
       "calculateTime": "Calcular Tiempo",
+      "calculatedTimeResult": "Actividad real actual",
       "cameraMotion": "Cámara — Detección de Movimiento",
       "motionSensor": "Sensor de Movimiento — Lectura",
       "motionDetected": "Movimiento Detectado",

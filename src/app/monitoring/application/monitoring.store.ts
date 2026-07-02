@@ -27,11 +27,14 @@ export class MonitoringStore {
   private readonly _motionSensors  = signal<MotionSensorResource[]>([]);
   private readonly _anomalyReports = signal<AnomalyResource[]>([]);
   private readonly _trackedSessions = signal<SessionTrackerResource[]>([]);
+  private readonly _lastCalculatedTime = signal<string | null>(null);
 
   readonly cameraSensors   = this._cameraSensors.asReadonly();
   readonly motionSensors   = this._motionSensors.asReadonly();
   readonly anomalyReports  = this._anomalyReports.asReadonly();
   readonly trackedSessions = this._trackedSessions.asReadonly();
+  /** Result of the last "calculate time" peek — read-only, doesn't affect the tracker. */
+  readonly lastCalculatedTime = this._lastCalculatedTime.asReadonly();
 
   loadCameraSensors(): void {
     this._actionLoading.set(true);
@@ -210,14 +213,20 @@ export class MonitoringStore {
   /**
    * Calculating time also deletes the tracker once reported (see endUsageSession).
    */
+  /**
+   * Read-only preview of the session's current true activity — does NOT end
+   * or delete the tracker, safe to call on a still-active session.
+   */
   calculateSessionTime(sessionTrackerId: string): void {
     this._actionLoading.set(true);
     this._actionError.set(null);
     this.api.calculateSessionTime(sessionTrackerId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.loadSessionTrackers();
+        next: session => {
+          this._lastCalculatedTime.set(session.calculatedTrueActivity);
+          this.upsertTrackedSession(session);
+          this._actionLoading.set(false);
         },
         error: err => {
           this._actionError.set(this.formatError(err, 'No se pudo calcular el tiempo de sesión'));
@@ -225,6 +234,8 @@ export class MonitoringStore {
         },
       });
   }
+
+  clearLastCalculatedTime(): void { this._lastCalculatedTime.set(null); }
 
   private upsertTrackedSession(session: SessionTrackerResource): void {
     this._trackedSessions.update(list => {
