@@ -150,13 +150,13 @@ export class DashboardStore {
   readonly inProgressTickets = computed(() => this.maintenanceStore.inProgressTickets());
   readonly resolvedTickets   = computed(() => this.maintenanceStore.resolvedTickets());
 
-  ticketLabel(id: number): string {
-    return `T-${id.toString().padStart(3, '0')}`;
+  ticketLabel(id: string): string {
+    return `T-${id.slice(0, 8)}`;
   }
 
-  equipmentName(equipmentId: number): string {
-    return this.equipmentStore.equipment().find(e => e.id === equipmentId)?.name
-      ?? `Equipo #${equipmentId}`;
+  equipmentName(equipmentId: string): string {
+    return this.equipmentStore.equipment().find(e => e.uuid === equipmentId)?.name
+      ?? equipmentId;
   }
 
   constructor() {
