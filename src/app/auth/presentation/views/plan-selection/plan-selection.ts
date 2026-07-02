@@ -3,10 +3,12 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthStore } from '../../../application/auth.store';
-import { StripePaymentService, MEMBERSHIP_PLANS } from '../../../infrastructure/stripe-payment.service';
+
+type MembershipTier = 'BASIC' | 'MID' | 'PLATINUM';
 
 interface PlanCard {
   key:      string;
+  tier:     MembershipTier;
   price:    number;
   popular:  boolean;
   features: string[];
@@ -21,31 +23,32 @@ interface PlanCard {
 })
 export class PlanSelectionComponent implements OnInit {
   private auth   = inject(AuthStore);
-  private stripe = inject(StripePaymentService);
   private router = inject(Router);
 
-  selectedKey  = 'basic';
-  loadingPlan  = false;
-  errorMsg     = '';
+  selectedKey = 'basic';
+
+  // Getters delegate to store signals so the existing template bindings need no changes.
+  get loadingPlan(): boolean       { return this.auth.pendingBusinessLoading(); }
+  get errorMsg():    string | null { return this.auth.pendingBusinessError(); }
 
   readonly plans: PlanCard[] = [
     {
-      key: 'basic', price: MEMBERSHIP_PLANS['basic'].amount, popular: false,
+      key: 'basic', tier: 'BASIC', price: 69, popular: false,
       features: ['plan20Equipment', 'planRealtimeMonitoring', 'planMaintenanceAlerts', 'planEmailSupport'],
     },
     {
-      key: 'mid', price: MEMBERSHIP_PLANS['mid'].amount, popular: true,
+      key: 'mid', tier: 'MID', price: 109, popular: true,
       features: ['plan60Equipment', 'planRealtimeMonitoring', 'planAdvancedAlerts', 'planPrioritySupport', 'planAnalytics'],
     },
     {
-      key: 'platinum', price: MEMBERSHIP_PLANS['platinum'].amount, popular: false,
+      key: 'platinum', tier: 'PLATINUM', price: 189, popular: false,
       features: ['planUnlimitedEquipment', 'planRealtimeMonitoring', 'planCustomReports', 'plan24Support', 'planFullAnalytics'],
     },
   ];
 
   ngOnInit(): void {
-    // This page requires the registration flow's session; bounce back if it's missing.
-    if (!this.auth.isAuthenticated()) {
+    // Redirect back to registration if no draft is present (direct navigation or lost sessionStorage).
+    if (!this.auth.pendingBusinessData()) {
       this.router.navigate(['/register']);
     }
   }
@@ -56,20 +59,11 @@ export class PlanSelectionComponent implements OnInit {
 
   selectPlan(key: string): void {
     this.selectedKey = key;
+    this.auth.clearPendingBusinessError();
   }
 
-  async proceedToPayment(): Promise<void> {
+  proceedToPayment(): void {
     if (this.loadingPlan) return;
-    const user = this.auth.currentUser();
-    if (!user) { this.router.navigate(['/register']); return; }
-
-    this.loadingPlan = true;
-    this.errorMsg = '';
-    try {
-      await this.stripe.redirectToCheckout(user.id, this.selectedKey);
-    } catch {
-      this.errorMsg = 'auth.plans.checkoutError';
-      this.loadingPlan = false;
-    }
+    this.auth.registerBusiness(this.selectedPlan.tier);
   }
 }
