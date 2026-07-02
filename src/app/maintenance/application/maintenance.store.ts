@@ -1,9 +1,11 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 import { retry } from 'rxjs';
 import { MaintenanceApi } from '../infrastructure/maintenance-api';
 import { MaintenanceTicket, TicketStatus, TicketPriority, TicketType } from '../domain/model/maintenance-ticket.entity';
 import { MaintenanceSchedule, TaskType, ScheduleStatus } from '../domain/model/maintenance-schedule.entity';
+import { MaintenanceLogResource } from '../infrastructure/maintenance-response';
 
 const PEAK_RANGES: [number, number][] = [[6, 9], [18, 21]];
 export const OFF_PEAK_SUGGESTIONS     = ['10:00', '11:00', '14:00', '15:00'];
@@ -19,11 +21,17 @@ export class MaintenanceStore {
   private readonly errorSignal     = signal<string | null>(null);
   private readonly lastScheduledSignal = signal<MaintenanceSchedule | null>(null);
 
+  private readonly ticketActionLoadingSignal = signal(false);
+  private readonly ticketActionErrorSignal   = signal<string | null>(null);
+
   readonly tickets       = this.ticketsSignal.asReadonly();
   readonly schedules     = this.schedulesSignal.asReadonly();
   readonly loading       = this.loadingSignal.asReadonly();
   readonly error         = this.errorSignal.asReadonly();
   readonly lastScheduled = this.lastScheduledSignal.asReadonly();
+
+  readonly ticketActionLoading = this.ticketActionLoadingSignal.asReadonly();
+  readonly ticketActionError   = this.ticketActionErrorSignal.asReadonly();
 
   readonly pendingTickets    = computed(() => this.tickets().filter(t => t.status === TicketStatus.OPEN));
   readonly inProgressTickets = computed(() => this.tickets().filter(t => t.status === TicketStatus.IN_PROGRESS));
@@ -41,44 +49,62 @@ export class MaintenanceStore {
     return PEAK_RANGES.some(([s, e]) => hours >= s && hours < e);
   }
 
-  startTicket(ticketId: string): void {
-    this.ticketsSignal.update(list =>
-      list.map(t => {
-        if (t.id !== ticketId) return t;
-        t.status = TicketStatus.IN_PROGRESS;
-        return t;
-      })
-    );
-  }
-
-  completeTicket(ticketId: string, completedBy = 'Admin'): void {
-    this.loadingSignal.set(true);
-    this.api.completeTicket(ticketId)
-      .pipe(retry(2))
+  /** Assigns a technician to the ticket, which is the control point that moves it into IN_PROGRESS. */
+  startTicket(ticketId: string, technicianId: string): void {
+    this.ticketActionLoadingSignal.set(true);
+    this.ticketActionErrorSignal.set(null);
+    this.api.assignTicket(ticketId, technicianId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.loadAll();
+        next: updated => {
+          this.replaceTicket(updated);
+          this.ticketActionLoadingSignal.set(false);
         },
         error: err => {
-          this.errorSignal.set(this.formatError(err, 'Failed to complete ticket'));
-          this.loadingSignal.set(false);
+          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to assign ticket');
+          this.ticketActionLoadingSignal.set(false);
         },
       });
   }
 
+  /** Registers a completion log entry (accountability record) before resolving the ticket. */
+  completeTicket(ticketId: string, maintenanceId: string, notes: string): void {
+    this.ticketActionLoadingSignal.set(true);
+    this.ticketActionErrorSignal.set(null);
+    this.api.registerCompletionLog(ticketId, maintenanceId, notes)
+      .pipe(
+        switchMap(() => this.api.completeTicket(ticketId)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: updated => {
+          this.replaceTicket(updated);
+          this.ticketActionLoadingSignal.set(false);
+        },
+        error: err => {
+          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to complete ticket');
+          this.ticketActionLoadingSignal.set(false);
+        },
+      });
+  }
+
+  getCompletionLogs(ticketId: string) {
+    return this.api.getCompletionLogs(ticketId);
+  }
+
   createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): void {
-    this.loadingSignal.set(true);
-    this.errorSignal.set(null);
+    this.ticketActionLoadingSignal.set(true);
+    this.ticketActionErrorSignal.set(null);
     this.api.createTicket(equipmentId, description, priority, type)
-      .pipe(retry(2))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: created => {
           this.ticketsSignal.update(list => [created, ...list]);
-          this.loadingSignal.set(false);
+          this.ticketActionLoadingSignal.set(false);
         },
         error: err => {
-          this.errorSignal.set(err instanceof Error ? err.message : 'Failed to create ticket');
-          this.loadingSignal.set(false);
+          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to create ticket');
+          this.ticketActionLoadingSignal.set(false);
         },
       });
   }
@@ -107,6 +133,11 @@ export class MaintenanceStore {
   }
 
   clearLastScheduled(): void { this.lastScheduledSignal.set(null); }
+  clearTicketActionError(): void { this.ticketActionErrorSignal.set(null); }
+
+  private replaceTicket(updated: MaintenanceTicket): void {
+    this.ticketsSignal.update(list => list.map(t => t.id === updated.id ? updated : t));
+  }
 
   private loadAll(): void {
     this.loadingSignal.set(true);

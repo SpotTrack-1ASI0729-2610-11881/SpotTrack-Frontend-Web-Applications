@@ -500,3 +500,146 @@ $blue:     #4fc3f7;
   .maint-header { flex-direction: column; align-items: flex-start; gap: 10px; }
   .btn-new { width: 100%; justify-content: center; }
 }
+
+// ── Control-point modal ──────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 32px;
+  width: 420px;
+  max-width: 90vw;
+  position: relative;
+
+  &--log { width: 480px; }
+}
+
+.modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: $muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  &:hover { color: #fff; }
+}
+
+.modal__title {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.modal__subtitle {
+  margin: 0 0 12px;
+  color: $muted;
+  font-family: 'Consolas', monospace;
+  font-size: .85rem;
+}
+
+.modal__hint {
+  margin: 0 0 16px;
+  color: $muted;
+  font-size: .85rem;
+  line-height: 1.4;
+}
+
+.modal__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: $text;
+}
+
+.modal__input,
+.modal__textarea {
+  width: 100%;
+  background: $bg-inner;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: $text;
+  font-size: .9rem;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
+
+  &::placeholder { color: $muted; }
+  &:focus { border-color: $accent; }
+}
+
+.modal__error {
+  margin: 10px 0 0;
+  color: $red;
+  font-size: .8rem;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal__btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: .875rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: opacity .15s;
+
+  &--primary   { background: $accent; color: #000; }
+  &--secondary { background: transparent; color: $muted; border: 1px solid $border; }
+
+  &:hover:not(:disabled) { opacity: .85; }
+  &:disabled { opacity: .4; cursor: not-allowed; }
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  background: $bg-inner;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.log-entry__notes {
+  margin: 0 0 4px;
+  color: $text;
+  font-size: .875rem;
+  line-height: 1.4;
+}
+
+.log-entry__date {
+  margin: 0;
+  color: $muted;
+  font-size: .75rem;
+}

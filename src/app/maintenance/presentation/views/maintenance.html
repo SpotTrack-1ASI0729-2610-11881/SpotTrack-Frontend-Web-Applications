@@ -106,7 +106,7 @@
               </span>
               <span class="ticket-age">{{ ticketAge(t) }}</span>
             </div>
-            <button class="btn-start" (click)="startTicket(t.id)">
+            <button class="btn-start" (click)="openStartModal(t)">
               {{ 'maintenance.action.start' | translate }}
               <mat-icon>arrow_forward</mat-icon>
             </button>
@@ -141,7 +141,7 @@
               </div>
               <span class="status-dot status-dot--amber"></span>
             </div>
-            <button class="btn-complete" (click)="completeTicket(t.id)">
+            <button class="btn-complete" (click)="openCompleteModal(t)">
               {{ 'maintenance.action.complete' | translate }}
               <mat-icon>check_circle</mat-icon>
             </button>
@@ -185,4 +185,90 @@
     </div>
 
   </div>
+
+  <!-- ── Control-point modal ────────────────────────────────────────── -->
+  @if (modalMode() === 'start' && modalTicket(); as t) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <button class="modal__close" (click)="closeModal()"><mat-icon>close</mat-icon></button>
+        <h2 class="modal__title">{{ 'maintenance.controlPoint.startTitle' | translate }}</h2>
+        <p class="modal__subtitle">{{ ticketId(t) }} · {{ equipmentName(t.equipmentId) }}</p>
+        <p class="modal__hint">{{ 'maintenance.controlPoint.startHint' | translate }}</p>
+        <label class="modal__label">{{ 'maintenance.controlPoint.technician' | translate }} *</label>
+        <input
+          class="modal__input"
+          [ngModel]="technicianInput()"
+          (ngModelChange)="technicianInput.set($event)"
+          name="technicianId"
+          [placeholder]="'maintenance.controlPoint.technicianPlaceholder' | translate"
+        >
+        @if (actionError()) {
+          <p class="modal__error">{{ actionError() }}</p>
+        }
+        <div class="modal__actions">
+          <button class="modal__btn modal__btn--secondary" (click)="closeModal()">{{ 'maintenance.controlPoint.cancel' | translate }}</button>
+          <button class="modal__btn modal__btn--primary" [disabled]="!technicianInput().trim() || actionLoading()" (click)="confirmStart()">
+            {{ 'maintenance.controlPoint.confirmStart' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (modalMode() === 'complete' && modalTicket(); as t) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <button class="modal__close" (click)="closeModal()"><mat-icon>close</mat-icon></button>
+        <h2 class="modal__title">{{ 'maintenance.controlPoint.completeTitle' | translate }}</h2>
+        <p class="modal__subtitle">{{ ticketId(t) }} · {{ equipmentName(t.equipmentId) }}</p>
+        <p class="modal__hint">{{ 'maintenance.controlPoint.completeHint' | translate }}</p>
+        <label class="modal__label">{{ 'maintenance.controlPoint.notes' | translate }} *</label>
+        <textarea
+          class="modal__textarea"
+          [ngModel]="notesInput()"
+          (ngModelChange)="notesInput.set($event)"
+          name="notes"
+          rows="4"
+          [placeholder]="'maintenance.controlPoint.notesPlaceholder' | translate"
+        ></textarea>
+        @if (actionError()) {
+          <p class="modal__error">{{ actionError() }}</p>
+        }
+        <div class="modal__actions">
+          <button class="modal__btn modal__btn--secondary" (click)="closeModal()">{{ 'maintenance.controlPoint.cancel' | translate }}</button>
+          <button class="modal__btn modal__btn--primary" [disabled]="!notesInput().trim() || actionLoading()" (click)="confirmComplete()">
+            {{ 'maintenance.controlPoint.confirmComplete' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (modalMode() === 'log' && modalTicket(); as t) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal modal--log" (click)="$event.stopPropagation()">
+        <button class="modal__close" (click)="closeModal()"><mat-icon>close</mat-icon></button>
+        <h2 class="modal__title">{{ 'maintenance.controlPoint.logTitle' | translate }}</h2>
+        <p class="modal__subtitle">{{ ticketId(t) }} · {{ equipmentName(t.equipmentId) }}</p>
+        @if (logLoading()) {
+          <p class="modal__hint">{{ 'maintenance.controlPoint.logLoading' | translate }}</p>
+        } @else if (logEntries().length === 0) {
+          <p class="modal__hint">{{ 'maintenance.controlPoint.logEmpty' | translate }}</p>
+        } @else {
+          <div class="log-list">
+            @for (entry of logEntries(); track entry.id) {
+              <div class="log-entry">
+                <p class="log-entry__notes">{{ entry.notes }}</p>
+                <p class="log-entry__date">{{ entry.completedAt | date:'medium' }}</p>
+              </div>
+            }
+          </div>
+        }
+        <div class="modal__actions">
+          <button class="modal__btn modal__btn--secondary" (click)="closeModal()">{{ 'maintenance.controlPoint.close' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>
