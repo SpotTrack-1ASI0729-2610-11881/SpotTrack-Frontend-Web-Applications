@@ -5,27 +5,36 @@ import { AuthApiService } from '../infrastructure/auth-api.service';
 import { ProfileApiService } from '../infrastructure/profile-api.service';
 import { User, UserRole } from '../domain/model/user.model';
 
-const TOKEN_KEY = 'spottrack_token';
-const USER_KEY  = 'spottrack_user';
+const TOKEN_KEY   = 'spottrack_token';
+const USER_KEY    = 'spottrack_user';
+const PENDING_KEY = 'spottrack_pending_business';
 
-// businessIntent selects /sign-up-business (grants ROLE_ADMIN) instead of the
-// default /sign-up (ROLE_CLIENT). Company fields are only required when true.
 export interface RegisterData {
-  firstName:      string;
-  lastName:       string;
-  dni:            string;
-  phoneNumber:    string;
-  email:          string;
-  password:       string;
-  businessIntent: boolean;
-  companyName?:   string;
-  ruc?:           string;
-  legalType?:     string;
-  companyPhone?:  string;
-  companyEmail?:  string;
-  street?:        string;
-  city?:          string;
-  district?:      string;
+  firstName:   string;
+  lastName:    string;
+  dni:         string;
+  phoneNumber: string;
+  email:       string;
+  password:    string;
+}
+
+// Holds form data between /register and /register/plans for the business path.
+// Stored in sessionStorage so it survives the Stripe redirect round-trip on cancel.
+export interface BusinessRegistrationDraft {
+  firstName:   string;
+  lastName:    string;
+  dni:         string;
+  phoneNumber: string;
+  email:       string;
+  password:    string;
+  companyName:  string;
+  ruc:          string;
+  legalType:    string;
+  companyPhone: string;
+  companyEmail: string;
+  street:       string;
+  city:         string;
+  district:     string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -38,22 +47,26 @@ export class AuthStore {
   private readonly tokenSignal = signal<string | null>(
     localStorage.getItem(TOKEN_KEY)
   );
-  private readonly errorSignal         = signal<string | null>(null);
-  private readonly registerErrorSignal = signal<string | null>(null);
+  private readonly errorSignal           = signal<string | null>(null);
+  private readonly registerErrorSignal   = signal<string | null>(null);
   private readonly registerLoadingSignal = signal(false);
+
+  private readonly pendingBusinessDataSignal    = signal<BusinessRegistrationDraft | null>(this.loadPendingBusiness());
+  private readonly pendingBusinessLoadingSignal = signal(false);
+  private readonly pendingBusinessErrorSignal   = signal<string | null>(null);
 
   readonly currentUser      = this.userSignal.asReadonly();
   readonly token            = this.tokenSignal.asReadonly();
   readonly loginError       = this.errorSignal.asReadonly();
   readonly registerError    = this.registerErrorSignal.asReadonly();
   readonly registerLoading  = this.registerLoadingSignal.asReadonly();
-  readonly isAuthenticated = computed(() => this.tokenSignal() !== null);
-  readonly isAdmin         = computed(() =>
-    this.userSignal()?.role === UserRole.ADMIN
-  );
-  readonly isClient = computed(() =>
-    this.userSignal()?.role === UserRole.CLIENT
-  );
+  readonly isAuthenticated  = computed(() => this.tokenSignal() !== null);
+  readonly isAdmin          = computed(() => this.userSignal()?.role === UserRole.ADMIN);
+  readonly isClient         = computed(() => this.userSignal()?.role === UserRole.CLIENT);
+
+  readonly pendingBusinessData    = this.pendingBusinessDataSignal.asReadonly();
+  readonly pendingBusinessLoading = this.pendingBusinessLoadingSignal.asReadonly();
+  readonly pendingBusinessError   = this.pendingBusinessErrorSignal.asReadonly();
 
   login(email: string, password: string): void {
     if (!email.trim() || !password.trim()) {
@@ -89,60 +102,39 @@ export class AuthStore {
     });
   }
 
+  // Client registration only. Business registration goes through
+  // stageBusinessRegistration() + registerBusiness() instead.
   register(data: RegisterData): void {
     this.registerErrorSignal.set(null);
     this.registerLoadingSignal.set(true);
 
-    const signUp$ = data.businessIntent
-      ? this.api.signUpBusiness({ username: data.email.trim(), password: data.password })
-      : this.api.signUp({ username: data.email.trim(), password: data.password });
-
-    signUp$.pipe(
+    this.api.signUp({ username: data.email.trim(), password: data.password }).pipe(
       switchMap(() => this.api.signIn({ username: data.email.trim(), password: data.password }))
     ).subscribe({
       next: res => {
-        // Token must be set before the next calls so the JWT interceptor attaches it
+        // Token must be set before the next call so the JWT interceptor attaches it
         this.tokenSignal.set(res.token);
         localStorage.setItem(TOKEN_KEY, res.token);
 
-        // Sign-up already auto-creates a blank Client/Admin profile server-side
-        // (RoleAssignedEventHandler), so calling the matching POST /profiles/*
-        // here would 409 against that row and skip the update below entirely.
-        const updateProfile$ = data.businessIntent
-          ? this.profileApi.updateAdminProfile({
-              firstName:    data.firstName.trim(),
-              lastName:     data.lastName.trim(),
-              phoneNumber:  data.phoneNumber.trim(),
-              dni:          data.dni.trim(),
-              companyName:  data.companyName!.trim(),
-              ruc:          data.ruc!.trim(),
-              legalType:    data.legalType!,
-              companyPhone: data.companyPhone!.trim(),
-              companyEmail: data.companyEmail!.trim(),
-              street:       data.street!.trim(),
-              city:         data.city!.trim(),
-              district:     data.district!.trim(),
-            })
-          : this.profileApi.updateClientProfile({
-              firstName:   data.firstName.trim(),
-              lastName:    data.lastName.trim(),
-              phoneNumber: data.phoneNumber.trim(),
-              dni:         data.dni.trim(),
-            });
-
-        updateProfile$.subscribe({
+        // sign-up auto-creates a blank Client profile server-side (RoleAssignedEventHandler),
+        // so we update rather than create here.
+        this.profileApi.updateClientProfile({
+          firstName:   data.firstName.trim(),
+          lastName:    data.lastName.trim(),
+          phoneNumber: data.phoneNumber.trim(),
+          dni:         data.dni.trim(),
+        }).subscribe({
           next: () => {
             const user: User = {
               id:    res.id,
               email: res.username,
               name:  `${data.firstName.trim()} ${data.lastName.trim()}`,
-              role:  data.businessIntent ? UserRole.ADMIN : UserRole.CLIENT,
+              role:  UserRole.CLIENT,
             };
             this.userSignal.set(user);
             localStorage.setItem(USER_KEY, JSON.stringify(user));
             this.registerLoadingSignal.set(false);
-
-            this.router.navigate(data.businessIntent ? ['/register/plans'] : ['/map']);
+            this.router.navigate(['/map']);
           },
           error: () => {
             this.registerLoadingSignal.set(false);
@@ -161,7 +153,62 @@ export class AuthStore {
     });
   }
 
-  clearRegisterError(): void { this.registerErrorSignal.set(null); }
+  // Step 1 of business registration: persist form data and navigate to plan selection.
+  // Using sessionStorage so the draft survives a Stripe cancel redirect and the user
+  // can retry without re-filling the entire form.
+  stageBusinessRegistration(draft: BusinessRegistrationDraft): void {
+    sessionStorage.setItem(PENDING_KEY, JSON.stringify(draft));
+    this.pendingBusinessDataSignal.set(draft);
+    this.pendingBusinessErrorSignal.set(null);
+    this.router.navigate(['/register/plans']);
+  }
+
+  // Step 2 of business registration: send everything to POST /register-business in one shot,
+  // then hand off to Stripe. Account is created by webhook after payment is confirmed.
+  registerBusiness(tier: 'BASIC' | 'MID' | 'PLATINUM'): void {
+    const draft = this.pendingBusinessDataSignal();
+    if (!draft) {
+      this.router.navigate(['/register']);
+      return;
+    }
+
+    this.pendingBusinessLoadingSignal.set(true);
+    this.pendingBusinessErrorSignal.set(null);
+
+    this.api.registerBusiness({
+      email:          draft.email.trim(),
+      password:       draft.password,
+      firstName:      draft.firstName.trim(),
+      lastName:       draft.lastName.trim(),
+      phoneNumber:    draft.phoneNumber.trim(),
+      dni:            draft.dni.trim(),
+      companyName:    draft.companyName.trim(),
+      ruc:            draft.ruc.trim(),
+      legalStructure: draft.legalType,
+      companyPhone:   draft.companyPhone.trim(),
+      companyEmail:   draft.companyEmail.trim(),
+      streetAddress:  draft.street.trim(),
+      city:           draft.city.trim(),
+      district:       draft.district.trim(),
+      membershipTier: tier,
+    }).subscribe({
+      next: ({ checkoutUrl }) => {
+        sessionStorage.removeItem(PENDING_KEY);
+        this.pendingBusinessDataSignal.set(null);
+        this.pendingBusinessLoadingSignal.set(false);
+        window.location.href = checkoutUrl;
+      },
+      error: err => {
+        this.pendingBusinessLoadingSignal.set(false);
+        this.pendingBusinessErrorSignal.set(
+          err?.status === 409 ? 'auth.error.emailTaken' : 'auth.error.registerFailed'
+        );
+      },
+    });
+  }
+
+  clearRegisterError(): void        { this.registerErrorSignal.set(null); }
+  clearPendingBusinessError(): void { this.pendingBusinessErrorSignal.set(null); }
 
   logout(): void {
     this.userSignal.set(null);
@@ -178,6 +225,13 @@ export class AuthStore {
     try {
       const raw = localStorage.getItem(USER_KEY);
       return raw ? (JSON.parse(raw) as User) : null;
+    } catch { return null; }
+  }
+
+  private loadPendingBusiness(): BusinessRegistrationDraft | null {
+    try {
+      const raw = sessionStorage.getItem(PENDING_KEY);
+      return raw ? (JSON.parse(raw) as BusinessRegistrationDraft) : null;
     } catch { return null; }
   }
 }
