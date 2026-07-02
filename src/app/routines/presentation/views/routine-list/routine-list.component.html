@@ -24,92 +24,42 @@
     />
   </div>
 
-  <!-- FILTER CHIPS -->
-  <div class="filter-chips">
-    @for (filter of filters; track filter) {
-      <button
-        class="filter-chip"
-        [class.active]="activeFilter() === filter"
-        (click)="setFilter(filter)"
-      >
-        {{ 'routines.filter.' + filter | translate }}
-      </button>
-    }
-  </div>
+  @if (error()) {
+    <div class="error-banner">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon class="spin">refresh</mat-icon>
+      {{ 'routines.loading' | translate }}
+    </div>
+  }
 
   <!-- ROUTINE CARDS LIST -->
   <div class="routines-list">
-    @for (routine of filteredRoutines(); track routine.id) {
-      <mat-card class="routine-card" [appContextMenu]="routineMenu(routine)">
+    @for (routine of routines(); track routine.id) {
+      <mat-card class="routine-card" [appContextMenu]="routineMenu(routine)" [routerLink]="['/routines', routine.id]">
         <mat-card-content class="card-content">
 
-          <!-- Card Top: Exercise Name + Status Dot -->
+          <!-- Card Top: Routine Name + Active Session Badge -->
           <div class="card-top">
             <div class="exercise-info">
-              <h3 class="exercise-name">{{ 'routines.exercises.' + routine.exerciseKey | translate }}</h3>
-              <p class="machine-name">{{ 'routines.machines.' + routine.machineKey | translate }}</p>
+              <h3 class="exercise-name">{{ routine.routineName }}</h3>
+              <p class="machine-name">{{ routine.exerciseBlockCount }} {{ 'routines.card.exercises' | translate }}</p>
             </div>
-            <div class="status-dot" [style.background-color]="getStatusDotColor(routine.machineStatus)"></div>
+            @if (hasActiveSession(routine)) {
+              <span class="tag tag--level">{{ 'routines.session.activeLabel' | translate }}</span>
+            }
           </div>
-
-          <!-- Tags Row -->
-          <div class="card-tags">
-            <span class="tag tag--muscle">{{ 'routines.tags.' + routine.tagKey | translate }}</span>
-            <span class="tag tag--level">{{ 'routines.level.' + routine.level | translate }}</span>
-            <span
-              class="tag"
-              [class.tag--available]="routine.machineStatus === 'available'"
-              [class.tag--inUse]="routine.machineStatus === 'inUse'"
-              [class.tag--maintenance]="routine.machineStatus === 'maintenance'"
-            >
-              {{ 'routines.status.' + routine.machineStatus | translate }}
-            </span>
-          </div>
-
-          <!-- Alternatives Section (shown when machine is unavailable) -->
-          @if (hasAlternatives(routine)) {
-            <div class="alternatives-section">
-              <div class="alternatives-header">
-                <mat-icon class="bolt-icon">bolt</mat-icon>
-                <span class="alternatives-title">{{ 'routines.alternatives.title' | translate }}</span>
-              </div>
-              <div class="alternatives-list">
-                @for (alt of routine.alternatives; track alt.nameKey) {
-                  <div class="alternative-item">
-                    <span class="alt-name">{{ 'routines.alternatives.' + alt.nameKey | translate }}</span>
-                    <span class="alt-free">
-                      <span class="alt-dot"></span>
-                      {{ 'routines.alternatives.free' | translate }}
-                    </span>
-                  </div>
-                }
-              </div>
-              <button class="view-map-btn" routerLink="/map">
-                {{ 'routines.alternatives.viewMap' | translate }}
-              </button>
-            </div>
-          }
 
         </mat-card-content>
       </mat-card>
     }
-  </div>
 
-  <!-- SMART SUGGESTION ENGINE CARD -->
-  <mat-card class="suggestion-card">
-    <mat-card-content class="suggestion-content">
-      <div class="suggestion-header">
-        <mat-icon class="bolt-icon">bolt</mat-icon>
-        <span class="suggestion-title">{{ 'routines.suggestion.title' | translate }}</span>
-      </div>
-      <ul class="suggestion-list">
-        <li>{{ 'routines.suggestion.item1' | translate }}</li>
-        <li>{{ 'routines.suggestion.item2' | translate }}</li>
-        <li>{{ 'routines.suggestion.item3' | translate }}</li>
-        <li>{{ 'routines.suggestion.item4' | translate }}</li>
-      </ul>
-    </mat-card-content>
-  </mat-card>
+    @if (!loading() && routines().length === 0) {
+      <p class="empty-msg">{{ 'routines.empty' | translate }}</p>
+    }
+  </div>
 
 </div>
 
@@ -146,59 +96,6 @@
           />
         </div>
 
-        <!-- Objetivo -->
-        <div class="field-group">
-          <label class="field-label">
-            {{ 'routines.modal.objective' | translate }}
-            <span class="required">*</span>
-          </label>
-          <div class="select-box">
-            <mat-select
-              [(ngModel)]="selectedObjective"
-              class="routine-select"
-              [placeholder]="'routines.modal.selectObjective' | translate"
-              panelClass="routine-select-panel"
-              disableRipple
-            >
-              @for (obj of objectives; track obj) {
-                <mat-option [value]="obj">
-                  {{ 'routines.modal.objectives.' + obj | translate }}
-                </mat-option>
-              }
-            </mat-select>
-          </div>
-        </div>
-
-        <!-- Nivel de Dificultad -->
-        <div class="field-group">
-          <label class="field-label">{{ 'routines.modal.difficulty' | translate }}</label>
-          <div class="select-box">
-            <mat-select
-              [(ngModel)]="selectedLevel"
-              class="routine-select"
-              panelClass="routine-select-panel"
-              disableRipple
-            >
-              @for (lvl of levels; track lvl) {
-                <mat-option [value]="lvl">
-                  {{ 'routines.level.' + lvl | translate }}
-                </mat-option>
-              }
-            </mat-select>
-          </div>
-        </div>
-
-        <!-- Notas (Opcional) -->
-        <div class="field-group">
-          <label class="field-label">{{ 'routines.modal.notes' | translate }}</label>
-          <textarea
-            class="field-textarea"
-            [placeholder]="'routines.modal.notesPlaceholder' | translate"
-            [(ngModel)]="routineNotes"
-            rows="3"
-          ></textarea>
-        </div>
-
       </div>
 
       <!-- Footer -->
@@ -208,7 +105,7 @@
         </button>
         <button
           class="btn-create"
-          [disabled]="!routineName.trim() || !selectedObjective"
+          [disabled]="!routineName.trim()"
           (click)="createRoutine()"
         >
           {{ 'routines.modal.create' | translate }}

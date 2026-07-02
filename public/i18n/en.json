@@ -784,86 +784,43 @@
   },
   "routines": {
     "title": "My Routines",
-    "subtitle": "Manage your workout routines and track machine availability",
+    "subtitle": "Manage your workout routines",
     "newRoutine": "New Routine",
     "search": "Search routines...",
-    "filter": {
-      "all": "All",
-      "chest": "Chest",
-      "legs": "Legs",
-      "back": "Back",
-      "shoulders": "Shoulders",
-      "arms": "Arms"
+    "loading": "Loading...",
+    "empty": "No routines yet — create your first one.",
+    "card": {
+      "exercises": "exercises"
     },
-    "exercises": {
-      "pressDePecho": "Bench Press",
-      "sentadillaConBarra": "Barbell Squat",
-      "pesoMuertoRumano": "Romanian Deadlift",
-      "dominadas": "Pull-ups",
-      "pressMilitar": "Military Press"
+    "session": {
+      "start": "Start Routine",
+      "complete": "Complete",
+      "missed": "Mark as Missed",
+      "activeLabel": "In progress"
     },
-    "machines": {
-      "bancoPechoPlano": "Flat Bench Press",
-      "rackSentadilla2": "Squat Rack #2",
-      "plataformaPesoMuerto": "Deadlift Platform",
-      "barraDeDominadas": "Pull-up Bar",
-      "rackDeFuerza": "Power Rack"
+    "exerciseType": {
+      "CARDIO": "Cardio",
+      "STRENGTH": "Strength",
+      "FLEXIBILITY": "Flexibility"
     },
-    "tags": {
-      "chest": "Chest",
-      "legs": "Legs",
-      "lowerBack": "Lower Back",
-      "back": "Back",
-      "shoulders": "Shoulders"
-    },
-    "level": {
-      "beginner": "Beginner",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced"
-    },
-    "status": {
-      "available": "Available",
-      "inUse": "In Use",
-      "maintenance": "Maintenance"
-    },
-    "alternatives": {
-      "title": "Smart Suggestions",
-      "prensaDePiernas": "Leg Press",
-      "hackSquat": "Hack Squat",
-      "sentadillaGoblet": "Goblet Squat",
-      "poleaAlta": "High Cable",
-      "remoConBarra": "Barbell Row",
-      "maquinaDeRemo": "Rowing Machine",
-      "free": "Free",
-      "viewMap": "View Map"
-    },
-    "suggestion": {
-      "title": "Smart Suggestion Engine",
-      "item1": "Routines adapt to real-time machine availability",
-      "item2": "Alternatives suggested when your machine is busy",
-      "item3": "Optimized for peak and off-peak hours",
-      "item4": "Personalized to your fitness goals"
+    "detail": {
+      "blocksTitle": "Exercise Blocks",
+      "noBlocks": "No exercise blocks yet.",
+      "notFound": "Routine not found.",
+      "addBlock": {
+        "title": "Add Exercise",
+        "name": "Exercise Name",
+        "type": "Type",
+        "submit": "Add"
+      }
     },
     "modal": {
       "title": "New Routine",
       "subtitle": "Create a personalized workout routine",
       "name": "Routine Name",
       "namePlaceholder": "e.g. Upper Body Day A",
-      "objective": "Objective",
-      "selectObjective": "Select an objective",
-      "difficulty": "Difficulty Level",
-      "notes": "Notes (optional)",
-      "notesPlaceholder": "Add notes or specific instructions...",
       "cancel": "Cancel",
-      "create": "Create Routine",
-      "successMessage": "Routine \"{{name}}\" created successfully",
-      "objectives": {
-        "gainStrength": "Gain Strength",
-        "muscleHypertrophy": "Muscle Hypertrophy",
-        "endurance": "Endurance",
-        "weightLoss": "Weight Loss",
-        "generalFitness": "General Fitness"
-      }
+      "create": "Create Routine"
     }
   },
   "profile": {

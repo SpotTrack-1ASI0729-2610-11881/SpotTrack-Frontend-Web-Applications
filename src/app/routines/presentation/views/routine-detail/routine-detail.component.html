@@ -10,30 +10,49 @@
   @if (routine) {
     <div class="routine-header">
       <div>
-        <h1 class="routine-name">{{ routine.name }}</h1>
-        <div class="routine-tags">
-          <span class="tag tag--level">{{ 'routines.level.' + routine.level | translate }}</span>
-          <span class="tag tag--group">{{ 'routines.filter.' + routine.filter_group | translate }}</span>
-        </div>
+        <h1 class="routine-name">{{ routine.routineName }}</h1>
       </div>
       <div class="blocks-count">
         <mat-icon>fitness_center</mat-icon>
-        <span>{{ routine.block_count }} ejercicios</span>
+        <span>{{ routine.exerciseBlockCount }} {{ 'routines.card.exercises' | translate }}</span>
       </div>
     </div>
 
+    <div class="session-section">
+      @if (activeSession(); as session) {
+        <span class="tag tag--level">{{ 'routines.session.activeLabel' | translate }}</span>
+        <button class="btn-session btn-session--complete" (click)="completeSession()">
+          {{ 'routines.session.complete' | translate }}
+        </button>
+        <button class="btn-session btn-session--missed" (click)="markMissed()">
+          {{ 'routines.session.missed' | translate }}
+        </button>
+      } @else {
+        <button class="btn-session btn-session--start" (click)="startSession()">
+          <mat-icon>play_arrow</mat-icon>
+          {{ 'routines.session.start' | translate }}
+        </button>
+      }
+    </div>
+
     <div class="blocks-section">
-      <h2 class="section-title">Bloques de Ejercicio</h2>
+      <div class="section-header">
+        <h2 class="section-title">{{ 'routines.detail.blocksTitle' | translate }}</h2>
+        <button class="btn-add-block" (click)="openAddBlock()">
+          <mat-icon>add</mat-icon>
+          {{ 'routines.detail.addBlock.title' | translate }}
+        </button>
+      </div>
 
       @if (loading()) {
         <div class="loading-state">
           <mat-icon class="spin">refresh</mat-icon>
-          Cargando ejercicios…
+          {{ 'routines.loading' | translate }}
         </div>
       }
 
       @if (!loading() && blocks().length === 0) {
-        <p class="empty-msg">No hay bloques de ejercicio registrados.</p>
+        <p class="empty-msg">{{ 'routines.detail.noBlocks' | translate }}</p>
       }
 
       <div class="blocks-list">
@@ -41,12 +60,10 @@
           <div class="block-card">
             <span class="block-order">{{ block.order }}</span>
             <div class="block-info">
-              <p class="block-exercise">{{ 'routines.exercises.' + block.exercise_key | translate }}</p>
-              <p class="block-machine">{{ 'routines.machines.' + block.machine_key | translate }}</p>
+              <p class="block-exercise">{{ block.exerciseName }}</p>
             </div>
             <div class="block-meta">
-              <span class="meta-badge">{{ block.sets }} series</span>
-              <span class="meta-badge">{{ block.reps }} reps</span>
+              <span class="meta-badge">{{ 'routines.exerciseType.' + block.exerciseType | translate }}</span>
             </div>
           </div>
         }
@@ -55,8 +72,51 @@
   } @else {
     <div class="not-found">
       <mat-icon>search_off</mat-icon>
-      <p>Rutina no encontrada.</p>
+      <p>{{ 'routines.detail.notFound' | translate }}</p>
     </div>
   }
 
 </div>
+
+<!-- ADD EXERCISE BLOCK MODAL -->
+@if (showAddBlock()) {
+  <div class="modal-backdrop" (click)="closeAddBlock()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">{{ 'routines.detail.addBlock.title' | translate }}</h2>
+        <button class="modal-close-btn" (click)="closeAddBlock()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="field-group">
+          <label class="field-label">{{ 'routines.detail.addBlock.name' | translate }}</label>
+          <input type="text" class="field-input" [(ngModel)]="newExerciseName" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">{{ 'routines.detail.addBlock.type' | translate }}</label>
+          <select class="field-select" [(ngModel)]="newExerciseType">
+            @for (t of exerciseTypes; track t) {
+              <option [value]="t">{{ 'routines.exerciseType.' + t | translate }}</option>
+            }
+          </select>
+        </div>
+
+        @if (blockError()) {
+          <p class="error-banner">{{ blockError() }}</p>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeAddBlock()">{{ 'routines.modal.cancel' | translate }}</button>
+        <button class="btn-create" [disabled]="!newExerciseName.trim()" (click)="submitAddBlock()">
+          {{ 'routines.detail.addBlock.submit' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

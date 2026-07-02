@@ -784,86 +784,43 @@
   },
   "routines": {
     "title": "Mis Rutinas",
-    "subtitle": "Gestiona tus rutinas de entrenamiento y verifica disponibilidad de máquinas",
+    "subtitle": "Gestiona tus rutinas de entrenamiento",
     "newRoutine": "Nueva Rutina",
     "search": "Buscar rutinas...",
-    "filter": {
-      "all": "Todos",
-      "chest": "Pecho",
-      "legs": "Piernas",
-      "back": "Espalda",
-      "shoulders": "Hombros",
-      "arms": "Brazos"
+    "loading": "Cargando...",
+    "empty": "Aún no tienes rutinas — crea la primera.",
+    "card": {
+      "exercises": "ejercicios"
     },
-    "exercises": {
-      "pressDePecho": "Press de Pecho",
-      "sentadillaConBarra": "Sentadilla con Barra",
-      "pesoMuertoRumano": "Peso Muerto Rumano",
-      "dominadas": "Dominadas",
-      "pressMilitar": "Press Militar"
+    "session": {
+      "start": "Iniciar Rutina",
+      "complete": "Completar",
+      "missed": "Marcar como Perdida",
+      "activeLabel": "En progreso"
     },
-    "machines": {
-      "bancoPechoPlano": "Banco Pecho Plano",
-      "rackSentadilla2": "Rack Sentadilla #2",
-      "plataformaPesoMuerto": "Plataforma de Peso Muerto",
-      "barraDeDominadas": "Barra de Dominadas",
-      "rackDeFuerza": "Rack de Fuerza"
+    "exerciseType": {
+      "CARDIO": "Cardio",
+      "STRENGTH": "Fuerza",
+      "FLEXIBILITY": "Flexibilidad"
     },
-    "tags": {
-      "chest": "Pecho",
-      "legs": "Piernas",
-      "lowerBack": "Zona Lumbar",
-      "back": "Espalda",
-      "shoulders": "Hombros"
-    },
-    "level": {
-      "beginner": "Principiante",
-      "intermediate": "Intermedio",
-      "advanced": "Avanzado"
-    },
-    "status": {
-      "available": "Disponible",
-      "inUse": "En Uso",
-      "maintenance": "Mantenimiento"
-    },
-    "alternatives": {
-      "title": "Sugerencias Inteligentes",
-      "prensaDePiernas": "Prensa de Piernas",
-      "hackSquat": "Hack Squat",
-      "sentadillaGoblet": "Sentadilla Goblet",
-      "poleaAlta": "Polea Alta",
-      "remoConBarra": "Remo con Barra",
-      "maquinaDeRemo": "Máquina de Remo",
-      "free": "Libre",
-      "viewMap": "Ver Mapa"
-    },
-    "suggestion": {
-      "title": "Motor de Sugerencias Inteligentes",
-      "item1": "Las rutinas se adaptan a la disponibilidad en tiempo real",
-      "item2": "Se sugieren alternativas cuando tu máquina está ocupada",
-      "item3": "Optimizado para horas pico y valle",
-      "item4": "Personalizado según tus objetivos de entrenamiento"
+    "detail": {
+      "blocksTitle": "Bloques de Ejercicio",
+      "noBlocks": "Aún no hay bloques de ejercicio.",
+      "notFound": "Rutina no encontrada.",
+      "addBlock": {
+        "title": "Agregar Ejercicio",
+        "name": "Nombre del Ejercicio",
+        "type": "Tipo",
+        "submit": "Agregar"
+      }
     },
     "modal": {
       "title": "Nueva Rutina",
       "subtitle": "Crea una rutina de entrenamiento personalizada",
       "name": "Nombre de la Rutina",
       "namePlaceholder": "Ej. Día A - Tren Superior",
-      "objective": "Objetivo",
-      "selectObjective": "Selecciona un objetivo",
-      "difficulty": "Nivel de Dificultad",
-      "notes": "Notas (opcional)",
-      "notesPlaceholder": "Agrega notas o instrucciones específicas...",
       "cancel": "Cancelar",
-      "create": "Crear Rutina",
-      "successMessage": "Rutina \"{{name}}\" creada con éxito",
-      "objectives": {
-        "gainStrength": "Ganar Fuerza",
-        "muscleHypertrophy": "Hipertrofia Muscular",
-        "endurance": "Resistencia",
-        "weightLoss": "Pérdida de Peso",
-        "generalFitness": "Fitness General"
-      }
+      "create": "Crear Rutina"
     }
   },
   "profile": {
