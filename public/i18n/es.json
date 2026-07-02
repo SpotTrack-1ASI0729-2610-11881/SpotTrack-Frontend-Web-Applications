@@ -799,7 +799,16 @@
       "start": "Iniciar Rutina",
       "complete": "Completar",
       "missed": "Marcar como Perdida",
-      "activeLabel": "En progreso"
+      "activeLabel": "En progreso",
+      "status": {
+        "STARTED": "En progreso",
+        "COMPLETED": "Completada",
+        "MISSED": "Perdida"
+      },
+      "history": {
+        "title": "Historial de Sesiones",
+        "empty": "Aún no hay sesiones registradas."
+      }
     },
     "exerciseType": {
       "CARDIO": "Cardio",

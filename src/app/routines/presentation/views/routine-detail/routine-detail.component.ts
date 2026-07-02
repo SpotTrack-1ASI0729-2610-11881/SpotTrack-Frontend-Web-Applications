@@ -38,7 +38,15 @@ export class RoutineDetailComponent implements OnInit {
     return this.store.routines().find(r => r.id === this.routineId) ?? null;
   }
 
-  readonly activeSession = computed(() => this.sessionsStore.activeSessionByRoutine().get(this.routineId));
+  readonly activeSession        = computed(() => this.sessionsStore.activeSessionByRoutine().get(this.routineId));
+  readonly sessionActionLoading = this.sessionsStore.actionLoading;
+  readonly sessionActionError   = this.sessionsStore.actionError;
+
+  readonly routineSessions = computed(() =>
+    this.sessionsStore.sessions()
+      .filter(s => s.routineId === this.routineId)
+      .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
+  );
 
   ngOnInit(): void {
     if (!this.routineId) return;

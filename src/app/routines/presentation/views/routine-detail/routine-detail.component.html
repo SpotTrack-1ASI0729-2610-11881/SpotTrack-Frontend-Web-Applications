@@ -21,19 +21,25 @@
     <div class="session-section">
       @if (activeSession(); as session) {
         <span class="tag tag--level">{{ 'routines.session.activeLabel' | translate }}</span>
-        <button class="btn-session btn-session--complete" (click)="completeSession()">
+        <button class="btn-session btn-session--complete" [disabled]="sessionActionLoading()" (click)="completeSession()">
+          @if (sessionActionLoading()) { <mat-icon class="spin">refresh</mat-icon> }
           {{ 'routines.session.complete' | translate }}
         </button>
-        <button class="btn-session btn-session--missed" (click)="markMissed()">
+        <button class="btn-session btn-session--missed" [disabled]="sessionActionLoading()" (click)="markMissed()">
+          @if (sessionActionLoading()) { <mat-icon class="spin">refresh</mat-icon> }
           {{ 'routines.session.missed' | translate }}
         </button>
       } @else {
-        <button class="btn-session btn-session--start" (click)="startSession()">
-          <mat-icon>play_arrow</mat-icon>
+        <button class="btn-session btn-session--start" [disabled]="sessionActionLoading()" (click)="startSession()">
+          <mat-icon [class.spin]="sessionActionLoading()">{{ sessionActionLoading() ? 'refresh' : 'play_arrow' }}</mat-icon>
           {{ 'routines.session.start' | translate }}
         </button>
       }
     </div>
+
+    @if (sessionActionError()) {
+      <div class="error-banner">{{ sessionActionError() }}</div>
+    }
 
     <div class="blocks-section">
       <div class="section-header">
@@ -65,6 +71,25 @@
             <div class="block-meta">
               <span class="meta-badge">{{ 'routines.exerciseType.' + block.exerciseType | translate }}</span>
             </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="history-section">
+      <h2 class="section-title">{{ 'routines.session.history.title' | translate }}</h2>
+
+      @if (routineSessions().length === 0) {
+        <p class="empty-msg">{{ 'routines.session.history.empty' | translate }}</p>
+      }
+
+      <div class="history-list">
+        @for (session of routineSessions(); track session.id) {
+          <div class="history-item">
+            <span class="history-date">{{ session.startedAt | date:'medium' }}</span>
+            <span class="meta-badge" [ngClass]="'meta-badge--' + session.status.toLowerCase()">
+              {{ 'routines.session.status.' + session.status | translate }}
+            </span>
           </div>
         }
       </div>
