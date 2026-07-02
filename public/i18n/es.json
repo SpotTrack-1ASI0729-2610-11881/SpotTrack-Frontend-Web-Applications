@@ -100,9 +100,9 @@
       }
     },
     "payment": {
-      "successTitle": "Pago exitoso",
-      "successSubtitle": "Tu suscripción ya está activa. Todo listo para empezar a usar SpotTrack.",
-      "continueBtn": "Continuar",
+      "successTitle": "Pago confirmado",
+      "successSubtitle": "Inicia sesión con el correo y contraseña que registraste para acceder a tu cuenta.",
+      "continueBtn": "Iniciar sesión",
       "cancelTitle": "Pago cancelado",
       "cancelSubtitle": "Tu pago no se completó. Puedes elegir un plan nuevamente cuando quieras.",
       "retryBtn": "Elegir un plan de nuevo"
