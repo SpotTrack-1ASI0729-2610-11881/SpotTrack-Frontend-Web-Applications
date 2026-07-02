@@ -1,5 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { retry } from 'rxjs';
 import { MaintenanceApi } from '../infrastructure/maintenance-api';
 import { MaintenanceTicket, TicketStatus, TicketPriority, TicketType } from '../domain/model/maintenance-ticket.entity';
 import { MaintenanceSchedule, TaskType, ScheduleStatus } from '../domain/model/maintenance-schedule.entity';
@@ -62,21 +63,20 @@ export class MaintenanceStore {
   }
 
   createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): void {
-    const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-      ? crypto.randomUUID()
-      : `local-${Date.now()}`;
-    const ticket = new MaintenanceTicket({
-      id,
-      equipmentId,
-      status:      TicketStatus.OPEN,
-      priority,
-      type,
-      createdAt:   new Date().toISOString(),
-      description,
-      assignee:    '',
-      completedBy: '',
-    });
-    this.ticketsSignal.update(list => [ticket, ...list]);
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.api.createTicket(equipmentId, description, priority, type)
+      .pipe(retry(2))
+      .subscribe({
+        next: created => {
+          this.ticketsSignal.update(list => [created, ...list]);
+          this.loadingSignal.set(false);
+        },
+        error: err => {
+          this.errorSignal.set(err instanceof Error ? err.message : 'Failed to create ticket');
+          this.loadingSignal.set(false);
+        },
+      });
   }
 
   scheduleBlock(equipmentId: number, date: string, time: string, taskType: TaskType, notes: string): void {
