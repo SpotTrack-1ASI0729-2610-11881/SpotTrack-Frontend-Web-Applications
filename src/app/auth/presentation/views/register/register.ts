@@ -88,15 +88,15 @@ export class RegisterComponent {
     }
 
     const v = this.form.getRawValue();
-    this.auth.register({
-      firstName:      v.firstName!,
-      lastName:       v.lastName!,
-      dni:            v.dni!,
-      phoneNumber:    v.phoneNumber!,
-      email:          v.email!,
-      password:       v.password!,
-      businessIntent: this.isBusiness,
-      ...(this.isBusiness ? {
+
+    if (this.isBusiness) {
+      this.auth.stageBusinessRegistration({
+        firstName:    v.firstName!,
+        lastName:     v.lastName!,
+        dni:          v.dni!,
+        phoneNumber:  v.phoneNumber!,
+        email:        v.email!,
+        password:     v.password!,
         companyName:  v.companyName!,
         ruc:          v.ruc!,
         legalType:    v.legalType!,
@@ -105,8 +105,17 @@ export class RegisterComponent {
         street:       v.street!,
         city:         v.city!,
         district:     v.district!,
-      } : {}),
-    });
+      });
+    } else {
+      this.auth.register({
+        firstName:   v.firstName!,
+        lastName:    v.lastName!,
+        dni:         v.dni!,
+        phoneNumber: v.phoneNumber!,
+        email:       v.email!,
+        password:    v.password!,
+      });
+    }
   }
 
   goToLogin(): void {
