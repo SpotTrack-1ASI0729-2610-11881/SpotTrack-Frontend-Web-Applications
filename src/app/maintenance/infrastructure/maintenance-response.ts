@@ -15,6 +15,14 @@ export interface MaintenanceTicketResource {
 
 export type MaintenanceTicketResponse = MaintenanceTicketResource[];
 
+export interface MaintenanceLogResource {
+  id:            string;
+  ticketId:      string;
+  maintenanceId: string;
+  notes:         string;
+  completedAt:   string;
+}
+
 export interface MaintenanceScheduleResource extends BaseResource {
   id:             number;
   equipment_id:   number;
