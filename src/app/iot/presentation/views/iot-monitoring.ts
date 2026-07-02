@@ -46,7 +46,7 @@ export class IotMonitoringComponent {
     this.refreshAll();
   }
 
-  readonly displayedColumns = ['sensorId', 'type', 'equipment', 'status', 'registeredAt'];
+  readonly displayedColumns = ['sensorId', 'type', 'equipment', 'status', 'registeredAt', 'actions'];
 
   readonly isLoading = this.sessionStore.actionLoading;
 
@@ -96,6 +96,21 @@ export class IotMonitoringComponent {
   onTypeFilterChange(v: string): void { this.typeFilter.set(v as SensorType | ''); }
 
   onRefresh(): void { this.refreshAll(); }
+
+  /**
+   * Simulates a real sensor detecting movement on its equipment — the same
+   * capture-motion call a physical camera/motion sensor would make. Works for
+   * any registered sensor regardless of whether a session tracker already
+   * exists for its equipment: the backend either updates the existing one or
+   * auto-creates a walk-up tracker on the first detection.
+   */
+  simulateMotion(row: SensorRow): void {
+    if (row.type === 'camera') {
+      this.sessionStore.captureCameraMotion(row.equipmentId, true);
+    } else {
+      this.sessionStore.captureMotionSensorReading(row.equipmentId, true);
+    }
+  }
 
   private refreshAll(): void {
     this.sessionStore.loadCameraSensors();

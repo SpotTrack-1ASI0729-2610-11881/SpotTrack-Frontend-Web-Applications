@@ -282,6 +282,27 @@
 
 .badge--online { background: rgba(102,187,106,.15); color: #66bb6a; }
 
+.btn-simulate-motion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #4fc3f7;
+  border: 1px solid rgba(79, 195, 247, .4);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color .15s, border-color .15s;
+
+  mat-icon { font-size: 15px; width: 15px; height: 15px; }
+
+  &:hover:not(:disabled) { background: rgba(79, 195, 247, .1); border-color: #4fc3f7; }
+  &:disabled { opacity: .4; cursor: not-allowed; }
+}
+
 .no-data-cell {
   padding: 48px;
   text-align: center;
