@@ -387,6 +387,8 @@
       "equipment": "Equipment",
       "status": "Status",
       "registeredAt": "Registered At",
+      "actions": "Actions",
+      "simulateMotion": "Simulate Motion",
       "noData": "No sensors found"
     }
   },
