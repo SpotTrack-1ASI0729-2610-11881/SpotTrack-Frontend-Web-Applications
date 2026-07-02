@@ -787,6 +787,23 @@
       "LUBRICATION": "Lubrication",
       "INSPECTION": "Inspection",
       "OVERHAUL": "Overhaul"
+    },
+    "controlPoint": {
+      "startTitle": "Assign technician",
+      "startHint": "Assigning a technician records who is responsible for this ticket before work begins.",
+      "technician": "Technician",
+      "technicianPlaceholder": "Technician name or ID",
+      "completeTitle": "Confirm completion",
+      "completeHint": "Describe what was fixed. This entry is logged permanently and tied to the assigned technician, so incomplete or incorrect work can be traced back later.",
+      "notes": "Completion notes",
+      "notesPlaceholder": "What was inspected, repaired or replaced...",
+      "confirmStart": "Assign & start",
+      "confirmComplete": "Confirm & resolve",
+      "cancel": "Cancel",
+      "close": "Close",
+      "logTitle": "Completion log",
+      "logLoading": "Loading log...",
+      "logEmpty": "No completion log entries yet."
     }
   },
   "routines": {

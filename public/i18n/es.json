@@ -787,6 +787,23 @@
       "LUBRICATION": "Lubricación",
       "INSPECTION": "Inspección",
       "OVERHAUL": "Revisión General"
+    },
+    "controlPoint": {
+      "startTitle": "Asignar técnico",
+      "startHint": "Asignar un técnico registra quién es responsable de este ticket antes de comenzar el trabajo.",
+      "technician": "Técnico",
+      "technicianPlaceholder": "Nombre o ID del técnico",
+      "completeTitle": "Confirmar finalización",
+      "completeHint": "Describe qué se reparó. Este registro queda guardado permanentemente y vinculado al técnico asignado, para poder rastrear trabajos incompletos o incorrectos más adelante.",
+      "notes": "Notas de finalización",
+      "notesPlaceholder": "Qué se inspeccionó, reparó o reemplazó...",
+      "confirmStart": "Asignar e iniciar",
+      "confirmComplete": "Confirmar y resolver",
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "logTitle": "Registro de finalización",
+      "logLoading": "Cargando registro...",
+      "logEmpty": "Aún no hay registros de finalización."
     }
   },
   "routines": {
