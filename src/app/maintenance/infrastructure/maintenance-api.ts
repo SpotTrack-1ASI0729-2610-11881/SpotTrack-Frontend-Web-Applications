@@ -10,43 +10,65 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceApi extends BaseApi {
-  private readonly ticketEndpoint:   MaintenanceTicketApiEndpoint;
+  private readonly ticketEndpoint: MaintenanceTicketApiEndpoint;
   private readonly scheduleEndpoint: MaintenanceScheduleApiEndpoint;
 
   constructor(private readonly http: HttpClient) {
     super();
-    this.ticketEndpoint   = new MaintenanceTicketApiEndpoint(http);
+    this.ticketEndpoint = new MaintenanceTicketApiEndpoint(http);
     this.scheduleEndpoint = new MaintenanceScheduleApiEndpoint(http);
   }
 
-  getTickets(): Observable<MaintenanceTicket[]>                                    { return this.ticketEndpoint.getAll(); }
+  getTickets(): Observable<MaintenanceTicket[]> {
+    return this.ticketEndpoint.getAll();
+  }
 
-  getSchedules(): Observable<MaintenanceSchedule[]>                                { return this.scheduleEndpoint.getAll(); }
-  getScheduleById(id: number): Observable<MaintenanceSchedule>                     { return this.scheduleEndpoint.getById(id); }
-  createSchedule(schedule: MaintenanceSchedule): Observable<MaintenanceSchedule>   { return this.scheduleEndpoint.create(schedule); }
-  updateSchedule(schedule: MaintenanceSchedule): Observable<MaintenanceSchedule>   { return this.scheduleEndpoint.update(schedule, schedule.id); }
-  deleteSchedule(id: number): Observable<void>                                     { return this.scheduleEndpoint.delete(id); }
+  createTicket(
+    equipmentId: string,
+    description: string,
+    priority: string,
+    type: string,
+  ): Observable<MaintenanceTicket> {
+    return this.ticketEndpoint.createTicket(equipmentId, description, priority, type);
+  }
+
+  getSchedules(): Observable<MaintenanceSchedule[]> {
+    return this.scheduleEndpoint.getAll();
+  }
+  getScheduleById(id: number): Observable<MaintenanceSchedule> {
+    return this.scheduleEndpoint.getById(id);
+  }
+  createSchedule(schedule: MaintenanceSchedule): Observable<MaintenanceSchedule> {
+    return this.scheduleEndpoint.create(schedule);
+  }
+  updateSchedule(schedule: MaintenanceSchedule): Observable<MaintenanceSchedule> {
+    return this.scheduleEndpoint.update(schedule, schedule.id);
+  }
+  deleteSchedule(id: number): Observable<void> {
+    return this.scheduleEndpoint.delete(id);
+  }
 
   createMaintenanceRequest(equipmentId: string, description: string): Observable<any> {
-    return this.http.post(`${environment.apiBase}/maintenance/requests`,
-      { equipmentId, description });
+    return this.http.post(`${environment.apiBase}/maintenance/requests`, {
+      equipmentId,
+      description,
+    });
   }
 
   assignTicket(ticketId: string, technicianId: string): Observable<any> {
     return this.http.patch(
-      `${environment.apiBase}/maintenance/tickets/${ticketId}/assign/${technicianId}`, {}
+      `${environment.apiBase}/maintenance/tickets/${ticketId}/assign/${technicianId}`,
+      {},
     );
   }
 
   modifyTicketStatus(ticketId: string, status: string): Observable<any> {
-    return this.http.patch(
-      `${environment.apiBase}/maintenance/tickets/${ticketId}/status`, { status }
-    );
+    return this.http.patch(`${environment.apiBase}/maintenance/tickets/${ticketId}/status`, {
+      status,
+    });
   }
 
   completeTicket(ticketId: string): Observable<any> {
-    return this.http.patch(
-      `${environment.apiBase}/maintenance/tickets/${ticketId}/complete`, {}
-    );
+    return this.http.patch(`${environment.apiBase}/maintenance/tickets/${ticketId}/complete`, {});
   }
 }
