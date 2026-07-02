@@ -49,8 +49,7 @@ export class NewTicketComponent {
   };
 
   get selectedEquipmentId(): string {
-    const eq = this.equipmentStore.equipment().find(e => e.uuid === this.form.equipmentId);
-    return eq ? eq.name : '';
+    return this.form.equipmentId ?? '';
   }
 
   onTimeChange(): void { this.selectedTime.set(this.form.time); }
