@@ -46,7 +46,7 @@ export class AddEquipmentDialogComponent {
     name:             [{ value: this.existing?.name  ?? '', disabled: this.isEditMode },  Validators.required],
     brand:            [{ value: this.existing?.brand ?? '', disabled: this.isEditMode },  Validators.required],
     model:            [{ value: this.existing?.model ?? '', disabled: this.isEditMode },  Validators.required],
-    zoneId:           [{ value: this.existing?.zoneId ?? (null as unknown as number), disabled: this.isEditMode }, Validators.required],
+    zoneId:           [{ value: this.existing?.zoneId ?? '', disabled: this.isEditMode }, Validators.required],
     purchaseAmount:   [{ value: this.existing?.purchaseAmount ?? (null as unknown as number), disabled: this.isEditMode }, [Validators.required, Validators.min(0)]],
     purchaseCurrency: [{ value: this.existing?.purchaseCurrency ?? 'USD', disabled: this.isEditMode }, Validators.required],
     status:           [this.existing?.status ?? EquipmentStatus.AVAILABLE, Validators.required],
@@ -56,11 +56,10 @@ export class AddEquipmentDialogComponent {
     if (this.form.invalid) return;
     const val = this.form.getRawValue();
 
-    if (this.isEditMode && this.existing?.id != null) {
-      this.store.updateEquipmentStatus(this.existing.id, val.status);
+    if (this.isEditMode && this.existing?.uuid) {
+      this.store.updateEquipmentStatus(this.existing.uuid, val.status);
     } else {
       const entity = new Equipment({
-        id:               0,
         uuid:             '',
         name:             val.name,
         brand:            val.brand,

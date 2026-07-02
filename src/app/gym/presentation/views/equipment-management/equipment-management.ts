@@ -18,9 +18,8 @@ import { ContextMenuDirective } from '../../../../shared/presentation/directives
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
 export interface EquipmentRow {
-  id:               number;
   uuid:             string;
-  zoneId:           number;
+  zoneId:           string;
   name:             string;
   brand:            string;
   model:            string;
@@ -64,12 +63,12 @@ export class EquipmentManagementComponent {
   searchQuery    = signal('');
   selectedStatus = signal<EquipmentStatus | ''>('');
 
-  readonly isLoading        = this.store.loading;
-  readonly totalEquipment   = this.store.equipmentCount;
-  readonly availableCount   = this.store.availableCount;
-  readonly inUseCount       = this.store.inUseCount;
-  readonly maintenanceCount = this.store.maintenanceCount;
-  readonly outOfServiceCount = this.store.outOfServiceCount;
+  readonly isLoading          = this.store.loading;
+  readonly totalEquipment     = this.store.equipmentCount;
+  readonly availableCount     = this.store.availableCount;
+  readonly occupiedCount      = this.store.occupiedCount;
+  readonly maintenanceCount   = this.store.maintenanceCount;
+  readonly outOfServiceCount  = this.store.outOfServiceCount;
 
   filteredEquipment = computed(() => {
     const query  = this.searchQuery().toLowerCase();
@@ -82,7 +81,6 @@ export class EquipmentManagementComponent {
         (!status || e.status === status)
       )
       .map(e => ({
-        id:               e.id,
         uuid:             e.uuid,
         zoneId:           e.zoneId,
         name:             e.name,
@@ -111,12 +109,12 @@ export class EquipmentManagementComponent {
   }
 
   navigateToEdit(row: EquipmentRow): void {
-    this.router.navigate(['/equipments', row.id, 'edit'], { state: { equipment: row } });
+    this.router.navigate(['/equipments', row.uuid, 'edit'], { state: { equipment: row } });
   }
 
-  decommissionEquipment(id: number): void {
+  decommissionEquipment(uuid: string): void {
     if (confirm('Decommission this equipment? This action cannot be undone.')) {
-      this.store.decommissionEquipment(id);
+      this.store.decommissionEquipment(uuid);
     }
   }
 
@@ -126,9 +124,11 @@ export class EquipmentManagementComponent {
   statusIcon(status: EquipmentStatus): string {
     const icons: Record<EquipmentStatus, string> = {
       [EquipmentStatus.AVAILABLE]:      'check_circle',
-      [EquipmentStatus.IN_USE]:         'person',
+      [EquipmentStatus.OCCUPIED]:       'person',
+      [EquipmentStatus.ACTIVE]:         'bolt',
       [EquipmentStatus.MAINTENANCE]:    'build',
       [EquipmentStatus.OUT_OF_SERVICE]: 'cancel',
+      [EquipmentStatus.DECOMMISSIONED]: 'delete_forever',
     };
     return icons[status] ?? 'help';
   }
@@ -136,10 +136,10 @@ export class EquipmentManagementComponent {
   rowMenu(row: EquipmentRow): ContextMenuItem[] {
     return [
       { label: 'Edit status',   icon: 'edit',         action: () => this.navigateToEdit(row) },
-      { label: 'Decommission',  icon: 'delete',       action: () => this.decommissionEquipment(row.id) },
+      { label: 'Decommission',  icon: 'delete',       action: () => this.decommissionEquipment(row.uuid) },
       { label: '', icon: '', separator: true, action: () => {} },
       { label: 'New ticket',    icon: 'build',        action: () => this.router.navigate(['/maintenance/new-ticket']) },
-      { label: 'Copy ID',       icon: 'content_copy', action: () => navigator.clipboard.writeText(String(row.id)) },
+      { label: 'Copy ID',       icon: 'content_copy', action: () => navigator.clipboard.writeText(row.uuid) },
     ];
   }
 }

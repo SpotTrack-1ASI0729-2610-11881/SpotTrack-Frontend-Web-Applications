@@ -494,7 +494,6 @@
     },
     "status": {
       "AVAILABLE": "Available",
-      "IN_USE": "In Use",
       "MAINTENANCE": "Maintenance",
       "OUT_OF_SERVICE": "Out of Service",
       "OCCUPIED": "Occupied",

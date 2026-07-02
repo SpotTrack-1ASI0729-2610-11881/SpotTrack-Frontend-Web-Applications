@@ -1,16 +1,15 @@
-import { BaseEntity } from '../../../shared/infrastructure/base-entity';
-
 export enum EquipmentStatus {
   AVAILABLE      = 'AVAILABLE',
-  IN_USE         = 'IN_USE',
-  MAINTENANCE    = 'MAINTENANCE',
   OUT_OF_SERVICE = 'OUT_OF_SERVICE',
+  MAINTENANCE    = 'MAINTENANCE',
+  ACTIVE         = 'ACTIVE',
+  OCCUPIED       = 'OCCUPIED',
+  DECOMMISSIONED = 'DECOMMISSIONED',
 }
 
-export class Equipment implements BaseEntity {
-  private _id:               number;
+export class Equipment {
   private _uuid:             string;
-  private _zoneId:           number;
+  private _zoneId:           string;
   private _name:             string;
   private _brand:            string;
   private _model:            string;
@@ -19,9 +18,8 @@ export class Equipment implements BaseEntity {
   private _status:           EquipmentStatus;
 
   constructor(props: {
-    id:               number;
     uuid:             string;
-    zoneId:           number;
+    zoneId:           string;
     name:             string;
     brand:            string;
     model:            string;
@@ -29,7 +27,6 @@ export class Equipment implements BaseEntity {
     purchaseCurrency: string;
     status:           EquipmentStatus;
   }) {
-    this._id               = props.id;
     this._uuid             = props.uuid;
     this._zoneId           = props.zoneId;
     this._name             = props.name;
@@ -40,11 +37,9 @@ export class Equipment implements BaseEntity {
     this._status           = props.status;
   }
 
-  get id():               number          { return this._id; }
-  set id(v:               number)         { this._id = v; }
   get uuid():             string          { return this._uuid; }
-  get zoneId():           number          { return this._zoneId; }
-  set zoneId(v:           number)         { this._zoneId = v; }
+  get zoneId():           string          { return this._zoneId; }
+  set zoneId(v:           string)         { this._zoneId = v; }
   get name():             string          { return this._name; }
   set name(v:             string)         { this._name = v; }
   get brand():            string          { return this._brand; }

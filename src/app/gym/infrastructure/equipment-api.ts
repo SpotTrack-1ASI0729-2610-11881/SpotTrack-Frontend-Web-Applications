@@ -19,24 +19,23 @@ export class EquipmentApi extends BaseApi {
     this.endpoint = new EquipmentApiEndpoint(http);
   }
 
-  getEquipment(): Observable<Equipment[]>             { return this.endpoint.getAll(); }
-  getEquipmentById(id: number): Observable<Equipment> { return this.endpoint.getById(id); }
-  registerEquipment(entity: Equipment): Observable<Equipment> { return this.endpoint.create(entity); }
+  getEquipment(): Observable<Equipment[]>                      { return this.endpoint.getAll(); }
+  registerEquipment(entity: Equipment): Observable<Equipment>  { return this.endpoint.create(entity); }
 
-  updateEquipmentStatus(id: number, status: EquipmentStatus): Observable<Equipment> {
+  updateEquipmentStatus(uuid: string, status: EquipmentStatus): Observable<Equipment> {
     return this.http.patch<EquipmentResource>(
-      `${environment.apiBase}/equipments/${id}/status`,
-      { id, status }
+      `${environment.apiBase}/equipments/${uuid}/status`,
+      { id: uuid, status }
     ).pipe(
       map(r => this.assembler.toEntityFromResource(r)),
       catchError(() => throwError(() => new Error('Failed to update equipment status')))
     );
   }
 
-  decommissionEquipment(id: number): Observable<void> {
+  decommissionEquipment(uuid: string): Observable<void> {
     return this.http.patch<void>(
-      `${environment.apiBase}/equipments/${id}/decomission`,
-      { equipmentId: id }
+      `${environment.apiBase}/equipments/${uuid}/decomission`,
+      { equipmentId: uuid }
     ).pipe(
       catchError(() => throwError(() => new Error('Failed to decommission equipment')))
     );

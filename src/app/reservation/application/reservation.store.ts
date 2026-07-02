@@ -226,9 +226,7 @@ export class ReservationStore {
   }
 
   private resolveEquipmentUuid(machineId: string): string {
-    if (machineId.includes('-')) return machineId; // already a UUID
-    const n = parseInt(machineId, 10);
-    return this.equipmentStore.equipment().find(e => e.id === n)?.uuid ?? machineId;
+    return machineId; // real equipment ids are always UUIDs; anything else is a legacy mock machine id
   }
 
   private parseDurationMinutes(startTime: string, endTime: string): number {

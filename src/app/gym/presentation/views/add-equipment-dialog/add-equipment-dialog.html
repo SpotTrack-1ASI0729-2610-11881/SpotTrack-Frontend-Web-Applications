@@ -79,7 +79,7 @@
         <mat-form-field appearance="outline" class="form-field form-field--full">
           <mat-label>{{ 'equipment.dialog.fields.zoneId' | translate }}</mat-label>
           <mat-icon matPrefix>location_on</mat-icon>
-          <input matInput type="number" formControlName="zoneId" min="1" />
+          <input matInput type="text" formControlName="zoneId" />
           @if (form.controls.zoneId.hasError('required')) {
             <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
           }

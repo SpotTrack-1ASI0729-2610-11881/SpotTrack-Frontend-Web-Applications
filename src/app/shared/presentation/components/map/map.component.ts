@@ -87,7 +87,8 @@ export class MapComponent {
     const result: Record<string, number> = {};
     for (const eq of this.equipmentStore.equipment()) {
       switch (eq.status) {
-        case EquipmentStatus.IN_USE:         result[eq.uuid] = 1.0;  break;
+        case EquipmentStatus.OCCUPIED:       result[eq.uuid] = 1.0;  break;
+        case EquipmentStatus.ACTIVE:         result[eq.uuid] = 0.8;  break;
         case EquipmentStatus.OUT_OF_SERVICE: result[eq.uuid] = 0.55; break;
         case EquipmentStatus.MAINTENANCE:    result[eq.uuid] = 0.45; break;
         default:
@@ -147,12 +148,18 @@ export class MapComponent {
     return this.pendingEquipmentUuids().has(uuid);
   }
 
+  isInUse(status: EquipmentStatus): boolean {
+    return status === EquipmentStatus.OCCUPIED || status === EquipmentStatus.ACTIVE;
+  }
+
   pinStatusClass(uuid: string, status: EquipmentStatus): string {
     if (this.pendingEquipmentUuids().has(uuid)) return 'pin-reserved';
     switch (status) {
-      case EquipmentStatus.IN_USE:         return 'pin-in-use';
+      case EquipmentStatus.OCCUPIED:
+      case EquipmentStatus.ACTIVE:         return 'pin-in-use';
       case EquipmentStatus.MAINTENANCE:    return 'pin-reserved';
-      case EquipmentStatus.OUT_OF_SERVICE: return 'pin-pending';
+      case EquipmentStatus.OUT_OF_SERVICE:
+      case EquipmentStatus.DECOMMISSIONED: return 'pin-pending';
       default:                             return 'pin-available';
     }
   }
@@ -237,7 +244,7 @@ export class MapComponent {
   get inUseCount(): number {
     const eq = this.equipmentStore.equipment();
     return eq.length
-      ? eq.filter(e => e.status === EquipmentStatus.IN_USE).length
+      ? eq.filter(e => e.status === EquipmentStatus.OCCUPIED || e.status === EquipmentStatus.ACTIVE).length
       : this.gymState.machines().filter(m => m.status === 'IN_USE').length;
   }
   get reservedCount(): number {

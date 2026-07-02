@@ -293,7 +293,7 @@
           <div class="detail-header-info">
             <div class="detail-icon-wrap"
               [class.detail-icon--available]="selectedEquipment()!.eq.status === 'AVAILABLE'"
-              [class.detail-icon--in-use]="selectedEquipment()!.eq.status === 'IN_USE'"
+              [class.detail-icon--in-use]="isInUse(selectedEquipment()!.eq.status)"
               [class.detail-icon--reserved]="selectedEquipment()!.eq.status === 'MAINTENANCE'"
             >
               <mat-icon class="detail-icon">{{ selectedEquipment()!.icon }}</mat-icon>
@@ -305,7 +305,7 @@
                 <span
                   [class.status-available]="selectedEquipment()!.eq.status === 'AVAILABLE' && !isPending(selectedEquipment()!.eq.uuid)"
                   [class.status-reserved]="isPending(selectedEquipment()!.eq.uuid)"
-                  [class.status-in-use]="selectedEquipment()!.eq.status === 'IN_USE'"
+                  [class.status-in-use]="isInUse(selectedEquipment()!.eq.status)"
                 >
                   @if (isPending(selectedEquipment()!.eq.uuid)) { Reserved }
                   @else { {{ selectedEquipment()!.eq.status }} }
@@ -324,7 +324,7 @@
           </div>
         }
 
-        @if (selectedEquipment()!.eq.status === 'IN_USE') {
+        @if (isInUse(selectedEquipment()!.eq.status)) {
           <div class="detail-actions">
             <button class="btn-action-cyan" (click)="notifyWhenFree()">
               <mat-icon>notifications</mat-icon>

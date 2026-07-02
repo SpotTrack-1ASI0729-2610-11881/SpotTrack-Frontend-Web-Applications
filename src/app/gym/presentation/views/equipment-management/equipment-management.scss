@@ -253,9 +253,11 @@ $blue:         #60a5fa;
 }
 
 .badge--status-available      { border-color: $green; color: $green; background: rgba($green, 0.08); }
-.badge--status-in_use         { border-color: $teal;  color: $teal;  background: rgba($teal, 0.08); }
+.badge--status-occupied       { border-color: $teal;  color: $teal;  background: rgba($teal, 0.08); }
+.badge--status-active         { border-color: $teal;  color: $teal;  background: rgba($teal, 0.08); }
 .badge--status-maintenance    { border-color: $amber; color: $amber; background: rgba($amber, 0.08); }
 .badge--status-out_of_service { border-color: $red;   color: $red;   background: rgba($red, 0.08); }
+.badge--status-decommissioned { border-color: $red;   color: $red;   background: rgba($red, 0.08); }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 .actions-cell {

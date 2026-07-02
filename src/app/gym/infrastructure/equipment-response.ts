@@ -1,13 +1,10 @@
-import { BaseResource } from '../../shared/infrastructure/base-response';
-
-export interface EquipmentResource extends BaseResource {
-  id:                    number;
+export interface EquipmentResource {
   equipmentId:           string;
   equipmentName:         string;
-  model:                 string;
   status:                string;
-  zoneId:                string;
+  model:                 string;
   manufacturerId:        string;
+  zoneId:                string;
   purchaseCurrency:      string;
   purchaseAmount:        number;
   maintenanceThreshold?: string;
