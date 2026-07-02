@@ -7,6 +7,29 @@ export interface SignInRequest  { username: string; password: string; }
 export interface SignUpRequest  { username: string; password: string; }
 export interface AuthResponse   { id: number; username: string; token: string; roles?: string[]; role?: string; }
 
+export interface RegisterBusinessRequest {
+  email:          string;
+  password:       string;
+  firstName:      string;
+  lastName:       string;
+  phoneNumber:    string;
+  dni:            string;
+  companyName:    string;
+  ruc:            string;
+  legalStructure: string;
+  companyPhone:   string;
+  companyEmail:   string;
+  streetAddress:  string;
+  city:           string;
+  district:       string;
+  membershipTier: 'BASIC' | 'MID' | 'PLATINUM';
+}
+
+export interface RegisterBusinessResponse {
+  checkoutUrl:           string;
+  pendingRegistrationId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
   private readonly base = `${environment.apiBase}/authentication`;
@@ -21,8 +44,8 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.base}/sign-up`, body);
   }
 
-  signUpBusiness(body: SignUpRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/sign-up-business`, body);
+  registerBusiness(body: RegisterBusinessRequest): Observable<RegisterBusinessResponse> {
+    return this.http.post<RegisterBusinessResponse>(`${environment.apiBase}/register-business`, body);
   }
 
   getUser(id: number): Observable<any> {
