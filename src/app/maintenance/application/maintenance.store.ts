@@ -40,7 +40,12 @@ export class MaintenanceStore {
 
   readonly suggestedTimes = OFF_PEAK_SUGGESTIONS;
 
-  constructor() { this.loadAll(); }
+  private static readonly POLL_INTERVAL_MS = 15000;
+
+  constructor() {
+    this.loadAll();
+    setInterval(() => this.refreshTickets(), MaintenanceStore.POLL_INTERVAL_MS);
+  }
 
   isPeakHour(time: string): boolean {
     if (!time) return false;
@@ -144,5 +149,13 @@ export class MaintenanceStore {
       .subscribe({ next: l => this.ticketsSignal.set(l), error: () => {} });
     this.api.getSchedules().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: l => { this.schedulesSignal.set(l); this.loadingSignal.set(false); }, error: () => this.loadingSignal.set(false) });
+  }
+
+  /** Silent background refresh — no loading/error signal churn, so ticket-driven stat cards update without flicker. */
+  private refreshTickets(): void {
+    this.api.getTickets().subscribe({
+      next: l => this.ticketsSignal.set(l),
+      error: () => {},
+    });
   }
 }
