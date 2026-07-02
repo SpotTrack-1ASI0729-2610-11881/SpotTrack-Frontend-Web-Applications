@@ -207,6 +207,17 @@ export class AuthStore {
     });
   }
 
+  // Called by httpErrorInterceptor on 401 with an active token.
+  // Sets the login-page banner key and clears auth state WITHOUT navigating —
+  // the interceptor owns the redirect so there is no double navigation.
+  handleExpiredSession(): void {
+    this.userSignal.set(null);
+    this.tokenSignal.set(null);
+    this.errorSignal.set('auth.error.sessionExpired');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+
   clearRegisterError(): void        { this.registerErrorSignal.set(null); }
   clearPendingBusinessError(): void { this.pendingBusinessErrorSignal.set(null); }
 
