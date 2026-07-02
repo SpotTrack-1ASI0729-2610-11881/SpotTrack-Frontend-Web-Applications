@@ -933,5 +933,15 @@
       },
       "empty": "No tickets"
     }
+  },
+  "gym": {
+    "error": {
+      "loadFailed": "Could not load your gym associations. Please try again.",
+      "switchFailed": "Could not switch the active gym. Please try again.",
+      "associateFailed": "Could not associate with this gym. Please try again.",
+      "access": {
+        "notWhitelisted": "Your account is not authorized to access this gym. Contact the gym administrator."
+      }
+    }
   }
 }

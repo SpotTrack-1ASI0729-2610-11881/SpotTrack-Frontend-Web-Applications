@@ -933,5 +933,15 @@
       },
       "empty": "Sin tickets"
     }
+  },
+  "gym": {
+    "error": {
+      "loadFailed": "No se pudieron cargar tus asociaciones de gimnasio. Inténtalo de nuevo.",
+      "switchFailed": "No se pudo cambiar el gimnasio activo. Inténtalo de nuevo.",
+      "associateFailed": "No se pudo asociar con este gimnasio. Inténtalo de nuevo.",
+      "access": {
+        "notWhitelisted": "Tu cuenta no está autorizada para acceder a este gimnasio. Contacta al administrador del gimnasio."
+      }
+    }
   }
 }
