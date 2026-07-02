@@ -799,7 +799,16 @@
       "start": "Start Routine",
       "complete": "Complete",
       "missed": "Mark as Missed",
-      "activeLabel": "In progress"
+      "activeLabel": "In progress",
+      "status": {
+        "STARTED": "In progress",
+        "COMPLETED": "Completed",
+        "MISSED": "Missed"
+      },
+      "history": {
+        "title": "Session History",
+        "empty": "No sessions recorded yet."
+      }
     },
     "exerciseType": {
       "CARDIO": "Cardio",
