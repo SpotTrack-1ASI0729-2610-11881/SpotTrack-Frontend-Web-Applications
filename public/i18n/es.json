@@ -110,6 +110,7 @@
     "error": {
       "emptyFields": "Por favor ingresa tu correo y contraseña",
       "invalidCredentials": "Correo o contraseña incorrectos",
+      "sessionExpired": "Tu sesión expiró. Por favor inicia sesión de nuevo.",
       "registerFailed": "No se pudo crear tu cuenta. Inténtalo de nuevo.",
       "emailTaken": "Este correo ya está registrado. Usa uno diferente.",
       "profileFailed": "Tu cuenta fue creada, pero no pudimos guardar tu perfil. Inténtalo de nuevo desde tu página de perfil."
