@@ -1,17 +1,15 @@
-import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { Equipment, EquipmentStatus } from '../domain/model/equipment.entity';
 import { EquipmentResource, EquipmentResponse } from './equipment-response';
 
-export class EquipmentAssembler implements BaseAssembler<Equipment, EquipmentResource, EquipmentResponse> {
+export class EquipmentAssembler {
   toEntitiesFromResponse(response: EquipmentResponse): Equipment[] {
     return response.map(r => this.toEntityFromResource(r));
   }
 
   toEntityFromResource(r: EquipmentResource): Equipment {
     return new Equipment({
-      id:               r.id ?? 0,
-      uuid:             r.equipmentId ?? r.id?.toString() ?? '',
-      zoneId:           Number(r.zoneId) || 0,
+      uuid:             r.equipmentId ?? '',
+      zoneId:           r.zoneId ?? '',
       name:             r.equipmentName ?? '',
       brand:            r.manufacturerId ?? '',
       model:            r.model ?? '',
@@ -23,12 +21,11 @@ export class EquipmentAssembler implements BaseAssembler<Equipment, EquipmentRes
 
   toResourceFromEntity(e: Equipment): EquipmentResource {
     return {
-      id:               e.id,
       equipmentId:      e.uuid,
       equipmentName:    e.name,
       model:            e.model,
       status:           e.status,
-      zoneId:           String(e.zoneId),
+      zoneId:           e.zoneId,
       manufacturerId:   e.brand,
       purchaseCurrency: e.purchaseCurrency,
       purchaseAmount:   e.purchaseAmount,
