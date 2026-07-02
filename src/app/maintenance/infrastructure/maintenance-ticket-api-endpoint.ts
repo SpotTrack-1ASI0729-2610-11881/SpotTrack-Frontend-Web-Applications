@@ -18,13 +18,4 @@ export class MaintenanceTicketApiEndpoint {
       catchError(err => throwError(() => err))
     );
   }
-
-  createTicket(equipmentId: string, description: string, priority: string, type: string): Observable<MaintenanceTicket> {
-    return this.http.post<MaintenanceTicketResource>(this.url,
-      { equipmentId, description, priority, type }
-    ).pipe(
-      map(r => this.assembler.toEntityFromResource(r)),
-      catchError(() => throwError(() => new Error('Failed to create ticket')))
-    );
-  }
 }

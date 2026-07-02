@@ -28,15 +28,6 @@ export class MaintenanceApi extends BaseApi {
     return this.ticketEndpoint.getAll();
   }
 
-  createTicket(
-    equipmentId: string,
-    description: string,
-    priority: string,
-    type: string,
-  ): Observable<MaintenanceTicket> {
-    return this.ticketEndpoint.createTicket(equipmentId, description, priority, type);
-  }
-
   getSchedules(): Observable<MaintenanceSchedule[]> {
     return this.scheduleEndpoint.getAll();
   }
