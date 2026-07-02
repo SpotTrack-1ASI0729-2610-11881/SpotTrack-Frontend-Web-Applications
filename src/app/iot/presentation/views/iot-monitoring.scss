@@ -323,8 +323,18 @@ $session-blue:     #4fc3f7;
   display: flex;
   align-items: center;
   gap: 10px;
-  h2 { margin: 0; font-size: 1rem; font-weight: 700; color: #fff; }
-  mat-icon { color: $session-muted; }
+  flex-wrap: wrap;
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  mat-icon { color: $session-muted; flex-shrink: 0; }
 }
 
 .count-badge {
@@ -371,9 +381,31 @@ $session-blue:     #4fc3f7;
   font: inherit;
   color: inherit;
   width: 100%;
+  flex-wrap: wrap;
 
   &:hover { border-color: #444; }
   &--selected { border-color: $session-accent; background: rgba(245, 188, 54, .08); }
+}
+
+.tracked-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tracked-row__equipment {
+  font-weight: 600;
+  color: #fff;
+  font-size: .88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracked-row__id {
+  color: $session-muted;
+  font-size: .72rem;
 }
 
 .mono { font-family: 'Consolas', monospace; font-size: .85rem; }
@@ -398,7 +430,7 @@ $session-blue:     #4fc3f7;
 
 .status-strip {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
 }
 
@@ -409,8 +441,26 @@ $session-blue:     #4fc3f7;
   background: #2a2a2a;
   border-radius: 8px;
   padding: 12px;
+  min-width: 0;
+
+  span:not(.status-cell__label) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &__label { font-size: .75rem; color: $session-muted; }
+}
+
+.calculated-time-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: .82rem;
+  color: $session-accent;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
 }
 
 .action-groups {
@@ -455,4 +505,13 @@ $session-blue:     #4fc3f7;
 @media (max-width: 900px) {
   .layout-grid { grid-template-columns: 1fr; }
   .status-strip { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .section-card { padding: 14px; gap: 12px; }
+  .status-strip { grid-template-columns: 1fr; }
+  .action-buttons { flex-direction: column; align-items: stretch; }
+  .btn-action { justify-content: center; }
+  .tracked-row { flex-direction: column; align-items: flex-start; }
+  .status-badge { margin-left: 0; }
 }

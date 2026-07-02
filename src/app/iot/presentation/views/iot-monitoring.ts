@@ -108,6 +108,7 @@ export class IotMonitoringComponent {
   readonly sessionLoading = this.sessionStore.actionLoading;
   readonly sessionError = this.sessionStore.actionError;
   readonly trackedSessions = this.sessionStore.trackedSessions;
+  readonly lastCalculatedTime = this.sessionStore.lastCalculatedTime;
 
   readonly selectedSessionId = signal<string | null>(null);
   readonly selectedSession = computed<SessionTrackerResource | undefined>(() =>
@@ -116,6 +117,7 @@ export class IotMonitoringComponent {
 
   selectSession(sessionTrackerId: string): void {
     this.selectedSessionId.set(sessionTrackerId);
+    this.sessionStore.clearLastCalculatedTime();
   }
 
   verifySession(): void {
