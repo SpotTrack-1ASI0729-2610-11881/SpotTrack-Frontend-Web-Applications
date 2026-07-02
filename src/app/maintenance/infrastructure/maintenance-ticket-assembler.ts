@@ -4,25 +4,15 @@ import { MaintenanceTicketResource } from './maintenance-response';
 export class MaintenanceTicketAssembler {
   toEntityFromResource(r: MaintenanceTicketResource): MaintenanceTicket {
     return new MaintenanceTicket({
-      id:          Number(r.id),
-      equipmentId: Number(r.equipmentId),
-      status:      (r.status as TicketStatus) || TicketStatus.OPEN,
-      priority:    TicketPriority.LOW,
-      type:        TicketType.CORRECTIVE,
-      createdAt:   '',
-      description: '',
-      assignee:    '',
+      id:          r.id,
+      equipmentId: r.equipmentId,
+      status:      (r.ticketStatus as TicketStatus) || TicketStatus.OPEN,
+      priority:    (r.priority as TicketPriority) || TicketPriority.MEDIUM,
+      type:        (r.type as TicketType) || TicketType.CORRECTIVE,
+      createdAt:   r.createdAt,
+      description: r.description,
+      assignee:    r.technicianId ?? '',
       completedBy: '',
     });
-  }
-
-  toResourceFromEntity(e: MaintenanceTicket): MaintenanceTicketResource {
-    return {
-      id:            String(e.id),
-      equipmentId:   String(e.equipmentId),
-      status:        e.status,
-      ticketId:      '',
-      maintenanceId: '',
-    };
   }
 }
