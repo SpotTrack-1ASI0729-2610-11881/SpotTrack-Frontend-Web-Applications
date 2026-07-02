@@ -84,10 +84,6 @@ export class ReservationListComponent implements OnInit {
     this.store.loadHistory();
   }
 
-  activateReservation(reservationId: string, startTime: string, endTime: string): void {
-    this.store.activateReservation(reservationId, startTime, endTime);
-  }
-
   cancelReservation(reservationId: string): void { this.store.cancelReservation(reservationId); }
   dismissExpired(machineId: string):        void { this.store.dismissExpired(machineId); }
   formatTimer(seconds: number):             string { return this.store.formatTimer(seconds); }
