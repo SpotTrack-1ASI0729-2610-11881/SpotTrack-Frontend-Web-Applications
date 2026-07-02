@@ -18,18 +18,10 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringApi {
-  private readonly cameraSensorsUrl = `${environment.apiBase}/monitoring/camera-sensors`;
-  private readonly motionSensorsUrl = `${environment.apiBase}/monitoring/motion-sensors`;
-  private readonly anomaliesUrl     = `${environment.apiBase}/anomalies`;
-
-  /**
-   * The session-tracker endpoints predate the /api/v1 prefix convention and
-   * live at the API root (e.g. /sessionTracker/create, not
-   * /api/v1/sessionTracker/create), so they're built from the origin instead
-   * of environment.apiBase directly.
-   */
-  private readonly apiOrigin        = environment.apiBase.replace(/\/api\/v1$/, '');
-  private readonly sessionTrackerUrl = `${this.apiOrigin}/sessionTracker`;
+  private readonly cameraSensorsUrl  = `${environment.apiBase}/monitoring/camera-sensors`;
+  private readonly motionSensorsUrl  = `${environment.apiBase}/monitoring/motion-sensors`;
+  private readonly anomaliesUrl      = `${environment.apiBase}/anomalies`;
+  private readonly sessionTrackerUrl = `${environment.apiBase}/monitoring/session-trackers`;
 
   constructor(private readonly http: HttpClient) {}
 

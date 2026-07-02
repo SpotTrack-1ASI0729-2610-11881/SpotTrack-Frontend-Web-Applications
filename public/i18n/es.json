@@ -358,7 +358,7 @@
   "iot": {
     "title": "Monitoreo IoT",
     "subtitle": "Estado en tiempo real de sensores Edge IoT instalados en los equipos",
-    "search": "Buscar por ID sensor, máquina o zona...",
+    "search": "Buscar por ID de sensor o equipo...",
     "actions": {
       "refresh": "Actualizar"
     },
@@ -367,53 +367,25 @@
       "reportAnomaly": "Reportar Anomalía"
     },
     "filter": {
-      "status": "Estado",
-      "allStatuses": "Todos los Estados"
+      "type": "Tipo",
+      "allTypes": "Todos los Tipos",
+      "camera": "Cámara",
+      "motion": "Movimiento"
     },
     "stats": {
-      "total": "Total Dispositivos",
-      "online": "Sensores en Línea",
-      "offline": "Desconectados",
-      "avgBattery": "Batería Promedio",
-      "activeAlerts": "Alertas Activas",
-      "ofTotal": "de {{total}} totales"
+      "totalSensors": "Sensores Totales",
+      "cameraSensors": "Sensores de Cámara",
+      "motionSensors": "Sensores de Movimiento",
+      "activeSessions": "Sesiones Activas"
     },
     "table": {
       "title": "Estado de Sensores",
       "id": "ID Sensor",
-      "machine": "Máquina",
-      "location": "Ubicación",
+      "type": "Tipo",
+      "equipment": "Equipo",
       "status": "Estado",
-      "lastPing": "Último Ping",
-      "battery": "Batería",
-      "signal": "Señal",
-      "firmware": "Firmware",
-      "noData": "No se encontraron dispositivos"
-    },
-    "status": {
-      "ONLINE": "En Línea",
-      "OFFLINE": "Desconectado",
-      "WARNING": "Advertencia",
-      "ACTIVE": "En Línea",
-      "INACTIVE": "Desconectado"
-    },
-    "alerts": {
-      "title": "Alertas Activas",
-      "disconnectedTitle": "{{sensor}} - Sensor Desconectado",
-      "lowBatteryTitle": "{{sensor}} - Batería Baja",
-      "lastPing": "Último ping:",
-      "battery": "Batería:",
-      "signal": "Señal:",
-      "investigate": "Investigar",
-      "scheduleReplacement": "Programar Cambio",
-      "severity": {
-        "critical": "Crítico",
-        "warning": "Advertencia"
-      }
-    },
-    "modal": {
-      "title": "Máquina Reconectada",
-      "close": "Cerrar"
+      "registeredAt": "Registrado",
+      "noData": "No se encontraron sensores"
     }
   },
   "configuration": {
@@ -524,7 +496,10 @@
       "AVAILABLE": "Disponible",
       "IN_USE": "En Uso",
       "MAINTENANCE": "Mantenimiento",
-      "OUT_OF_SERVICE": "Fuera de Servicio"
+      "OUT_OF_SERVICE": "Fuera de Servicio",
+      "OCCUPIED": "Ocupado",
+      "ACTIVE": "Activo",
+      "DECOMMISSIONED": "Retirado"
     },
     "dialog": {
       "addTitle": "Registrar Nuevo Equipo",

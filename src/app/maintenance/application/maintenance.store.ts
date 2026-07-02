@@ -1,6 +1,7 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
+import { retry } from 'rxjs';
 import { MaintenanceApi } from '../infrastructure/maintenance-api';
 import { MaintenanceTicket, TicketStatus, TicketPriority, TicketType } from '../domain/model/maintenance-ticket.entity';
 import { MaintenanceSchedule, TaskType, ScheduleStatus } from '../domain/model/maintenance-schedule.entity';
@@ -144,5 +145,10 @@ export class MaintenanceStore {
       .subscribe({ next: l => this.ticketsSignal.set(l), error: () => {} });
     this.api.getSchedules().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: l => { this.schedulesSignal.set(l); this.loadingSignal.set(false); }, error: () => this.loadingSignal.set(false) });
+  }
+
+  private formatError(error: unknown, fallback: string): string {
+    if (error instanceof Error) return error.message || fallback;
+    return fallback;
   }
 }
