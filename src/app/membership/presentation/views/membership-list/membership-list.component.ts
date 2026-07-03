@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
@@ -10,23 +11,73 @@ import { ContextMenuItem } from '../../../../shared/application/context-menu.ser
 @Component({
   selector: 'app-membership-list',
   standalone: true,
-  imports: [CommonModule, MatIconModule, TranslateModule, RouterLink, ContextMenuDirective],
+  imports: [CommonModule, FormsModule, MatIconModule, TranslateModule, RouterLink, ContextMenuDirective],
   templateUrl: './membership-list.component.html',
   styleUrl:    './membership-list.component.css',
 })
-export class MembershipListComponent {
+export class MembershipListComponent implements OnInit {
   readonly store = inject(MembershipStore);
 
-  readonly loading     = this.store.loading;
-  readonly error       = this.store.error;
-  readonly activePlans = this.store.activePlans;
+  readonly loading          = this.store.loading;
+  readonly error            = this.store.error;
+  readonly activePlans      = this.store.activePlans;
+  readonly lifecycleLoading = this.store.lifecycleLoading;
+  readonly lifecycleError   = this.store.lifecycleError;
+  readonly membershipLoading = this.store.membershipLoading;
+
+  readonly tiers = ['BASIC', 'MID', 'PLATINUM'] as const;
+
+  readonly upgradeTierTarget     = signal('');
+  readonly downgradeTierTarget   = signal('');
+  readonly resubscribeTierTarget = signal('BASIC');
+
+  readonly currentTierIndex = computed(() => {
+    const tier = this.store.myMembership()?.membershipTier ?? '';
+    return this.tiers.indexOf(tier as typeof this.tiers[number]);
+  });
+
+  readonly upgradeOptions = computed(() =>
+    this.currentTierIndex() >= 0 ? Array.from(this.tiers).slice(this.currentTierIndex() + 1) : []
+  );
+
+  readonly downgradeOptions = computed(() =>
+    this.currentTierIndex() > 0 ? Array.from(this.tiers).slice(0, this.currentTierIndex()) : []
+  );
+
+  constructor() {
+    // Initialize selectors to sensible defaults once the membership resolves.
+    // Guards prevent re-overwriting after the user makes a selection.
+    effect(() => {
+      const opts = this.upgradeOptions();
+      if (opts.length > 0 && !this.upgradeTierTarget()) this.upgradeTierTarget.set(opts[0]);
+    });
+    effect(() => {
+      const opts = this.downgradeOptions();
+      if (opts.length > 0 && !this.downgradeTierTarget()) this.downgradeTierTarget.set(opts[opts.length - 1]);
+    });
+  }
+
+  ngOnInit(): void {
+    this.store.loadMyMembership();
+  }
+
+  cancelMembership(): void {
+    if (confirm('¿Cancelar la membresía? Seguirá activa hasta fin del período de facturación.')) {
+      this.store.cancel();
+    }
+  }
+
+  payDebt(): void    { this.store.payDebt(); }
+  upgradePlan(): void  { if (this.upgradeTierTarget())   this.store.upgradePlan(this.upgradeTierTarget()); }
+  downgradePlan(): void { if (this.downgradeTierTarget()) this.store.downgradePlan(this.downgradeTierTarget()); }
+  resubscribe(): void   { if (this.resubscribeTierTarget()) this.store.resubscribe(this.resubscribeTierTarget()); }
 
   selectPlan(id: number): void { this.store.selectPlan(id); }
 
   planMenu(id: number, name: string): ContextMenuItem[] {
     return [
-      { label: 'View details',  icon: 'open_in_new',  action: () => this.selectPlan(id) },
-      { label: 'Copy plan name',icon: 'content_copy', action: () => navigator.clipboard.writeText(name) },
+      { label: 'View details',   icon: 'open_in_new',  action: () => this.selectPlan(id) },
+      { label: 'Copy plan name', icon: 'content_copy', action: () => navigator.clipboard.writeText(name) },
     ];
   }
 }

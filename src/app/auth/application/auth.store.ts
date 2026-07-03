@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { AuthApiService } from '../infrastructure/auth-api.service';
 import { ProfileApiService } from '../infrastructure/profile-api.service';
+import { ActiveGymStore } from './active-gym.store';
 import { User, UserRole } from '../domain/model/user.model';
 
 const TOKEN_KEY   = 'spottrack_token';
@@ -39,9 +40,11 @@ export interface BusinessRegistrationDraft {
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
-  private readonly api        = inject(AuthApiService);
-  private readonly profileApi = inject(ProfileApiService);
-  private readonly router     = inject(Router);
+  private readonly api           = inject(AuthApiService);
+  private readonly profileApi    = inject(ProfileApiService);
+  private readonly router        = inject(Router);
+  // ActiveGymStore does not inject AuthStore, so there is no circular dependency.
+  private readonly activeGymStore = inject(ActiveGymStore);
 
   private readonly userSignal  = signal<User | null>(this.loadUser());
   private readonly tokenSignal = signal<string | null>(
@@ -88,6 +91,9 @@ export class AuthStore {
             const user: User = { id: res.id, email: res.username, name: res.username, role };
             this.userSignal.set(user);
             localStorage.setItem(USER_KEY, JSON.stringify(user));
+            if (role === UserRole.CLIENT) {
+              this.activeGymStore.loadAssociations();
+            }
             this.router.navigate([role === UserRole.ADMIN ? '/dashboard' : '/map']);
           },
           error: () => {
@@ -222,6 +228,7 @@ export class AuthStore {
   clearPendingBusinessError(): void { this.pendingBusinessErrorSignal.set(null); }
 
   logout(): void {
+    this.activeGymStore.reset();
     this.userSignal.set(null);
     this.tokenSignal.set(null);
     this.errorSignal.set(null);

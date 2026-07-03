@@ -23,3 +23,17 @@ export interface BranchAccessResource extends BaseResource {
 }
 
 export type BranchAccessResponse = BranchAccessResource[];
+
+export interface AdminMembershipResource {
+  id:                   number;
+  membershipId:         string;       // UUID — used in lifecycle endpoint paths
+  clientId:             number;
+  membershipTier:       string;       // "BASIC" | "MID" | "PLATINUM"
+  priceAmount:          number;
+  priceCurrency:        string;
+  startDate:            string;
+  endDate:              string | null;
+  status:               string;       // "ACTIVE" | "SUSPENDED" | "CANCELLED" | "EXPIRED"
+  cancelAtPeriodEnd:    boolean;
+  pendingDowngradeTier: string | null;
+}

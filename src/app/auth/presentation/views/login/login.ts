@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthStore } from '../../../application/auth.store';
@@ -9,7 +9,7 @@ import { LanguageSwitcher } from '../../../../shared/presentation/components/lan
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, TranslateModule, MatIconModule, LanguageSwitcher],
+  imports: [FormsModule, TranslateModule, MatIconModule, LanguageSwitcher, RouterLink],
   templateUrl: './login.html',
   styleUrl:    './login.scss',
 })

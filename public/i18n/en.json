@@ -15,6 +15,7 @@
       "submitBtn": "Sign In",
       "noAccount": "Don't have an account?",
       "register": "Sign up",
+      "forgotPassword": "Forgot your password?",
       "demoTitle": "Demo credentials",
       "demoPassword": "Password: demo1234"
     },
@@ -106,6 +107,46 @@
       "cancelTitle": "Payment cancelled",
       "cancelSubtitle": "Your payment was not completed. You can pick a plan again whenever you're ready.",
       "retryBtn": "Choose a plan again"
+    },
+    "changePassword": {
+      "currentLabel": "Current password",
+      "newLabel": "New password",
+      "confirmLabel": "Confirm new password",
+      "submitBtn": "Update password",
+      "cancelBtn": "Cancel",
+      "success": "Password updated successfully.",
+      "error": {
+        "noMatch": "Passwords do not match.",
+        "wrongCurrent": "Current password is incorrect.",
+        "failed": "Could not update password. Please try again."
+      }
+    },
+    "forgotPassword": {
+      "step1": {
+        "title": "Forgot your password?",
+        "subtitle": "Enter your email address and we'll help you reset it.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "your@email.com",
+        "submitBtn": "Continue"
+      },
+      "step2": {
+        "title": "Reset your password",
+        "subtitle": "Enter your DNI and choose a new password.",
+        "emailLabel": "Email",
+        "dniLabel": "DNI",
+        "dniPlaceholder": "12345678",
+        "newPasswordLabel": "New password",
+        "confirmPasswordLabel": "Confirm new password",
+        "submitBtn": "Reset password"
+      },
+      "success": {
+        "title": "Password reset",
+        "desc": "Your password has been updated. You can now sign in with your new password."
+      },
+      "backToLogin": "Back to sign in",
+      "error": {
+        "failed": "Could not reset password. Please check your details and try again."
+      }
     },
     "error": {
       "emptyFields": "Please enter your email and password",
@@ -936,6 +977,78 @@
         "completed": "Completed"
       },
       "empty": "No tickets"
+    }
+  },
+  "gym": {
+    "associate": {
+      "title": "Choose your gym",
+      "subtitle": "Select a gym to get started",
+      "joinBtn": "Join",
+      "alreadyJoined": "Joined",
+      "noGyms": "No gyms available at the moment.",
+      "loadError": "Could not load the gym list. Please try again."
+    },
+    "error": {
+      "loadFailed": "Could not load your gym associations. Please try again.",
+      "switchFailed": "Could not switch the active gym. Please try again.",
+      "associateFailed": "Could not associate with this gym. Please try again.",
+      "myGymsFailed": "Could not load your gym information. Please try again.",
+      "access": {
+        "notWhitelisted": "Your account is not authorized to access this gym. Contact the gym administrator."
+      }
+    }
+  },
+  "membership": {
+    "lifecycle": {
+      "renewsOn": "Renews on",
+      "cancelAtPeriodEndNotice": "Cancels at end of current period ({{date}}). No further charges.",
+      "pendingDowngradeNotice": "Plan will downgrade to {{tier}} at end of current period.",
+      "cancelBtn": "Cancel Membership",
+      "payDebtBtn": "Pay Debt",
+      "resubscribeBtn": "Resubscribe",
+      "upgradeBtn": "Upgrade",
+      "downgradeBtn": "Schedule Downgrade",
+      "status": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "CANCELLED": "Cancelled",
+        "EXPIRED": "Expired"
+      },
+      "suspended": {
+        "title": "Membership Suspended",
+        "desc": "Your membership is suspended due to an unpaid balance. Pay your debt to restore access."
+      },
+      "cancelled": {
+        "title": "Membership Cancelled",
+        "desc": "Your membership has been cancelled. Resubscribe to restore access to your gym."
+      },
+      "expired": {
+        "title": "Membership Expired",
+        "desc": "Your membership has expired. Resubscribe to restore access to your gym."
+      },
+      "error": {
+        "cancelFailed": "Could not cancel membership. Please try again.",
+        "payDebtFailed": "Could not initiate debt payment. Please try again.",
+        "upgradeFailed": "Could not initiate plan upgrade. Please try again.",
+        "downgradeFailed": "Could not schedule plan downgrade. Please try again.",
+        "resubscribeFailed": "Could not initiate resubscription. Please try again."
+      }
+    }
+  },
+  "whitelist": {
+    "title": "Whitelist Management",
+    "subtitle": "Manage which clients can access your gym by DNI",
+    "addDni": "Add DNI",
+    "dniPlaceholder": "8-digit DNI",
+    "addBtn": "Add",
+    "removeDni": "Remove",
+    "dniCount": "{{count}} registered DNIs",
+    "empty": "No DNIs registered yet. Add one above to allow client access.",
+    "error": {
+      "loadFailed": "Could not load the whitelist. Please try again.",
+      "addFailed": "Could not add DNI. Please try again.",
+      "duplicate": "This DNI is already in the whitelist.",
+      "invalidFormat": "DNI must be exactly 8 digits."
     }
   }
 }

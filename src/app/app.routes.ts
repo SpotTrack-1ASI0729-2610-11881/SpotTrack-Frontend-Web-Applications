@@ -37,6 +37,11 @@ export const routes: Routes = [
       import('./auth/presentation/views/payment-result/payment-cancel').then(m => m.PaymentCancelComponent),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./auth/presentation/views/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),
+  },
+  {
     path: '',
     component: Layout,
     canActivate: [authGuard],
@@ -64,6 +69,11 @@ export const routes: Routes = [
               import('./dashboard/presentation/views/dashboard').then(m => m.DashboardComponent),
           },
           ...equipmentRoutes,
+          {
+            path: 'gym/whitelist',
+            loadComponent: () =>
+              import('./gym/presentation/views/gym-whitelist/gym-whitelist').then(m => m.GymWhitelistComponent),
+          },
           {
             path: 'iot',
             loadComponent: () =>
@@ -96,6 +106,11 @@ export const routes: Routes = [
         canMatch: [clientGuard],
         children: [
           { path: '', redirectTo: 'map', pathMatch: 'full' },
+          {
+            path: 'gym/associate',
+            loadComponent: () =>
+              import('./auth/presentation/views/gym-associate/gym-associate').then(m => m.GymAssociateComponent),
+          },
           {
             path: 'client',
             loadComponent: () =>
