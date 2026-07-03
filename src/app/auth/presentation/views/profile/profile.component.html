@@ -145,9 +145,55 @@
           <h3>{{ 'profile.security.title' | translate }}</h3>
         </div>
         <div class="security-actions">
-          <button class="btn-outline">{{ 'profile.security.changePassword' | translate }}</button>
+          <button class="btn-outline" (click)="toggleChangePwd()">{{ 'profile.security.changePassword' | translate }}</button>
           <button class="btn-outline btn-danger" (click)="logout()">{{ 'profile.security.logout' | translate }}</button>
         </div>
+
+        @if (showChangePwd()) {
+          <div class="change-pwd-form">
+
+            @if (pwdStore.changePwdSuccess()) {
+              <div class="cpwd-success">
+                <mat-icon>check_circle</mat-icon>
+                {{ 'auth.changePassword.success' | translate }}
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+              </div>
+
+              @if (pwdMatchError) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ 'auth.changePassword.error.noMatch' | translate }}
+                </div>
+              }
+              @if (pwdStore.changePwdError()) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ pwdStore.changePwdError()! | translate }}
+                </div>
+              }
+
+              <div class="cpwd-actions">
+                <button class="btn-outline" (click)="toggleChangePwd()">{{ 'auth.changePassword.cancelBtn' | translate }}</button>
+                <button class="btn-primary" [disabled]="pwdStore.changePwdLoading()" (click)="submitChangePassword()">
+                  {{ 'auth.changePassword.submitBtn' | translate }}
+                </button>
+              </div>
+            }
+
+          </div>
+        }
       </section>
 
       <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
@@ -316,9 +362,55 @@
           <h3>{{ 'profile.security.title' | translate }}</h3>
         </div>
         <div class="security-actions">
-          <button class="btn-outline">{{ 'profile.security.changePassword' | translate }}</button>
+          <button class="btn-outline" (click)="toggleChangePwd()">{{ 'profile.security.changePassword' | translate }}</button>
           <button class="btn-outline btn-danger" (click)="logout()">{{ 'profile.security.logout' | translate }}</button>
         </div>
+
+        @if (showChangePwd()) {
+          <div class="change-pwd-form">
+
+            @if (pwdStore.changePwdSuccess()) {
+              <div class="cpwd-success">
+                <mat-icon>check_circle</mat-icon>
+                {{ 'auth.changePassword.success' | translate }}
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+              </div>
+
+              @if (pwdMatchError) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ 'auth.changePassword.error.noMatch' | translate }}
+                </div>
+              }
+              @if (pwdStore.changePwdError()) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ pwdStore.changePwdError()! | translate }}
+                </div>
+              }
+
+              <div class="cpwd-actions">
+                <button class="btn-outline" (click)="toggleChangePwd()">{{ 'auth.changePassword.cancelBtn' | translate }}</button>
+                <button class="btn-primary" [disabled]="pwdStore.changePwdLoading()" (click)="submitChangePassword()">
+                  {{ 'auth.changePassword.submitBtn' | translate }}
+                </button>
+              </div>
+            }
+
+          </div>
+        }
       </section>
 
       <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
