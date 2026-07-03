@@ -1032,6 +1032,24 @@
       }
     }
   },
+  "branches": {
+    "title": "Gestión de Sedes",
+    "subtitle": "Administra las sedes de tu gimnasio",
+    "addTitle": "Agregar nueva sede",
+    "namePlaceholder": "Nombre de la sede",
+    "addressPlaceholder": "Dirección",
+    "addBtn": "Agregar",
+    "count": "{{ count }} sede(s)",
+    "empty": "Aún no hay sedes registradas.",
+    "error": {
+      "loadFailed": "No se pudo cargar la lista de sedes. Inténtalo de nuevo.",
+      "createFailed": "No se pudo crear la sede. Inténtalo de nuevo.",
+      "limitReached": "Alcanzaste el límite de sedes de tu plan actual. Mejora tu plan para agregar más.",
+      "noActiveMembership": "No tienes una membresía activa. Regulariza tu situación para gestionar sedes.",
+      "upgradePlanLink": "Ir a Membresía →",
+      "manageMembershipLink": "Gestionar membresía →"
+    }
+  },
   "whitelist": {
     "title": "Gestión de Whitelist",
     "subtitle": "Administra qué clientes pueden acceder a tu gimnasio por DNI",
