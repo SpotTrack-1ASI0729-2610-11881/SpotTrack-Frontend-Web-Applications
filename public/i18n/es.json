@@ -947,9 +947,26 @@
       "loadFailed": "No se pudieron cargar tus asociaciones de gimnasio. Inténtalo de nuevo.",
       "switchFailed": "No se pudo cambiar el gimnasio activo. Inténtalo de nuevo.",
       "associateFailed": "No se pudo asociar con este gimnasio. Inténtalo de nuevo.",
+      "myGymsFailed": "No se pudo cargar la información de tu gimnasio. Inténtalo de nuevo.",
       "access": {
         "notWhitelisted": "Tu cuenta no está autorizada para acceder a este gimnasio. Contacta al administrador del gimnasio."
       }
+    }
+  },
+  "whitelist": {
+    "title": "Gestión de Whitelist",
+    "subtitle": "Administra qué clientes pueden acceder a tu gimnasio por DNI",
+    "addDni": "Agregar DNI",
+    "dniPlaceholder": "DNI de 8 dígitos",
+    "addBtn": "Agregar",
+    "removeDni": "Eliminar",
+    "dniCount": "{{count}} DNIs registrados",
+    "empty": "Aún no hay DNIs registrados. Agrega uno arriba para permitir el acceso de clientes.",
+    "error": {
+      "loadFailed": "No se pudo cargar la whitelist. Inténtalo de nuevo.",
+      "addFailed": "No se pudo agregar el DNI. Inténtalo de nuevo.",
+      "duplicate": "Este DNI ya está en la whitelist.",
+      "invalidFormat": "El DNI debe tener exactamente 8 dígitos."
     }
   }
 }
