@@ -900,18 +900,6 @@
       "title": "Mi Perfil",
       "roleBadge": "Cliente",
       "gym": "Gimnasio",
-      "plan": {
-        "name": "Plan Basic",
-        "price": "$69/mes",
-        "upgrade": "Mejorar Plan",
-        "featuresTitle": "Características incluidas:",
-        "feature1": "Hasta 20 máquinas monitoreadas",
-        "feature2": "Mapa de calor en tiempo real",
-        "feature3": "1 sede",
-        "feature4": "Soporte por email",
-        "renewal": "Próxima renovación",
-        "renewalDate": "24 de Mayo, 2026"
-      },
       "history": "Historial de Puntos",
       "notifications": {
         "title": "Notificaciones",

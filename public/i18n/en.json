@@ -900,18 +900,6 @@
       "title": "My Profile",
       "roleBadge": "Client",
       "gym": "Gym",
-      "plan": {
-        "name": "Basic Plan",
-        "price": "$69/month",
-        "upgrade": "Upgrade Plan",
-        "featuresTitle": "Included features:",
-        "feature1": "Up to 20 monitored machines",
-        "feature2": "Real-time heat map",
-        "feature3": "1 branch",
-        "feature4": "Email support",
-        "renewal": "Next renewal",
-        "renewalDate": "May 24, 2026"
-      },
       "history": "Points History",
       "notifications": {
         "title": "Notifications",
