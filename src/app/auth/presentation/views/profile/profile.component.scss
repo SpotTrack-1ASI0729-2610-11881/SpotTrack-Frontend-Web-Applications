@@ -445,6 +445,7 @@ $danger-color: #ef4444;
   &--yellow { border-left-color: $accent-gold; .gym-stat-card__icon { background: rgba($accent-gold,.12); mat-icon { color: $accent-gold; } } .gym-stat-card__value { color: $accent-gold; } }
   &--green { border-left-color: $success-green; .gym-stat-card__icon { background: rgba($success-green,.12); mat-icon { color: $success-green; } } .gym-stat-card__value { color: $success-green; } }
   &--teal  { border-left-color: #00bcd4; .gym-stat-card__icon { background: rgba(0,188,212,.12); mat-icon { color: #00bcd4; } } .gym-stat-card__value { color: #00bcd4; } }
+  &--link  { text-decoration: none; cursor: pointer; transition: background 0.15s, transform 0.1s; &:hover { background: lighten($bg-card, 4%); transform: translateY(-1px); } }
 }
 
 // ── Admin plan card ───────────────────────────────────────────────────────────

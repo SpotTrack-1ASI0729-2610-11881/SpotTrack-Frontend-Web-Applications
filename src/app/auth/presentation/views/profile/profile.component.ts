@@ -13,6 +13,7 @@ import { MembershipStore } from '../../../../membership/application/membership.s
 import { AdminGymStore } from '../../../../gym/application/admin-gym.store';
 import { EquipmentStore } from '../../../../gym/application/equipment.store';
 import { WhitelistStore } from '../../../../gym/application/whitelist.store';
+import { BranchStore } from '../../../../gym/application/branch.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
@@ -34,6 +35,7 @@ export class ProfileComponent implements OnInit {
   readonly adminGymStore  = inject(AdminGymStore);
   readonly equipmentStore = inject(EquipmentStore);
   readonly whitelistStore = inject(WhitelistStore);
+  readonly branchStore    = inject(BranchStore);
 
   readonly pageMenu: ContextMenuItem[] = [
     { label: 'Logout', icon: 'logout', action: () => this.logout() },
@@ -44,7 +46,10 @@ export class ProfileComponent implements OnInit {
   constructor() {
     effect(() => {
       const id = this.gymId();
-      if (id) this.whitelistStore.load(id);
+      if (id) {
+        this.whitelistStore.load(id);
+        this.branchStore.load(id);
+      }
     });
   }
 
@@ -109,9 +114,7 @@ export class ProfileComponent implements OnInit {
   }
 
   readonly branchCount   = computed(() =>
-    this.adminGymStore.loaded() && !this.adminGymStore.loading()
-      ? this.adminGymStore.myGyms().length
-      : null
+    !this.branchStore.loading() ? this.branchStore.branches().length : null
   );
 
   readonly equipmentCount = computed(() =>

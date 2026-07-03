@@ -35,7 +35,7 @@
 
       <!-- Gym stat cards -->
       <div class="gym-stats">
-        <div class="gym-stat-card gym-stat-card--blue">
+        <a class="gym-stat-card gym-stat-card--blue gym-stat-card--link" routerLink="/gym/branches">
           <div class="gym-stat-card__icon">
             <mat-icon>location_on</mat-icon>
           </div>
@@ -43,7 +43,7 @@
             <span class="gym-stat-card__value">{{ branchCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.locations' | translate }}</span>
           </div>
-        </div>
+        </a>
 
         <div class="gym-stat-card gym-stat-card--yellow">
           <div class="gym-stat-card__icon">
