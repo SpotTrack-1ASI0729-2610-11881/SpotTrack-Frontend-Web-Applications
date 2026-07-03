@@ -87,6 +87,11 @@ export const routes: Routes = [
                   import('./gym/presentation/views/gym-whitelist/gym-whitelist').then(m => m.GymWhitelistComponent),
               },
               {
+                path: 'gym/branches',
+                loadComponent: () =>
+                  import('./gym/presentation/views/gym-branches/gym-branches').then(m => m.GymBranchesComponent),
+              },
+              {
                 path: 'iot',
                 loadComponent: () =>
                   import('./iot/presentation/views/iot-monitoring').then(m => m.IotMonitoringComponent),
