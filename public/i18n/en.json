@@ -193,10 +193,27 @@
       "inUse": "In Use ({{count}})",
       "reserved": "Reserved ({{count}})"
     },
-    "gyms": {
-      "gym1": "Gym Center",
-      "gym2": "North Gym",
-      "gym3": "South Gym"
+    "view": {
+      "map": "Map",
+      "heat": "Heat",
+      "allBranches": "All Branches"
+    },
+    "branches": {
+      "allBranches": "All Branches",
+      "networkOverview": "Network Overview",
+      "clickToView": "Click a branch to view its floor map",
+      "loading": "Loading branches…",
+      "noBranches": "No branches configured yet",
+      "noZones": "No zones configured for this branch"
+    },
+    "zone": {
+      "unzoned": "Unassigned"
+    },
+    "stats": {
+      "free": "Free",
+      "inUse": "In Use",
+      "reserved": "Reserved",
+      "util": "Util"
     },
     "detail": {
       "statusLabel": "Status",
