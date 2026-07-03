@@ -823,6 +823,10 @@
         "title": "Agregar Ejercicio",
         "name": "Nombre del Ejercicio",
         "type": "Tipo",
+        "sets": "Series",
+        "reps": "Repeticiones",
+        "setsAbbrev": "series",
+        "repsAbbrev": "reps",
         "submit": "Agregar"
       }
     },

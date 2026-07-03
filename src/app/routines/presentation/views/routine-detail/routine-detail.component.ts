@@ -31,6 +31,8 @@ export class RoutineDetailComponent implements OnInit {
   showAddBlock = signal(false);
   newExerciseName = '';
   newExerciseType: ExerciseType = ExerciseType.STRENGTH;
+  newSets = 3;
+  newReps = 10;
 
   get routineId(): number { return Number(this.route.snapshot.paramMap.get('id')); }
 
@@ -64,6 +66,8 @@ export class RoutineDetailComponent implements OnInit {
   openAddBlock(): void {
     this.newExerciseName = '';
     this.newExerciseType = ExerciseType.STRENGTH;
+    this.newSets = 3;
+    this.newReps = 10;
     this.blockError.set(null);
     this.showAddBlock.set(true);
   }
@@ -72,9 +76,9 @@ export class RoutineDetailComponent implements OnInit {
 
   submitAddBlock(): void {
     const name = this.newExerciseName.trim();
-    if (!name) return;
+    if (!name || this.newSets <= 0 || this.newReps <= 0) return;
     const order = this.blocks().length + 1;
-    this.api.addExerciseBlock(this.routineId, name, this.newExerciseType, order).subscribe({
+    this.api.addExerciseBlock(this.routineId, name, this.newExerciseType, order, this.newSets, this.newReps).subscribe({
       next: () => { this.closeAddBlock(); this.loadBlocks(); },
       error: () => this.blockError.set('No se pudo agregar el ejercicio'),
     });
