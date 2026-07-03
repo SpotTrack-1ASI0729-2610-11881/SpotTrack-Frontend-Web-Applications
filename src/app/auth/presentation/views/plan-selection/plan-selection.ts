@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthStore } from '../../../application/auth.store';
-import { MembershipTier, PLAN_FEATURES } from '../../../../../shared/application/plan-features.data';
+import { MembershipTier, PLAN_FEATURES } from '../../../../shared/application/plan-features.data';
 
 interface PlanCard {
   key:      string;
