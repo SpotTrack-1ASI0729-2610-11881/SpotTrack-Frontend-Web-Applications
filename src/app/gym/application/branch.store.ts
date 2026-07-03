@@ -46,7 +46,7 @@ export class BranchStore {
       error: (err: unknown) => {
         let key = 'branches.error.createFailed';
         if (err instanceof HttpErrorResponse && err.status === 409) {
-          const code = err.error?.message as string | undefined;
+          const code = err.error?.details as string | undefined;
           if (code === 'gym.error.branch.limitReached')
             key = 'branches.error.limitReached';
           else if (code === 'gym.error.branch.noActiveMembership')
