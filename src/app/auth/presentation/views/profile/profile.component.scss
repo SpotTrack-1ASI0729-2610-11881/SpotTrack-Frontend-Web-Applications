@@ -112,45 +112,6 @@ body {
 
 }
 
-// History Card Specific
-.history-card {
-  .history-title {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: $bg-item;
-    padding: 1rem;
-    border-radius: 8px;
-
-    .history-desc {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-
-      p {
-        font-size: 0.875rem;
-        font-weight: 500;
-      }
-    }
-
-    .history-points {
-      color: $success-green;
-      font-weight: bold;
-      font-size: 0.875rem;
-    }
-  }
-}
 // Nuevas variables sugeridas al principio del archivo
 $accent-cyan: #0ab5c3;
 $danger-color: #ef4444;
