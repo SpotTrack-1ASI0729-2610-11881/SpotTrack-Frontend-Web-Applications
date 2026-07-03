@@ -22,9 +22,10 @@ export interface UpdateAdminProfileRequest extends UpdatePersonInfoRequest {
 }
 
 export interface ProfileSummary {
-  id:       number;
-  fullName: string;
-  email:    string;
+  id:          number;
+  fullName:    string;
+  email:       string;
+  phoneNumber: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
