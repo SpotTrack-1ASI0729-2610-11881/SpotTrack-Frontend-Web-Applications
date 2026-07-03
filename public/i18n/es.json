@@ -888,7 +888,7 @@
       "stats": {
         "locations": "Sedes activas",
         "equipment": "Equipos monitoreados",
-        "sensors": "Sensores IoT online",
+        "sensors": "Sensores IoT",
         "members": "Miembros registrados"
       },
       "plan": {
