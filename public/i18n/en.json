@@ -15,6 +15,7 @@
       "submitBtn": "Sign In",
       "noAccount": "Don't have an account?",
       "register": "Sign up",
+      "forgotPassword": "Forgot your password?",
       "demoTitle": "Demo credentials",
       "demoPassword": "Password: demo1234"
     },
@@ -106,6 +107,46 @@
       "cancelTitle": "Payment cancelled",
       "cancelSubtitle": "Your payment was not completed. You can pick a plan again whenever you're ready.",
       "retryBtn": "Choose a plan again"
+    },
+    "changePassword": {
+      "currentLabel": "Current password",
+      "newLabel": "New password",
+      "confirmLabel": "Confirm new password",
+      "submitBtn": "Update password",
+      "cancelBtn": "Cancel",
+      "success": "Password updated successfully.",
+      "error": {
+        "noMatch": "Passwords do not match.",
+        "wrongCurrent": "Current password is incorrect.",
+        "failed": "Could not update password. Please try again."
+      }
+    },
+    "forgotPassword": {
+      "step1": {
+        "title": "Forgot your password?",
+        "subtitle": "Enter your email address and we'll help you reset it.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "your@email.com",
+        "submitBtn": "Continue"
+      },
+      "step2": {
+        "title": "Reset your password",
+        "subtitle": "Enter your DNI and choose a new password.",
+        "emailLabel": "Email",
+        "dniLabel": "DNI",
+        "dniPlaceholder": "12345678",
+        "newPasswordLabel": "New password",
+        "confirmPasswordLabel": "Confirm new password",
+        "submitBtn": "Reset password"
+      },
+      "success": {
+        "title": "Password reset",
+        "desc": "Your password has been updated. You can now sign in with your new password."
+      },
+      "backToLogin": "Back to sign in",
+      "error": {
+        "failed": "Could not reset password. Please check your details and try again."
+      }
     },
     "error": {
       "emptyFields": "Please enter your email and password",
