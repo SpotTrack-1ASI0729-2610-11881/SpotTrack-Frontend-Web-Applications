@@ -97,4 +97,14 @@ export class RoutineDetailComponent implements OnInit {
     const session = this.activeSession();
     if (session) this.sessionsStore.markMissed(session.id);
   }
+
+  isBlockCompleted(exerciseBlockId: number): boolean {
+    return this.activeSession()?.isBlockCompleted(exerciseBlockId) ?? false;
+  }
+
+  toggleBlockCompletion(exerciseBlockId: number): void {
+    const session = this.activeSession();
+    if (!session) return;
+    this.sessionsStore.setExerciseCompletion(session.id, exerciseBlockId, !session.isBlockCompleted(exerciseBlockId));
+  }
 }
