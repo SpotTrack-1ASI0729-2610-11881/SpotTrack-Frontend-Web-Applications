@@ -30,7 +30,7 @@
       <!-- Gym overview heading -->
       <div class="section-heading">
         <mat-icon class="section-heading__icon">store</mat-icon>
-        <h2 class="section-heading__title">{{ gymData.name }}</h2>
+        <h2 class="section-heading__title">{{ adminGymStore.primaryGym()?.name ?? '—' }}</h2>
       </div>
 
       <!-- Gym stat cards -->
@@ -40,7 +40,7 @@
             <mat-icon>location_on</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.locations }}</span>
+            <span class="gym-stat-card__value">{{ branchCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.locations' | translate }}</span>
           </div>
         </div>
@@ -50,7 +50,7 @@
             <mat-icon>fitness_center</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.equipmentTotal }}</span>
+            <span class="gym-stat-card__value">{{ equipmentCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.equipment' | translate }}</span>
           </div>
         </div>
@@ -60,7 +60,7 @@
             <mat-icon>sensors</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.iotSensorsOnline }}</span>
+            <span class="gym-stat-card__value">—</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.sensors' | translate }}</span>
           </div>
         </div>
@@ -70,7 +70,7 @@
             <mat-icon>group</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.memberCount }}</span>
+            <span class="gym-stat-card__value">{{ memberCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.members' | translate }}</span>
           </div>
         </div>
@@ -146,7 +146,7 @@
         </div>
         <div class="form-group">
           <label for="admin-gym">{{ 'profile.account.gymName' | translate }}</label>
-          <input type="text" id="admin-gym" [value]="gymData.name" class="form-control">
+          <input type="text" id="admin-gym" [value]="adminGymStore.primaryGym()?.name ?? ''" class="form-control">
         </div>
       </section>
 
