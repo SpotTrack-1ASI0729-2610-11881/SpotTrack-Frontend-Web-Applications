@@ -110,15 +110,6 @@ body {
     }
   }
 
-  .points-info {
-    text-align: right;
-
-    .points-total {
-      font-size: 2rem;
-      font-weight: bold;
-      color: $accent-gold;
-    }
-  }
 }
 
 // Plan Card Specific
@@ -685,8 +676,6 @@ $danger-color: #ef4444;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
-
-    .points-info { text-align: left; }
   }
 
   .admin-identity-card { gap: 1rem; }

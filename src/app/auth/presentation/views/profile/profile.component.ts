@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,6 +6,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { AuthStore } from '../../../application/auth.store';
 import { PasswordStore } from '../../../application/password.store';
+import { ProfileStore } from '../../../application/profile.store';
+import { ActiveGymStore } from '../../../application/active-gym.store';
+import { GymListStore } from '../../../../gym/application/gym-list.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
@@ -16,10 +19,13 @@ import { ContextMenuItem } from '../../../../shared/application/context-menu.ser
   styleUrl: './profile.component.scss',
   imports: [LanguageSwitcher, MatIconModule, TranslateModule, ContextMenuDirective, FormsModule],
 })
-export class ProfileComponent {
-  private authStore = inject(AuthStore);
-  private router    = inject(Router);
-  readonly pwdStore = inject(PasswordStore);
+export class ProfileComponent implements OnInit {
+  private authStore     = inject(AuthStore);
+  private router        = inject(Router);
+  readonly pwdStore      = inject(PasswordStore);
+  readonly profileStore  = inject(ProfileStore);
+  readonly activeGymStore = inject(ActiveGymStore);
+  readonly gymListStore   = inject(GymListStore);
 
   readonly pageMenu: ContextMenuItem[] = [
     { label: 'Logout', icon: 'logout', action: () => this.logout() },
@@ -32,6 +38,28 @@ export class ProfileComponent {
 
   readonly currentUser = this.authStore.currentUser;
   readonly isAdmin     = this.authStore.isAdmin;
+
+  readonly profile        = this.profileStore.profile;
+  readonly profileLoading = this.profileStore.loading;
+
+  readonly activeGymName = computed(() => {
+    const gymId = this.activeGymStore.activeGym()?.gymId;
+    if (!gymId) return null;
+    return this.gymListStore.gyms().find(g => g.gymId === gymId)?.name ?? null;
+  });
+
+  ngOnInit(): void {
+    if (this.isAdmin()) {
+      this.profileStore.loadAdminProfile();
+    } else {
+      this.profileStore.loadClientProfile();
+      this.gymListStore.load();
+      // AuthStore only loads gym associations right after login() — if this page
+      // is reached via a restored session (page refresh, direct navigation) that
+      // never ran, so reload here to make the profile page self-sufficient.
+      this.activeGymStore.loadAssociations();
+    }
+  }
 
   readonly showChangePwd = signal(false);
 

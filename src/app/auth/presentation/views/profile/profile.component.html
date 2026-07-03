@@ -17,8 +17,8 @@
           <mat-icon>admin_panel_settings</mat-icon>
         </div>
         <div class="admin-identity-info">
-          <h2 class="admin-name">{{ currentUser()?.name }}</h2>
-          <p class="admin-email">{{ currentUser()?.email }}</p>
+          <h2 class="admin-name">{{ profile()?.fullName }}</h2>
+          <p class="admin-email">{{ profile()?.email }}</p>
           <span class="role-badge role-badge--admin">{{ 'profile.admin.roleBadge' | translate }}</span>
         </div>
         <div class="admin-since">
@@ -226,14 +226,13 @@
             </svg>
           </div>
           <div class="user-details">
-            <h2>{{ currentUser()?.name }}</h2>
-            <p class="text-muted">{{ currentUser()?.email }}</p>
+            <h2>{{ profile()?.fullName }}</h2>
+            <p class="text-muted">{{ profile()?.email }}</p>
+            @if (activeGymName()) {
+              <p class="text-muted">{{ 'profile.client.gym' | translate }}: {{ activeGymName() }}</p>
+            }
             <span class="badge badge-outline">{{ 'profile.client.roleBadge' | translate }}</span>
           </div>
-        </div>
-        <div class="points-info">
-          <p class="text-muted">{{ 'profile.client.points' | translate }}</p>
-          <span class="points-total">245</span>
         </div>
       </section>
 

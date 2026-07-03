@@ -899,7 +899,7 @@
     "client": {
       "title": "Mi Perfil",
       "roleBadge": "Cliente",
-      "points": "Puntos Acumulados",
+      "gym": "Gimnasio",
       "plan": {
         "name": "Plan Basic",
         "price": "$69/mes",
