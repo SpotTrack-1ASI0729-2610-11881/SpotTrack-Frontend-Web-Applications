@@ -7,7 +7,7 @@ import { membershipRoutes } from './membership/membership.routes';
 import { alertsRoutes } from './alerts/alerts.routes';
 import { routinesRoutes } from './routines/routines.routes';
 import { reservationRoutes } from './reservation/reservation.routes';
-import { authGuard, adminGuard, clientGuard } from './auth/guards/auth.guard';
+import { authGuard, adminGuard, clientGuard, hasGymGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -62,40 +62,54 @@ export const routes: Routes = [
         path: '',
         canMatch: [adminGuard],
         children: [
-          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          // Accessible to admins without a gym — must stay outside hasGymGuard.
           {
-            path: 'dashboard',
+            path: 'gym/create',
             loadComponent: () =>
-              import('./dashboard/presentation/views/dashboard').then(m => m.DashboardComponent),
+              import('./gym/presentation/views/gym-create/gym-create').then(m => m.GymCreateComponent),
           },
-          ...equipmentRoutes,
+
+          // All other admin routes require at least one gym.
           {
-            path: 'gym/whitelist',
-            loadComponent: () =>
-              import('./gym/presentation/views/gym-whitelist/gym-whitelist').then(m => m.GymWhitelistComponent),
-          },
-          {
-            path: 'iot',
-            loadComponent: () =>
-              import('./iot/presentation/views/iot-monitoring').then(m => m.IotMonitoringComponent),
-          },
-          {
-            path: 'maintenance',
-            loadComponent: () =>
-              import('./maintenance/presentation/views/maintenance').then(m => m.MaintenanceComponent),
-          },
-          {
-            path: 'maintenance/new-ticket',
-            loadComponent: () =>
-              import('./maintenance/presentation/views/new-ticket/new-ticket').then(m => m.NewTicketComponent),
-          },
-          ...analyticsRoutes,
-          ...monitoringRoutes,
-          ...membershipRoutes,
-          {
-            path: 'configuration',
-            loadComponent: () =>
-              import('./configuration/presentation/views/configuration').then(m => m.ConfigurationComponent),
+            path: '',
+            canActivate: [hasGymGuard],
+            children: [
+              { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+              {
+                path: 'dashboard',
+                loadComponent: () =>
+                  import('./dashboard/presentation/views/dashboard').then(m => m.DashboardComponent),
+              },
+              ...equipmentRoutes,
+              {
+                path: 'gym/whitelist',
+                loadComponent: () =>
+                  import('./gym/presentation/views/gym-whitelist/gym-whitelist').then(m => m.GymWhitelistComponent),
+              },
+              {
+                path: 'iot',
+                loadComponent: () =>
+                  import('./iot/presentation/views/iot-monitoring').then(m => m.IotMonitoringComponent),
+              },
+              {
+                path: 'maintenance',
+                loadComponent: () =>
+                  import('./maintenance/presentation/views/maintenance').then(m => m.MaintenanceComponent),
+              },
+              {
+                path: 'maintenance/new-ticket',
+                loadComponent: () =>
+                  import('./maintenance/presentation/views/new-ticket/new-ticket').then(m => m.NewTicketComponent),
+              },
+              ...analyticsRoutes,
+              ...monitoringRoutes,
+              ...membershipRoutes,
+              {
+                path: 'configuration',
+                loadComponent: () =>
+                  import('./configuration/presentation/views/configuration').then(m => m.ConfigurationComponent),
+              },
+            ],
           },
         ],
       },
