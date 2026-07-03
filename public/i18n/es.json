@@ -1044,9 +1044,9 @@
     "error": {
       "loadFailed": "No se pudo cargar la lista de sedes. Inténtalo de nuevo.",
       "createFailed": "No se pudo crear la sede. Inténtalo de nuevo.",
-      "limitReached": "Alcanzaste el límite de sedes de tu plan actual. Mejora tu plan para agregar más.",
-      "noActiveMembership": "No tienes una membresía activa. Regulariza tu situación para gestionar sedes.",
-      "upgradePlanLink": "Ir a Membresía →",
+      "limitReached": "¿Necesitas más sedes? Alcanzaste el límite de tu plan actual.",
+      "noActiveMembership": "Sin membresía activa. Regulariza tu cuenta para gestionar sedes.",
+      "upgradePlanLink": "Mejorar plan →",
       "manageMembershipLink": "Gestionar membresía →"
     }
   },
