@@ -37,6 +37,11 @@ export const routes: Routes = [
       import('./auth/presentation/views/payment-result/payment-cancel').then(m => m.PaymentCancelComponent),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./auth/presentation/views/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),
+  },
+  {
     path: '',
     component: Layout,
     canActivate: [authGuard],
