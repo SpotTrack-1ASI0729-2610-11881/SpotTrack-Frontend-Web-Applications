@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  EquipmentUsageStatResource,
+  ActivityReportResource,
   EquipmentResource,
   MaintenanceTicketResource,
   MaintenanceLogResource,
-  SparePartResource,
+  MaintenanceQuoteResource,
 } from './financial-impact-response';
 
 /**
@@ -14,33 +14,29 @@ import {
  * FinancialImpactApi so the facade only deals with entity mapping.
  */
 export class FinancialImpactApiEndpoint {
-  private readonly equipUrl: string;
+  private readonly base: string;
 
   constructor(private readonly http: HttpClient) {
-    this.equipUrl = `${environment.apiBase}/equipments`;
+    this.base = environment.apiBase;
   }
 
-  getUsageStats(): Observable<EquipmentUsageStatResource[]> {
-    // Not yet exposed by the real backend — see analytics-response.ts.
-    return of([]);
+  getActivityReports(): Observable<ActivityReportResource[]> {
+    return this.http.get<ActivityReportResource[]>(`${this.base}/activity-reports`);
   }
 
   getEquipments(): Observable<EquipmentResource[]> {
-    return this.http.get<EquipmentResource[]>(this.equipUrl);
+    return this.http.get<EquipmentResource[]>(`${this.base}/equipments`);
   }
 
   getMaintenanceTickets(): Observable<MaintenanceTicketResource[]> {
-    // Not yet exposed by the real backend.
-    return of([]);
+    return this.http.get<MaintenanceTicketResource[]>(`${this.base}/maintenance/tickets`);
   }
 
   getMaintenanceLogs(): Observable<MaintenanceLogResource[]> {
-    // Not yet exposed by the real backend.
-    return of([]);
+    return this.http.get<MaintenanceLogResource[]>(`${this.base}/maintenance/logs`);
   }
 
-  getSpareParts(): Observable<SparePartResource[]> {
-    // Not yet exposed by the real backend.
-    return of([]);
+  getMaintenanceQuotes(): Observable<MaintenanceQuoteResource[]> {
+    return this.http.get<MaintenanceQuoteResource[]>(`${this.base}/maintenance-quotes`);
   }
 }

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { EquipmentUsageStatResource, EquipmentResource } from './analytics-response';
+import { ActivityReportResource, EquipmentResource } from './analytics-response';
 
 /**
  * Raw HTTP access for the analytics bounded context. Kept separate from
@@ -14,9 +14,8 @@ export class AnalyticsApiEndpoint {
     this.base = environment.apiBase;
   }
 
-  getUsageStats(): Observable<EquipmentUsageStatResource[]> {
-    // Not yet exposed by the real backend — see analytics-response.ts.
-    return of([]);
+  getActivityReports(): Observable<ActivityReportResource[]> {
+    return this.http.get<ActivityReportResource[]>(`${this.base}/activity-reports`);
   }
 
   getEquipments(): Observable<EquipmentResource[]> {
@@ -24,7 +23,7 @@ export class AnalyticsApiEndpoint {
   }
 
   requestActivityAnalysis(body: {
-    minutesActive: number; minutesInactive: number;
+    equipmentId: string; minutesActive: number; minutesInactive: number;
     downtimeReason: string; percentageChange: number;
   }): Observable<any> {
     return this.http.post(`${this.base}/activity-reports`, body);

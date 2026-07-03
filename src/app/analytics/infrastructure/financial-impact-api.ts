@@ -5,13 +5,13 @@ import { map } from 'rxjs/operators';
 import { FinancialStat } from '../domain/model/financial-impact.entity';
 import { FinancialImpactApiEndpoint } from './financial-impact-api-endpoint';
 import { FinancialImpactAssembler } from './financial-impact-assembler';
-import { MaintenanceTicketResource, MaintenanceLogResource, SparePartResource } from './financial-impact-response';
+import { MaintenanceTicketResource, MaintenanceLogResource, MaintenanceQuoteResource } from './financial-impact-response';
 
 export interface FinancialImpactData {
-  stats:      FinancialStat[];
-  tickets:    MaintenanceTicketResource[];
-  logs:       MaintenanceLogResource[];
-  spareParts: SparePartResource[];
+  stats:   FinancialStat[];
+  tickets: MaintenanceTicketResource[];
+  logs:    MaintenanceLogResource[];
+  quotes:  MaintenanceQuoteResource[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,24 +24,24 @@ export class FinancialImpactApi {
   }
 
   /**
-   * Fetches equipments + usage stats + maintenance data in one round trip.
-   * Equipment/usage-stat resources are joined into FinancialStat entities;
-   * tickets/logs/spare-parts stay raw since there's no domain entity for
-   * them yet.
+   * Fetches equipments + activity reports + maintenance data in one round
+   * trip. Equipment/activity-report resources are joined into FinancialStat
+   * entities; tickets/logs/quotes stay raw since there's no domain entity
+   * for them yet.
    */
   getFinancialImpactData(): Observable<FinancialImpactData> {
     return forkJoin({
       equipments: this.endpoint.getEquipments(),
-      usageStats: this.endpoint.getUsageStats(),
+      reports:    this.endpoint.getActivityReports(),
       tickets:    this.endpoint.getMaintenanceTickets(),
       logs:       this.endpoint.getMaintenanceLogs(),
-      spareParts: this.endpoint.getSpareParts(),
+      quotes:     this.endpoint.getMaintenanceQuotes(),
     }).pipe(
-      map(({ equipments, usageStats, tickets, logs, spareParts }) => ({
-        stats: this.assembler.toEntitiesFromResources(equipments, usageStats),
+      map(({ equipments, reports, tickets, logs, quotes }) => ({
+        stats: this.assembler.toEntitiesFromResources(equipments, reports),
         tickets,
         logs,
-        spareParts,
+        quotes,
       }))
     );
   }

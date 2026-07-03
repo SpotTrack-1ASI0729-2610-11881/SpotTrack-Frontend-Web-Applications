@@ -22,25 +22,25 @@ export class AnalyticsApi {
   }
 
   /**
-   * Fetches usage stats + equipments in a single round trip and joins them
-   * into AnalyticsStat entities. Equipments are also returned raw since
+   * Fetches activity reports + equipments in a single round trip and joins
+   * them into AnalyticsStat entities. Equipments are also returned raw since
    * AnalyticsStore's machine-type breakdown reads the full equipment list
-   * independently of usage stats.
+   * independently of activity reports.
    */
   getAnalyticsData(): Observable<AnalyticsData> {
     return forkJoin({
-      stats:      this.endpoint.getUsageStats(),
+      reports:    this.endpoint.getActivityReports(),
       equipments: this.endpoint.getEquipments(),
     }).pipe(
-      map(({ stats, equipments }) => ({
-        stats: this.assembler.toEntitiesFromResources(stats, equipments),
+      map(({ reports, equipments }) => ({
+        stats: this.assembler.toEntitiesFromResources(reports, equipments),
         equipments,
       }))
     );
   }
 
   requestActivityAnalysis(body: {
-    minutesActive: number; minutesInactive: number;
+    equipmentId: string; minutesActive: number; minutesInactive: number;
     downtimeReason: string; percentageChange: number;
   }): Observable<any> {
     return this.endpoint.requestActivityAnalysis(body);
