@@ -15,7 +15,7 @@ export class AnalyticsApiEndpoint {
   }
 
   getActivityReports(): Observable<ActivityReportResource[]> {
-    return this.http.get<ActivityReportResource[]>(`${this.base}/activity-reports`);
+    return this.http.get<ActivityReportResource[]>(`${this.base}/activity-reports/me`);
   }
 
   getEquipments(): Observable<EquipmentResource[]> {
