@@ -80,17 +80,21 @@ export class AnalyticsStore {
 
     const baseHours     = stats.reduce((s, r) => s + r.totalUsageHours, 0);
     const totalHours    = Math.round(baseHours * multiplier);
-    const avgWear       = stats.reduce((s, r) => s + r.estimatedWearLevel, 0) / stats.length;
-    const occupancy     = Math.round((1 - avgWear) * 100);
-    const inactiveCount = stats.filter(r => r.estimatedWearLevel >= 0.7).length;
+    // Downtime cost is a real backend-computed $ figure — used here as a
+    // proxy for "points of occupancy lost", since there's no wear-level
+    // concept on ActivityReport.
+    const avgDowntimeCost = stats.reduce((s, r) => s + r.downtimeCost, 0) / stats.length;
+    const occupancy     = Math.max(0, Math.min(100, Math.round(100 - avgDowntimeCost)));
+    const inactiveCount = stats.filter(r => r.downtimeCost >= 30).length;
     const inactive      = Math.round(inactiveCount * 24 * multiplier);
     const peakStat      = stats.reduce((a, b) =>
-      a.usageCountDaily > b.usageCountDaily ? a : b, stats[0]);
-    const peak = Math.min(100, Math.round((peakStat.usageCountDaily / 10) * 100));
+      a.totalUsageHours > b.totalUsageHours ? a : b, stats[0]);
+    const peak = Math.min(100, Math.round((peakStat.totalUsageHours / 10) * 100));
+    const hoursChange = Math.round(stats.reduce((s, r) => s + r.percentageComparison, 0) / stats.length);
 
     return {
       totalHours,
-      hoursChange:     12,
+      hoursChange,
       occupancy,
       occupancyChange:  5,
       peak,
@@ -100,18 +104,18 @@ export class AnalyticsStore {
     };
   });
 
-  // ── Bar chart: weekly usage (derived from daily counts × 7 days) ──────────
+  // ── Bar chart: weekly usage (derived from total hours × 7 days) ───────────
   readonly weeklyData = computed<WeekDay[]>(() => {
     const stats = this._filteredStats();
     if (!stats.length) return [];
 
-    const totalDaily = stats.reduce((s, r) => s + r.usageCountDaily, 0);
+    const totalHours = stats.reduce((s, r) => s + r.totalUsageHours, 0);
     const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const weights = [0.85, 1.00, 0.90, 1.10, 1.25, 1.15, 0.70];
     const wSum    = weights.reduce((a, b) => a + b, 0);
 
     return days.map((day, i) => {
-      const usage     = Math.round((weights[i] / wSum) * totalDaily * 7);
+      const usage     = Math.round((weights[i] / wSum) * totalHours * 7);
       const prevUsage = Math.round(usage * 0.88);
       return { day, usage, prevUsage };
     });
@@ -128,8 +132,8 @@ export class AnalyticsStore {
     const stats = this._filteredStats();
     if (!stats.length) return [];
 
-    const totalDaily = stats.reduce((s, r) => s + r.usageCountDaily, 0);
-    const scale      = Math.min(totalDaily / 30, 1);
+    const totalHours = stats.reduce((s, r) => s + r.totalUsageHours, 0);
+    const scale      = Math.min(totalHours / 30, 1);
 
     const base: HourlyPoint[] = [
       { hour: '06:00', occupancy: Math.round(30  * scale) },
