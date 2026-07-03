@@ -2,8 +2,8 @@
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Planes de Membresía</h1>
-      <p class="page-subtitle">Administra los planes y accesos a sedes</p>
+      <h1 class="page-title">{{ 'membership.page.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'membership.page.subtitle' | translate }}</p>
     </div>
   </div>
 
@@ -11,7 +11,7 @@
   @if (membershipLoading()) {
     <div class="loading-state">
       <mat-icon class="spin">refresh</mat-icon>
-      <p>Cargando membresía…</p>
+      <p>{{ 'membership.page.loading' | translate }}</p>
     </div>
   }
 
@@ -62,6 +62,14 @@
               {{ 'membership.lifecycle.resubscribeBtn' | translate }}
             </button>
           </div>
+          <!-- Features preview for selected resubscribe tier -->
+          @if (resubscribeTierTarget()) {
+            <ul class="plan-features-preview">
+              @for (f of featuresFor(resubscribeTierTarget()); track f) {
+                <li><mat-icon class="check-icon">check_circle</mat-icon>{{ ('auth.plans.feature.' + f) | translate }}</li>
+              }
+            </ul>
+          }
         </div>
       }
 
@@ -85,6 +93,13 @@
               {{ store.myMembership()!.priceCurrency }} {{ store.myMembership()!.priceAmount }}/mo
             </span>
           </div>
+
+          <!-- Features of current active tier -->
+          <ul class="plan-features-preview">
+            @for (f of featuresFor(store.myMembership()!.membershipTier); track f) {
+              <li><mat-icon class="check-icon">check_circle</mat-icon>{{ ('auth.plans.feature.' + f) | translate }}</li>
+            }
+          </ul>
 
           <!-- Cancel-at-period-end notice + undo -->
           @if (store.myMembership()!.cancelAtPeriodEnd) {
@@ -122,6 +137,14 @@
                     <mat-icon>arrow_upward</mat-icon>
                     {{ 'membership.lifecycle.upgradeBtn' | translate }}
                   </button>
+                  <!-- Features preview for selected upgrade tier -->
+                  @if (upgradeTierTarget()) {
+                    <ul class="plan-features-preview">
+                      @for (f of featuresFor(upgradeTierTarget()); track f) {
+                        <li><mat-icon class="check-icon">check_circle</mat-icon>{{ ('auth.plans.feature.' + f) | translate }}</li>
+                      }
+                    </ul>
+                  }
                 </div>
               }
 
@@ -137,6 +160,14 @@
                     <mat-icon>arrow_downward</mat-icon>
                     {{ 'membership.lifecycle.downgradeBtn' | translate }}
                   </button>
+                  <!-- Features preview for selected downgrade tier -->
+                  @if (downgradeTierTarget()) {
+                    <ul class="plan-features-preview">
+                      @for (f of featuresFor(downgradeTierTarget()); track f) {
+                        <li><mat-icon class="check-icon">check_circle</mat-icon>{{ ('auth.plans.feature.' + f) | translate }}</li>
+                      }
+                    </ul>
+                  }
                 </div>
               }
 
