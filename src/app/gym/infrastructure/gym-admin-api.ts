@@ -11,4 +11,8 @@ export class GymAdminApi {
   getMyGyms(): Observable<GymSummaryResource[]> {
     return this.http.get<GymSummaryResource[]>(`${environment.apiBase}/gyms/me`);
   }
+
+  createGym(gymName: string): Observable<GymSummaryResource> {
+    return this.http.post<GymSummaryResource>(`${environment.apiBase}/gyms`, { gymName });
+  }
 }
