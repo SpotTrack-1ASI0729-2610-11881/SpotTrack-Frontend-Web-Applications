@@ -581,11 +581,13 @@
         "name": "Equipment name",
         "brand": "Brand / Manufacturer",
         "model": "Model",
-        "zoneId": "Zone ID",
+        "zoneId": "Zone",
         "purchaseCurrency": "Currency",
         "purchaseAmount": "Purchase amount",
         "status": "Status"
       },
+      "zonesLoading": "Loading zones…",
+      "noZones": "No zones available. Create zones in Branch Management first.",
       "validation": {
         "required": "This field is required",
         "min": "Value must be 0 or greater"
@@ -1070,6 +1072,19 @@
       "noActiveMembership": "No active membership. Regularize your account to manage branches.",
       "upgradePlanLink": "Upgrade plan →",
       "manageMembershipLink": "Manage membership →"
+    },
+    "zones": {
+      "manageBtn": "Manage Zones",
+      "addTitle": "Add zone",
+      "namePlaceholder": "Zone name",
+      "occupancyPlaceholder": "Max occupancy",
+      "addBtn": "Add zone",
+      "count": "{{ count }} zone(s)",
+      "empty": "No zones in this branch yet.",
+      "occupancy": "Max: {{ max }} people",
+      "error": {
+        "createFailed": "Could not create the zone. Please try again."
+      }
     }
   },
   "whitelist": {
