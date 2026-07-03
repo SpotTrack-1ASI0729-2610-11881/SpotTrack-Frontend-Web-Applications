@@ -97,6 +97,11 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'map', pathMatch: 'full' },
           {
+            path: 'gym/associate',
+            loadComponent: () =>
+              import('./auth/presentation/views/gym-associate/gym-associate').then(m => m.GymAssociateComponent),
+          },
+          {
             path: 'client',
             loadComponent: () =>
               import('./auth/presentation/views/client-home/client-home.component').then(

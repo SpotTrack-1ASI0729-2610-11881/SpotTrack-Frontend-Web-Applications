@@ -935,6 +935,14 @@
     }
   },
   "gym": {
+    "associate": {
+      "title": "Elige tu gimnasio",
+      "subtitle": "Selecciona un gimnasio para comenzar",
+      "joinBtn": "Unirse",
+      "alreadyJoined": "Unido",
+      "noGyms": "No hay gimnasios disponibles en este momento.",
+      "loadError": "No se pudo cargar la lista de gimnasios. Inténtalo de nuevo."
+    },
     "error": {
       "loadFailed": "No se pudieron cargar tus asociaciones de gimnasio. Inténtalo de nuevo.",
       "switchFailed": "No se pudo cambiar el gimnasio activo. Inténtalo de nuevo.",
