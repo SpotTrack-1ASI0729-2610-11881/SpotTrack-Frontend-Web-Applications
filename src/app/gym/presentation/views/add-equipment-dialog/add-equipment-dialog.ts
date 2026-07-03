@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,6 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Equipment, EquipmentStatus } from '../../../domain/model/equipment.entity';
 import { EquipmentStore } from '../../../application/equipment.store';
+import { AdminGymStore } from '../../../application/admin-gym.store';
+import { BranchStore } from '../../../application/branch.store';
+import { ZoneStore } from '../../../application/zone.store';
 import { EquipmentRow } from '../equipment-management/equipment-management';
 
 export const CURRENCIES = ['USD', 'EUR', 'PEN', 'MXN', 'COP', 'GBP', 'BRL'] as const;
@@ -31,10 +34,13 @@ export const CURRENCIES = ['USD', 'EUR', 'PEN', 'MXN', 'COP', 'GBP', 'BRL'] as c
   styleUrl: './add-equipment-dialog.scss',
 })
 export class AddEquipmentDialogComponent {
-  private fb     = inject(FormBuilder);
-  private router = inject(Router);
-  private route  = inject(ActivatedRoute);
-  private store  = inject(EquipmentStore);
+  private fb            = inject(FormBuilder);
+  private router        = inject(Router);
+  private route         = inject(ActivatedRoute);
+  private store         = inject(EquipmentStore);
+  readonly adminGymStore = inject(AdminGymStore);
+  readonly branchStore   = inject(BranchStore);
+  readonly zoneStore     = inject(ZoneStore);
 
   readonly equipmentStatuses = Object.values(EquipmentStatus);
   readonly currencies        = CURRENCIES;
@@ -51,6 +57,29 @@ export class AddEquipmentDialogComponent {
     purchaseCurrency: [{ value: this.existing?.purchaseCurrency ?? 'USD', disabled: this.isEditMode }, Validators.required],
     status:           [this.existing?.status ?? EquipmentStatus.AVAILABLE, Validators.required],
   });
+
+  readonly groupedZones = computed(() => {
+    const zones    = this.zoneStore.zones();
+    const branches = this.branchStore.branches();
+    return branches
+      .map(branch => ({
+        branch,
+        zones: zones.filter(z => z.branchId === branch.branchId),
+      }))
+      .filter(g => g.zones.length > 0);
+  });
+
+  constructor() {
+    this.adminGymStore.load();
+
+    effect(() => {
+      const gymId = this.adminGymStore.primaryGym()?.gymId;
+      if (gymId) {
+        this.zoneStore.load(gymId);
+        this.branchStore.load(gymId);
+      }
+    });
+  }
 
   submit(): void {
     if (this.form.invalid) return;
