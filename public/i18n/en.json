@@ -935,6 +935,14 @@
     }
   },
   "gym": {
+    "associate": {
+      "title": "Choose your gym",
+      "subtitle": "Select a gym to get started",
+      "joinBtn": "Join",
+      "alreadyJoined": "Joined",
+      "noGyms": "No gyms available at the moment.",
+      "loadError": "Could not load the gym list. Please try again."
+    },
     "error": {
       "loadFailed": "Could not load your gym associations. Please try again.",
       "switchFailed": "Could not switch the active gym. Please try again.",
