@@ -4,7 +4,7 @@ import { FinancialImpactApi } from '../infrastructure/financial-impact-api';
 import {
   MaintenanceTicketResource,
   MaintenanceLogResource,
-  SparePartResource,
+  MaintenanceQuoteResource,
 } from '../infrastructure/financial-impact-response';
 import { FinancialStat } from '../domain/model/financial-impact.entity';
 
@@ -23,23 +23,30 @@ export class FinancialImpactStore {
   private readonly api        = inject(FinancialImpactApi);
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly _financialStats = signal<FinancialStat[]>([]);
-  private readonly _tickets        = signal<MaintenanceTicketResource[]>([]);
-  private readonly _logs           = signal<MaintenanceLogResource[]>([]);
-  private readonly _spareParts     = signal<SparePartResource[]>([]);
-  private readonly _loading        = signal(false);
-  private readonly _error          = signal<string | null>(null);
+  private readonly _financialStats     = signal<FinancialStat[]>([]);
+  private readonly _tickets            = signal<MaintenanceTicketResource[]>([]);
+  private readonly _logs               = signal<MaintenanceLogResource[]>([]);
+  private readonly _maintenanceQuotes  = signal<MaintenanceQuoteResource[]>([]);
+  private readonly _loading            = signal(false);
+  private readonly _error              = signal<string | null>(null);
 
   readonly loading = this._loading.asReadonly();
   readonly error   = this._error.asReadonly();
 
+  /**
+   * downtimeCost is a real backend-computed $ figure on ActivityReport, so
+   * "total" comes straight from it rather than being reconstructed from a
+   * synthetic hours x rate calculation. hours/ratePerHour are still shown
+   * for the table's informational columns.
+   */
   readonly inactivityLoss = computed<InactivityRow[]>(() => {
     return this._financialStats()
       .filter(s => s.status === 'MAINTENANCE')
       .map(s => {
-        const hours       = Math.max(24, Math.round(72 - s.usageCountDaily * 8));
-        const ratePerHour = Math.max(5, Math.round(s.purchasePrice / 500));
-        return { machine: s.equipmentName, hours, ratePerHour, total: hours * ratePerHour };
+        const hours       = Math.max(1, Math.round(s.totalUsageHours));
+        const total        = s.downtimeCost;
+        const ratePerHour  = Math.round(total / hours);
+        return { machine: s.equipmentName, hours, ratePerHour, total };
       });
   });
 
@@ -47,19 +54,25 @@ export class FinancialImpactStore {
     this.inactivityLoss().reduce((sum, row) => sum + row.total, 0)
   );
 
+  /**
+   * Corrective/preventive costs come from completed MaintenanceLog entries
+   * (per-ticket, maintenance bounded context). Inventory cost comes from
+   * MaintenanceQuote.sparePartsCost (analytics bounded context) — spare
+   * parts are a cost line item on a quote, not a separate inventory concept.
+   */
   readonly maintenanceTypes = computed<MaintenanceTypeRow[]>(() => {
     const tickets = this._tickets();
     const logs    = this._logs();
-    const parts   = this._spareParts();
+    const quotes  = this._maintenanceQuotes();
 
-    if (!tickets.length && !parts.length) return [];
+    if (!tickets.length && !quotes.length) return [];
 
-    const costOf = (ticketId: number) =>
-      logs.filter(l => l.ticket_id === ticketId).reduce((s, l) => s + l.cost, 0);
+    const costOf = (ticketId: string) =>
+      logs.filter(l => l.ticketId === ticketId).reduce((s, l) => s + l.cost, 0);
 
     const corrective = tickets.filter(t => t.type === 'CORRECTIVE').reduce((s, t) => s + costOf(t.id), 0);
     const preventive = tickets.filter(t => t.type === 'PREVENTIVE').reduce((s, t) => s + costOf(t.id), 0);
-    const inventory  = parts.reduce((s, p) => s + p.stock_quantity * p.unit_cost, 0);
+    const inventory  = quotes.reduce((s, q) => s + q.sparePartsCost, 0);
 
     const total = corrective + preventive + inventory || 1;
     return [
@@ -95,11 +108,11 @@ export class FinancialImpactStore {
     this.api.getFinancialImpactData()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ({ stats, tickets, logs, spareParts }) => {
+        next: ({ stats, tickets, logs, quotes }) => {
           this._financialStats.set(stats);
           this._tickets.set(tickets);
           this._logs.set(logs);
-          this._spareParts.set(spareParts);
+          this._maintenanceQuotes.set(quotes);
           this._loading.set(false);
         },
         error: (err: unknown) => {

@@ -1,35 +1,35 @@
 import { FinancialStat } from '../domain/model/financial-impact.entity';
-import { EquipmentResource, EquipmentUsageStatResource } from './financial-impact-response';
+import { EquipmentResource, ActivityReportResource } from './financial-impact-response';
 
 /**
- * FinancialStat joins equipments with their (optional) usage stat, so it
+ * FinancialStat joins equipments with their (optional) activity report, so it
  * can't implement the single-resource BaseAssembler contract used elsewhere.
  * Unlike AnalyticsAssembler, every equipment is kept even without a matching
- * usage stat — FinancialImpactStore needs all equipment to compute
- * maintenance-related losses, not just the ones with recorded usage.
+ * report — FinancialImpactStore needs all equipment to compute
+ * maintenance-related losses, not just the ones with a report.
  */
 export class FinancialImpactAssembler {
   toEntitiesFromResources(
     equipments: EquipmentResource[],
-    usageStats: EquipmentUsageStatResource[]
+    reports: ActivityReportResource[]
   ): FinancialStat[] {
-    return equipments.map(equipment => this.toEntityFromResources(equipment, usageStats));
+    return equipments.map(equipment => this.toEntityFromResources(equipment, reports));
   }
 
   private toEntityFromResources(
     equipment: EquipmentResource,
-    usageStats: EquipmentUsageStatResource[]
+    reports: ActivityReportResource[]
   ): FinancialStat {
-    const stat = usageStats.find(s => s.equipment_id === equipment.id);
+    const report = reports.find(r => r.equipmentId === equipment.equipmentId);
 
     return new FinancialStat({
-      id:              equipment.id,
-      equipmentId:     equipment.id,
+      id:              equipment.equipmentId,
+      equipmentId:     equipment.equipmentId,
       equipmentName:   equipment.equipmentName,
       status:          equipment.status,
       purchasePrice:   equipment.purchaseAmount,
-      usageCountDaily: stat?.usage_count_daily ?? 0,
-      totalUsageHours: stat?.total_usage_hours ?? 0,
+      totalUsageHours: (report?.totalUsageTime ?? 0) / 60,
+      downtimeCost:    report?.downtimeCost ?? 0,
     });
   }
 }
