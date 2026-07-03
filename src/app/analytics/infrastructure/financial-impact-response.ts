@@ -35,6 +35,7 @@ export type MaintenanceLogResponse = MaintenanceLogResource[];
 export interface MaintenanceQuoteResource {
   id:                     number;
   maintenanceQuoteId:     number;
+  equipmentId:            string | null;
   correctiveActionsCost:  number;
   sparePartsCost:         number;
   preventiveCost:         number;
