@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { MembershipStore } from '../../../application/membership.store';
-import { PLAN_FEATURES } from '../../../../../shared/application/plan-features.data';
+import { PLAN_FEATURES } from '../../../../shared/application/plan-features.data';
 
 @Component({
   selector: 'app-membership-list',
