@@ -32,6 +32,10 @@ export class MembershipApi {
     return this.http.patch<AdminMembershipResource>(`${this.base}/${membershipId}/cancel`, {});
   }
 
+  undoCancel(membershipId: string): Observable<AdminMembershipResource> {
+    return this.http.patch<AdminMembershipResource>(`${this.base}/${membershipId}/undo-cancel`, {});
+  }
+
   payDebt(membershipId: string): Observable<{ checkoutUrl: string }> {
     return this.http.post<{ checkoutUrl: string }>(`${this.base}/${membershipId}/pay-debt`, {});
   }

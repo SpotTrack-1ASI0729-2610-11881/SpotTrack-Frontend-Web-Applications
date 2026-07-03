@@ -40,7 +40,19 @@ export class MembershipStore {
 
     this.api.cancel(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next:  updated => { this._myMembership.set(updated); this._lifecycleLoading.set(false); },
-      error: ()      => { this._lifecycleError.set('membership.lifecycle.error.cancelFailed');   this._lifecycleLoading.set(false); },
+      error: ()      => { this._lifecycleError.set('membership.lifecycle.error.cancelFailed'); this._lifecycleLoading.set(false); },
+    });
+  }
+
+  undoCancel(): void {
+    const id = this._myMembership()?.membershipId;
+    if (!id) return;
+    this._lifecycleLoading.set(true);
+    this._lifecycleError.set(null);
+
+    this.api.undoCancel(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next:  updated => { this._myMembership.set(updated); this._lifecycleLoading.set(false); },
+      error: ()      => { this._lifecycleError.set('membership.lifecycle.error.undoCancelFailed'); this._lifecycleLoading.set(false); },
     });
   }
 

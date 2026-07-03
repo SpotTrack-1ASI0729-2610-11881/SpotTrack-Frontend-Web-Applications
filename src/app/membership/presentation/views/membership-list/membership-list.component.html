@@ -86,12 +86,16 @@
             </span>
           </div>
 
-          <!-- Cancel-at-period-end notice -->
+          <!-- Cancel-at-period-end notice + undo -->
           @if (store.myMembership()!.cancelAtPeriodEnd) {
             <div class="lc-notice lc-notice--cancel">
               <mat-icon>event_busy</mat-icon>
               {{ 'membership.lifecycle.cancelAtPeriodEndNotice' | translate: { date: store.myMembership()!.endDate } }}
             </div>
+            <button class="btn-lc btn-lc--undo-cancel" [disabled]="lifecycleLoading()" (click)="undoCancel()">
+              <mat-icon>undo</mat-icon>
+              {{ 'membership.lifecycle.undoCancelBtn' | translate }}
+            </button>
           }
 
           <!-- Pending downgrade notice -->

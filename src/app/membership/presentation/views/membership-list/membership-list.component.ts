@@ -60,6 +60,8 @@ export class MembershipListComponent implements OnInit {
     }
   }
 
+  undoCancel(): void { this.store.undoCancel(); }
+
   payDebt(): void    { this.store.payDebt(); }
   upgradePlan(): void  { if (this.upgradeTierTarget())   this.store.upgradePlan(this.upgradeTierTarget()); }
   downgradePlan(): void { if (this.downgradeTierTarget()) this.store.downgradePlan(this.downgradeTierTarget()); }
