@@ -157,9 +157,9 @@
   cursor: pointer;
   white-space: nowrap;
   transition: opacity 0.15s;
-  mat-icon { font-size: 15px; width: 15px; height: 15px; }
   &:disabled { opacity: 0.45; cursor: not-allowed; }
   &:hover:not(:disabled) { opacity: 0.85; }
+  mat-icon { font-size: 15px; width: 15px; height: 15px; }
 }
 
 .btn-lc--pay         { background: #f59e0b; color: #000; }
@@ -290,6 +290,6 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  mat-icon { font-size: 16px; width: 16px; height: 16px; }
   &:hover { background: rgba(245, 188, 54, 0.2); }
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
 }
