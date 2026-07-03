@@ -193,10 +193,27 @@
       "inUse": "Ocupado ({{count}})",
       "reserved": "Reservado ({{count}})"
     },
-    "gyms": {
-      "gym1": "Gimnasio Centro",
-      "gym2": "Gimnasio Norte",
-      "gym3": "Gimnasio Sur"
+    "view": {
+      "map": "Mapa",
+      "heat": "Calor",
+      "allBranches": "Sedes"
+    },
+    "branches": {
+      "allBranches": "Todas las Sedes",
+      "networkOverview": "Vista General",
+      "clickToView": "Haz clic en una sede para ver su mapa",
+      "loading": "Cargando sedes…",
+      "noBranches": "No hay sedes configuradas aún",
+      "noZones": "Sin zonas configuradas para esta sede"
+    },
+    "zone": {
+      "unzoned": "Sin zona"
+    },
+    "stats": {
+      "free": "Libre",
+      "inUse": "En uso",
+      "reserved": "Reservado",
+      "util": "Util"
     },
     "detail": {
       "statusLabel": "Estado",
