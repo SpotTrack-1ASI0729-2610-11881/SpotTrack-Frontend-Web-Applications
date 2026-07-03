@@ -1032,6 +1032,24 @@
       }
     }
   },
+  "branches": {
+    "title": "Branch Management",
+    "subtitle": "Manage your gym's branches",
+    "addTitle": "Add new branch",
+    "namePlaceholder": "Branch name",
+    "addressPlaceholder": "Address",
+    "addBtn": "Add",
+    "count": "{{ count }} branch(es)",
+    "empty": "No branches registered yet.",
+    "error": {
+      "loadFailed": "Could not load the branch list. Please try again.",
+      "createFailed": "Could not create the branch. Please try again.",
+      "limitReached": "You have reached the branch limit for your current plan. Upgrade your plan to add more.",
+      "noActiveMembership": "You don't have an active membership. Please regularize your status to manage branches.",
+      "upgradePlanLink": "Go to Membership →",
+      "manageMembershipLink": "Manage membership →"
+    }
+  },
   "whitelist": {
     "title": "Whitelist Management",
     "subtitle": "Manage which clients can access your gym by DNI",
