@@ -83,30 +83,55 @@
             <div class="admin-plan-card__icon">
               <mat-icon>workspace_premium</mat-icon>
             </div>
-            <div>
-              <h3 class="admin-plan-card__name">Plan {{ gymData.plan }}</h3>
-              <p class="text-muted">{{ gymData.planPrice }}</p>
-            </div>
+            @if (membershipStore.membershipLoading()) {
+              <div class="plan-loading">
+                <div class="plan-loading__line plan-loading__line--wide"></div>
+                <div class="plan-loading__line plan-loading__line--short"></div>
+              </div>
+            } @else if (membershipStore.myMembership(); as m) {
+              <div>
+                <h3 class="admin-plan-card__name">{{ m.membershipTier }}</h3>
+                <p class="text-muted">{{ m.priceCurrency }} {{ m.priceAmount }}/mes</p>
+              </div>
+            }
           </div>
-          <span class="plan-badge">{{ 'profile.admin.plan.active' | translate }}</span>
-        </div>
-
-        <ul class="admin-plan-features">
-          @for (feature of gymData.planFeatures; track feature) {
-            <li class="admin-plan-features__item">
-              <mat-icon class="admin-plan-features__check">check_circle</mat-icon>
-              {{ feature }}
-            </li>
+          @if (membershipStore.myMembership(); as m) {
+            <span class="plan-badge"
+                  [class.plan-badge--suspended]="m.status === 'SUSPENDED'"
+                  [class.plan-badge--cancelled]="m.status === 'CANCELLED' || m.status === 'EXPIRED'">
+              {{ 'membership.lifecycle.status.' + m.status | translate }}
+            </span>
           }
-        </ul>
-
-        <div class="admin-plan-renewal">
-          <mat-icon class="admin-plan-renewal__icon">event</mat-icon>
-          <div>
-            <p class="admin-plan-renewal__label">{{ 'profile.admin.plan.renewal' | translate }}</p>
-            <p class="text-muted">{{ gymData.renewalDate }}</p>
-          </div>
         </div>
+
+        @if (membershipStore.myMembership(); as m) {
+          @if (m.cancelAtPeriodEnd) {
+            <div class="plan-notice plan-notice--warn">
+              <mat-icon>event_busy</mat-icon>
+              <span>{{ 'membership.lifecycle.cancelAtPeriodEndNotice' | translate: { date: m.endDate } }}</span>
+            </div>
+          }
+          @if (m.pendingDowngradeTier) {
+            <div class="plan-notice plan-notice--info">
+              <mat-icon>arrow_downward</mat-icon>
+              <span>{{ 'membership.lifecycle.pendingDowngradeNotice' | translate: { tier: m.pendingDowngradeTier } }}</span>
+            </div>
+          }
+          @if (m.endDate) {
+            <div class="admin-plan-renewal">
+              <mat-icon class="admin-plan-renewal__icon">event</mat-icon>
+              <div>
+                <p class="admin-plan-renewal__label">{{ 'profile.admin.plan.renewal' | translate }}</p>
+                <p class="text-muted">{{ m.endDate }}</p>
+              </div>
+            </div>
+          }
+        }
+
+        <button class="membership-manage-btn" routerLink="/membership">
+          <mat-icon>open_in_new</mat-icon>
+          {{ 'profile.admin.plan.manage' | translate }}
+        </button>
       </section>
 
       <!-- Account info -->

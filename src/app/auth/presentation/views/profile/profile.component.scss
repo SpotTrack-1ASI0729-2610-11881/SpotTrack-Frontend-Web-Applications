@@ -600,3 +600,84 @@ $danger-color: #ef4444;
   font-size: 0.875rem;
   mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
 }
+
+// ── Plan badge status variants ────────────────────────────────────────────────
+.plan-badge--suspended {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.plan-badge--cancelled {
+  background: rgba($danger-color, 0.12);
+  border-color: rgba($danger-color, 0.4);
+  color: $danger-color;
+}
+
+// ── Plan notice (cancelAtPeriodEnd / pendingDowngrade) ────────────────────────
+.plan-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 0.75rem;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  &--warn {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+  }
+
+  &--info {
+    background: rgba($text-secondary, 0.08);
+    border: 1px solid rgba($text-secondary, 0.2);
+    color: $text-secondary;
+  }
+}
+
+// ── Membership manage button ──────────────────────────────────────────────────
+.membership-manage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background: rgba($accent-gold, 0.1);
+  border: 1px solid rgba($accent-gold, 0.35);
+  color: $accent-gold;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+  &:hover { background: rgba($accent-gold, 0.18); }
+}
+
+// ── Plan loading skeleton ─────────────────────────────────────────────────────
+.plan-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__line {
+    height: 14px;
+    border-radius: 4px;
+    background: rgba($text-secondary, 0.15);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+
+    &--wide  { width: 120px; }
+    &--short { width: 80px; height: 12px; }
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

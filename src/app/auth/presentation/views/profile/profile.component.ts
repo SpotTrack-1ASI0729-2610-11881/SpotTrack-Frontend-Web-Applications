@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { PasswordStore } from '../../../application/password.store';
 import { ProfileStore } from '../../../application/profile.store';
 import { ActiveGymStore } from '../../../application/active-gym.store';
 import { GymListStore } from '../../../../gym/application/gym-list.store';
+import { MembershipStore } from '../../../../membership/application/membership.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
@@ -17,15 +18,16 @@ import { ContextMenuItem } from '../../../../shared/application/context-menu.ser
   standalone: true,
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
-  imports: [LanguageSwitcher, MatIconModule, TranslateModule, ContextMenuDirective, FormsModule],
+  imports: [LanguageSwitcher, MatIconModule, TranslateModule, ContextMenuDirective, FormsModule, RouterLink],
 })
 export class ProfileComponent implements OnInit {
-  private authStore     = inject(AuthStore);
-  private router        = inject(Router);
-  readonly pwdStore      = inject(PasswordStore);
-  readonly profileStore  = inject(ProfileStore);
+  private authStore      = inject(AuthStore);
+  private router         = inject(Router);
+  readonly pwdStore       = inject(PasswordStore);
+  readonly profileStore   = inject(ProfileStore);
   readonly activeGymStore = inject(ActiveGymStore);
   readonly gymListStore   = inject(GymListStore);
+  readonly membershipStore = inject(MembershipStore);
 
   readonly pageMenu: ContextMenuItem[] = [
     { label: 'Logout', icon: 'logout', action: () => this.logout() },
@@ -55,6 +57,9 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     if (this.isAdmin()) {
       this.profileStore.loadAdminProfile();
+      if (!this.membershipStore.myMembership()) {
+        this.membershipStore.loadMyMembership();
+      }
     } else {
       this.profileStore.loadClientProfile();
       this.gymListStore.load();
@@ -93,16 +98,6 @@ export class ProfileComponent implements OnInit {
     equipmentTotal: 47,
     iotSensorsOnline: 43,
     memberCount: 312,
-    plan: 'Enterprise',
-    planPrice: '$299/mes',
-    planFeatures: [
-      'Hasta 5 sedes activas',
-      'Equipos ilimitados monitoreados',
-      'Sensores IoT en tiempo real',
-      'Analíticas avanzadas e impacto financiero',
-      'Soporte prioritario 24/7',
-    ],
-    renewalDate: '24 de Mayo, 2026',
     memberSince: 'Enero 2024',
   };
 }

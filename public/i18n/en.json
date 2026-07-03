@@ -893,7 +893,8 @@
       },
       "plan": {
         "active": "Active",
-        "renewal": "Next renewal"
+        "renewal": "Next renewal",
+        "manage": "Manage membership"
       }
     },
     "client": {
