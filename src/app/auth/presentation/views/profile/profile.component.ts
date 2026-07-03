@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,9 @@ import { ProfileStore } from '../../../application/profile.store';
 import { ActiveGymStore } from '../../../application/active-gym.store';
 import { GymListStore } from '../../../../gym/application/gym-list.store';
 import { MembershipStore } from '../../../../membership/application/membership.store';
+import { AdminGymStore } from '../../../../gym/application/admin-gym.store';
+import { EquipmentStore } from '../../../../gym/application/equipment.store';
+import { WhitelistStore } from '../../../../gym/application/whitelist.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
@@ -28,10 +31,22 @@ export class ProfileComponent implements OnInit {
   readonly activeGymStore = inject(ActiveGymStore);
   readonly gymListStore   = inject(GymListStore);
   readonly membershipStore = inject(MembershipStore);
+  readonly adminGymStore  = inject(AdminGymStore);
+  readonly equipmentStore = inject(EquipmentStore);
+  readonly whitelistStore = inject(WhitelistStore);
 
   readonly pageMenu: ContextMenuItem[] = [
     { label: 'Logout', icon: 'logout', action: () => this.logout() },
   ];
+
+  private readonly gymId = computed(() => this.adminGymStore.primaryGym()?.gymId ?? null);
+
+  constructor() {
+    effect(() => {
+      const id = this.gymId();
+      if (id) this.whitelistStore.load(id);
+    });
+  }
 
   logout() {
     this.authStore.logout();
@@ -57,6 +72,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     if (this.isAdmin()) {
       this.profileStore.loadAdminProfile();
+      this.adminGymStore.load();
       if (!this.membershipStore.myMembership()) {
         this.membershipStore.loadMyMembership();
       }
@@ -92,12 +108,21 @@ export class ProfileComponent implements OnInit {
     this.pwdStore.changePassword(this.currentPassword, this.newPassword);
   }
 
+  readonly branchCount   = computed(() =>
+    this.adminGymStore.loaded() && !this.adminGymStore.loading()
+      ? this.adminGymStore.myGyms().length
+      : null
+  );
+
+  readonly equipmentCount = computed(() =>
+    !this.equipmentStore.loading() ? this.equipmentStore.equipmentCount() : null
+  );
+
+  readonly memberCount = computed(() =>
+    !this.whitelistStore.loading() ? this.whitelistStore.whitelist().length : null
+  );
+
   readonly gymData = {
-    name: 'SpotTrack Gym',
-    locations: 3,
-    equipmentTotal: 47,
-    iotSensorsOnline: 43,
-    memberCount: 312,
     memberSince: 'Enero 2024',
   };
 }
