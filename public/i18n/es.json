@@ -15,6 +15,7 @@
       "submitBtn": "Iniciar Sesión",
       "noAccount": "¿No tienes una cuenta?",
       "register": "Regístrate",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
       "demoTitle": "Credenciales de demostración",
       "demoPassword": "Contraseña: demo1234"
     },
@@ -106,6 +107,46 @@
       "cancelTitle": "Pago cancelado",
       "cancelSubtitle": "Tu pago no se completó. Puedes elegir un plan nuevamente cuando quieras.",
       "retryBtn": "Elegir un plan de nuevo"
+    },
+    "changePassword": {
+      "currentLabel": "Contraseña actual",
+      "newLabel": "Nueva contraseña",
+      "confirmLabel": "Confirmar nueva contraseña",
+      "submitBtn": "Actualizar contraseña",
+      "cancelBtn": "Cancelar",
+      "success": "Contraseña actualizada correctamente.",
+      "error": {
+        "noMatch": "Las contraseñas no coinciden.",
+        "wrongCurrent": "La contraseña actual es incorrecta.",
+        "failed": "No se pudo actualizar la contraseña. Inténtalo de nuevo."
+      }
+    },
+    "forgotPassword": {
+      "step1": {
+        "title": "¿Olvidaste tu contraseña?",
+        "subtitle": "Ingresa tu correo electrónico y te ayudamos a restablecerla.",
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "tu@correo.com",
+        "submitBtn": "Continuar"
+      },
+      "step2": {
+        "title": "Restablecer contraseña",
+        "subtitle": "Ingresa tu DNI y elige una nueva contraseña.",
+        "emailLabel": "Correo electrónico",
+        "dniLabel": "DNI",
+        "dniPlaceholder": "12345678",
+        "newPasswordLabel": "Nueva contraseña",
+        "confirmPasswordLabel": "Confirmar nueva contraseña",
+        "submitBtn": "Restablecer contraseña"
+      },
+      "success": {
+        "title": "Contraseña restablecida",
+        "desc": "Tu contraseña ha sido actualizada. Ya puedes iniciar sesión con tu nueva contraseña."
+      },
+      "backToLogin": "Volver al inicio de sesión",
+      "error": {
+        "failed": "No se pudo restablecer la contraseña. Verifica tus datos e inténtalo de nuevo."
+      }
     },
     "error": {
       "emptyFields": "Por favor ingresa tu correo y contraseña",
