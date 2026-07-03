@@ -4,6 +4,7 @@ import { switchMap } from 'rxjs';
 import { AuthApiService } from '../infrastructure/auth-api.service';
 import { ProfileApiService } from '../infrastructure/profile-api.service';
 import { ActiveGymStore } from './active-gym.store';
+import { AdminGymStore } from '../../gym/application/admin-gym.store';
 import { User, UserRole } from '../domain/model/user.model';
 
 const TOKEN_KEY   = 'spottrack_token';
@@ -43,8 +44,9 @@ export class AuthStore {
   private readonly api           = inject(AuthApiService);
   private readonly profileApi    = inject(ProfileApiService);
   private readonly router        = inject(Router);
-  // ActiveGymStore does not inject AuthStore, so there is no circular dependency.
+  // Neither ActiveGymStore nor AdminGymStore inject AuthStore, so there is no circular dependency.
   private readonly activeGymStore = inject(ActiveGymStore);
+  private readonly adminGymStore  = inject(AdminGymStore);
 
   private readonly userSignal  = signal<User | null>(this.loadUser());
   private readonly tokenSignal = signal<string | null>(
@@ -93,6 +95,8 @@ export class AuthStore {
             localStorage.setItem(USER_KEY, JSON.stringify(user));
             if (role === UserRole.CLIENT) {
               this.activeGymStore.loadAssociations();
+            } else {
+              this.adminGymStore.load();
             }
             this.router.navigate([role === UserRole.ADMIN ? '/dashboard' : '/map']);
           },
@@ -229,6 +233,7 @@ export class AuthStore {
 
   logout(): void {
     this.activeGymStore.reset();
+    this.adminGymStore.reset();
     this.userSignal.set(null);
     this.tokenSignal.set(null);
     this.errorSignal.set(null);
