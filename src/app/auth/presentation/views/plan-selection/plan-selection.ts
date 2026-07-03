@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthStore } from '../../../application/auth.store';
-
-type MembershipTier = 'BASIC' | 'MID' | 'PLATINUM';
+import { MembershipTier, PLAN_FEATURES } from '../../../../shared/application/plan-features.data';
 
 interface PlanCard {
   key:      string;
@@ -32,18 +31,9 @@ export class PlanSelectionComponent implements OnInit {
   get errorMsg():    string | null { return this.auth.pendingBusinessError(); }
 
   readonly plans: PlanCard[] = [
-    {
-      key: 'basic', tier: 'BASIC', price: 69, popular: false,
-      features: ['plan20Equipment', 'planRealtimeMonitoring', 'planMaintenanceAlerts', 'planEmailSupport'],
-    },
-    {
-      key: 'mid', tier: 'MID', price: 109, popular: true,
-      features: ['plan60Equipment', 'planRealtimeMonitoring', 'planAdvancedAlerts', 'planPrioritySupport', 'planAnalytics'],
-    },
-    {
-      key: 'platinum', tier: 'PLATINUM', price: 189, popular: false,
-      features: ['planUnlimitedEquipment', 'planRealtimeMonitoring', 'planCustomReports', 'plan24Support', 'planFullAnalytics'],
-    },
+    { key: 'basic',    tier: 'BASIC',    price: 69,  popular: false, features: PLAN_FEATURES['BASIC'] },
+    { key: 'mid',      tier: 'MID',      price: 109, popular: true,  features: PLAN_FEATURES['MID'] },
+    { key: 'platinum', tier: 'PLATINUM', price: 189, popular: false, features: PLAN_FEATURES['PLATINUM'] },
   ];
 
   ngOnInit(): void {

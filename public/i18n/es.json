@@ -994,6 +994,11 @@
     }
   },
   "membership": {
+    "page": {
+      "title":    "Planes de Membresía",
+      "subtitle": "Administra los planes y accesos a sedes",
+      "loading":  "Cargando membresía…"
+    },
     "lifecycle": {
       "renewsOn": "Se renueva el",
       "cancelAtPeriodEndNotice": "Se cancela al fin del período actual ({{date}}). No se generarán más cobros.",
