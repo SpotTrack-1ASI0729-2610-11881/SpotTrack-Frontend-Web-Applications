@@ -65,6 +65,11 @@ export const routes: Routes = [
           },
           ...equipmentRoutes,
           {
+            path: 'gym/whitelist',
+            loadComponent: () =>
+              import('./gym/presentation/views/gym-whitelist/gym-whitelist').then(m => m.GymWhitelistComponent),
+          },
+          {
             path: 'iot',
             loadComponent: () =>
               import('./iot/presentation/views/iot-monitoring').then(m => m.IotMonitoringComponent),
