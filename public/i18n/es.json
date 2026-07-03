@@ -975,11 +975,18 @@
       "noGyms": "No hay gimnasios disponibles en este momento.",
       "loadError": "No se pudo cargar la lista de gimnasios. Inténtalo de nuevo."
     },
+    "create": {
+      "title": "Configura tu gimnasio",
+      "subtitle": "Ingresa un nombre para comenzar. Puedes agregar equipos y zonas después.",
+      "namePlaceholder": "ej. Power Gym",
+      "submitBtn": "Crear Gimnasio"
+    },
     "error": {
       "loadFailed": "No se pudieron cargar tus asociaciones de gimnasio. Inténtalo de nuevo.",
       "switchFailed": "No se pudo cambiar el gimnasio activo. Inténtalo de nuevo.",
       "associateFailed": "No se pudo asociar con este gimnasio. Inténtalo de nuevo.",
       "myGymsFailed": "No se pudo cargar la información de tu gimnasio. Inténtalo de nuevo.",
+      "createFailed": "No se pudo crear el gimnasio. Inténtalo de nuevo.",
       "access": {
         "notWhitelisted": "Tu cuenta no está autorizada para acceder a este gimnasio. Contacta al administrador del gimnasio."
       }
