@@ -136,7 +136,8 @@ export class MapComponent implements OnInit {
       }
     }
 
-    const cols: Omit<ZoneColumn, 'colLeftPct' | 'colWidthPct'>[] = zones.map(z => ({
+    type RawCol = { zone: Zone | null; zoneName: string; equipment: Equipment[] };
+    const cols: RawCol[] = zones.map(z => ({
       zone: z, zoneName: z.zoneName, equipment: buckets.get(z.zoneId) ?? [],
     }));
     if (unzoned.length > 0) {
