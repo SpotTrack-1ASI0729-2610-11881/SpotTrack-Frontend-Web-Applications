@@ -5,6 +5,8 @@ import { AuthApiService } from '../infrastructure/auth-api.service';
 import { ProfileApiService } from '../infrastructure/profile-api.service';
 import { ActiveGymStore } from './active-gym.store';
 import { AdminGymStore } from '../../gym/application/admin-gym.store';
+import { AnalyticsStore } from '../../analytics/application/analytics.store';
+import { FinancialImpactStore } from '../../analytics/application/financial-impact.store';
 import { User, UserRole } from '../domain/model/user.model';
 
 const TOKEN_KEY   = 'spottrack_token';
@@ -44,9 +46,11 @@ export class AuthStore {
   private readonly api           = inject(AuthApiService);
   private readonly profileApi    = inject(ProfileApiService);
   private readonly router        = inject(Router);
-  // Neither ActiveGymStore nor AdminGymStore inject AuthStore, so there is no circular dependency.
-  private readonly activeGymStore = inject(ActiveGymStore);
-  private readonly adminGymStore  = inject(AdminGymStore);
+  // None of these stores inject AuthStore, so there is no circular dependency.
+  private readonly activeGymStore        = inject(ActiveGymStore);
+  private readonly adminGymStore         = inject(AdminGymStore);
+  private readonly analyticsStore        = inject(AnalyticsStore);
+  private readonly financialImpactStore  = inject(FinancialImpactStore);
 
   private readonly userSignal  = signal<User | null>(this.loadUser());
   private readonly tokenSignal = signal<string | null>(
@@ -234,6 +238,8 @@ export class AuthStore {
   logout(): void {
     this.activeGymStore.reset();
     this.adminGymStore.reset();
+    this.analyticsStore.reset();
+    this.financialImpactStore.reset();
     this.userSignal.set(null);
     this.tokenSignal.set(null);
     this.errorSignal.set(null);

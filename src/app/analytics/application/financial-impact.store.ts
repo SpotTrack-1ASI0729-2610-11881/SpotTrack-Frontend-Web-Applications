@@ -101,7 +101,7 @@ export class FinancialImpactStore {
 
   constructor() { this.load(); }
 
-  private load(): void {
+  load(): void {
     this._loading.set(true);
     this._error.set(null);
 
@@ -120,5 +120,15 @@ export class FinancialImpactStore {
           this._loading.set(false);
         },
       });
+  }
+
+  /** Called by AuthStore on logout to prevent stale financial data from bleeding into the next session. */
+  reset(): void {
+    this._financialStats.set([]);
+    this._tickets.set([]);
+    this._logs.set([]);
+    this._maintenanceQuotes.set([]);
+    this._loading.set(false);
+    this._error.set(null);
   }
 }

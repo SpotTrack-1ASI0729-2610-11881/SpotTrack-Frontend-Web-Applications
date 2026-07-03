@@ -248,7 +248,7 @@ export class AnalyticsStore {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this._loading.set(true);
     this._error.set(null);
 
@@ -265,5 +265,13 @@ export class AnalyticsStore {
           this._loading.set(false);
         },
       });
+  }
+
+  /** Called by AuthStore on logout to prevent stale analytics data from bleeding into the next session. */
+  reset(): void {
+    this._analyticsStats.set([]);
+    this._equipments.set([]);
+    this._loading.set(false);
+    this._error.set(null);
   }
 }
