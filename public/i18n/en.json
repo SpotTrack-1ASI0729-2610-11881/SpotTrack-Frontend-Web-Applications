@@ -975,11 +975,18 @@
       "noGyms": "No gyms available at the moment.",
       "loadError": "Could not load the gym list. Please try again."
     },
+    "create": {
+      "title": "Set up your gym",
+      "subtitle": "Enter a name to get started. You can add equipment and zones later.",
+      "namePlaceholder": "e.g. Power Gym",
+      "submitBtn": "Create Gym"
+    },
     "error": {
       "loadFailed": "Could not load your gym associations. Please try again.",
       "switchFailed": "Could not switch the active gym. Please try again.",
       "associateFailed": "Could not associate with this gym. Please try again.",
       "myGymsFailed": "Could not load your gym information. Please try again.",
+      "createFailed": "Could not create the gym. Please try again.",
       "access": {
         "notWhitelisted": "Your account is not authorized to access this gym. Contact the gym administrator."
       }

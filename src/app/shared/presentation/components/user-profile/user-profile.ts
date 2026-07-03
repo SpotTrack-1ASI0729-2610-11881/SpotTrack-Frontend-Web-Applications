@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../../auth/application/auth.store';
+import { AdminGymStore } from '../../../../gym/application/admin-gym.store';
 
 @Component({
   selector: 'app-user-profile',
@@ -10,9 +11,14 @@ import { AuthStore } from '../../../../auth/application/auth.store';
   styleUrl: './user-profile.css',
 })
 export class UserProfile {
-  private authStore = inject(AuthStore);
+  private authStore    = inject(AuthStore);
+  private adminGymStore = inject(AdminGymStore);
 
   readonly currentUser = this.authStore.currentUser;
+
+  readonly primaryGymName = computed(() =>
+    this.authStore.isAdmin() ? (this.adminGymStore.primaryGym()?.name ?? null) : null
+  );
 
   get initials(): string {
     const name = this.currentUser()?.name ?? '';
