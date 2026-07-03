@@ -14,10 +14,10 @@ export class MembershipAccessService {
         this.router.navigate(['/gym/associate']);
         break;
       case 'membership.error.access.suspended':
-        this.router.navigate(['/client/pay-debt']);
+        this.router.navigate(['/membership']);
         break;
       case 'membership.error.access.inactive':
-        this.router.navigate(['/client/resubscribe']);
+        this.router.navigate(['/membership']);
         break;
       // Unknown codes: fall through — the store's errorSignal handles display
     }

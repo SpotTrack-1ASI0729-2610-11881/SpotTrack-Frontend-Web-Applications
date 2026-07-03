@@ -953,6 +953,43 @@
       }
     }
   },
+  "membership": {
+    "lifecycle": {
+      "renewsOn": "Renews on",
+      "cancelAtPeriodEndNotice": "Cancels at end of current period ({{date}}). No further charges.",
+      "pendingDowngradeNotice": "Plan will downgrade to {{tier}} at end of current period.",
+      "cancelBtn": "Cancel Membership",
+      "payDebtBtn": "Pay Debt",
+      "resubscribeBtn": "Resubscribe",
+      "upgradeBtn": "Upgrade",
+      "downgradeBtn": "Schedule Downgrade",
+      "status": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "CANCELLED": "Cancelled",
+        "EXPIRED": "Expired"
+      },
+      "suspended": {
+        "title": "Membership Suspended",
+        "desc": "Your membership is suspended due to an unpaid balance. Pay your debt to restore access."
+      },
+      "cancelled": {
+        "title": "Membership Cancelled",
+        "desc": "Your membership has been cancelled. Resubscribe to restore access to your gym."
+      },
+      "expired": {
+        "title": "Membership Expired",
+        "desc": "Your membership has expired. Resubscribe to restore access to your gym."
+      },
+      "error": {
+        "cancelFailed": "Could not cancel membership. Please try again.",
+        "payDebtFailed": "Could not initiate debt payment. Please try again.",
+        "upgradeFailed": "Could not initiate plan upgrade. Please try again.",
+        "downgradeFailed": "Could not schedule plan downgrade. Please try again.",
+        "resubscribeFailed": "Could not initiate resubscription. Please try again."
+      }
+    }
+  },
   "whitelist": {
     "title": "Whitelist Management",
     "subtitle": "Manage which clients can access your gym by DNI",

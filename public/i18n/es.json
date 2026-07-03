@@ -953,6 +953,43 @@
       }
     }
   },
+  "membership": {
+    "lifecycle": {
+      "renewsOn": "Se renueva el",
+      "cancelAtPeriodEndNotice": "Se cancela al fin del período actual ({{date}}). No se generarán más cobros.",
+      "pendingDowngradeNotice": "El plan bajará a {{tier}} al fin del período actual.",
+      "cancelBtn": "Cancelar Membresía",
+      "payDebtBtn": "Pagar Deuda",
+      "resubscribeBtn": "Resubscribirse",
+      "upgradeBtn": "Subir Plan",
+      "downgradeBtn": "Programar Downgrade",
+      "status": {
+        "ACTIVE": "Activa",
+        "SUSPENDED": "Suspendida",
+        "CANCELLED": "Cancelada",
+        "EXPIRED": "Vencida"
+      },
+      "suspended": {
+        "title": "Membresía Suspendida",
+        "desc": "Tu membresía está suspendida por un saldo pendiente. Paga tu deuda para recuperar el acceso."
+      },
+      "cancelled": {
+        "title": "Membresía Cancelada",
+        "desc": "Tu membresía ha sido cancelada. Resubscríbete para recuperar el acceso a tu gimnasio."
+      },
+      "expired": {
+        "title": "Membresía Vencida",
+        "desc": "Tu membresía ha vencido. Resubscríbete para recuperar el acceso a tu gimnasio."
+      },
+      "error": {
+        "cancelFailed": "No se pudo cancelar la membresía. Inténtalo de nuevo.",
+        "payDebtFailed": "No se pudo iniciar el pago de la deuda. Inténtalo de nuevo.",
+        "upgradeFailed": "No se pudo iniciar el upgrade del plan. Inténtalo de nuevo.",
+        "downgradeFailed": "No se pudo programar el downgrade del plan. Inténtalo de nuevo.",
+        "resubscribeFailed": "No se pudo iniciar la resubscripción. Inténtalo de nuevo."
+      }
+    }
+  },
   "whitelist": {
     "title": "Gestión de Whitelist",
     "subtitle": "Administra qué clientes pueden acceder a tu gimnasio por DNI",
