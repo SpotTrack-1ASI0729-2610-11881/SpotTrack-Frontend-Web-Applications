@@ -45,7 +45,7 @@
           </div>
         </a>
 
-        <div class="gym-stat-card gym-stat-card--yellow">
+        <a class="gym-stat-card gym-stat-card--yellow gym-stat-card--link" routerLink="/equipments">
           <div class="gym-stat-card__icon">
             <mat-icon>fitness_center</mat-icon>
           </div>
@@ -53,9 +53,9 @@
             <span class="gym-stat-card__value">{{ equipmentCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.equipment' | translate }}</span>
           </div>
-        </div>
+        </a>
 
-        <div class="gym-stat-card gym-stat-card--green">
+        <a class="gym-stat-card gym-stat-card--green gym-stat-card--link" routerLink="/iot">
           <div class="gym-stat-card__icon">
             <mat-icon>sensors</mat-icon>
           </div>
@@ -63,9 +63,9 @@
             <span class="gym-stat-card__value">—</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.sensors' | translate }}</span>
           </div>
-        </div>
+        </a>
 
-        <div class="gym-stat-card gym-stat-card--teal">
+        <a class="gym-stat-card gym-stat-card--teal gym-stat-card--link" routerLink="/gym/whitelist">
           <div class="gym-stat-card__icon">
             <mat-icon>group</mat-icon>
           </div>
@@ -73,7 +73,7 @@
             <span class="gym-stat-card__value">{{ memberCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.members' | translate }}</span>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- SpotTrack subscription -->
