@@ -21,11 +21,25 @@ export interface UpdateAdminProfileRequest extends UpdatePersonInfoRequest {
   district:     string;
 }
 
+export interface ProfileSummary {
+  id:       number;
+  fullName: string;
+  email:    string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProfileApiService {
   private readonly base = `${environment.apiBase}/profiles`;
 
   constructor(private readonly http: HttpClient) {}
+
+  getMyClientProfile(): Observable<ProfileSummary> {
+    return this.http.get<ProfileSummary>(`${this.base}/clients/me`);
+  }
+
+  getMyAdminProfile(): Observable<ProfileSummary> {
+    return this.http.get<ProfileSummary>(`${this.base}/admins/me`);
+  }
 
   updateClientProfile(body: UpdatePersonInfoRequest): Observable<unknown> {
     return this.http.put(`${this.base}/clients/me`, body);

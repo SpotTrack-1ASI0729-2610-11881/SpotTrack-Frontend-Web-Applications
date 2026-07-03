@@ -110,150 +110,8 @@ body {
     }
   }
 
-  .points-info {
-    text-align: right;
-
-    .points-total {
-      font-size: 2rem;
-      font-weight: bold;
-      color: $accent-gold;
-    }
-  }
 }
 
-// Plan Card Specific
-.plan-card {
-  .plan-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-
-    .plan-title-group {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      .plan-icon {
-        background-color: #2a2a2a;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      h3 {
-        font-size: 1rem;
-      }
-    }
-
-    .btn-upgrade {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      border: 1px solid $accent-gold;
-      color: $accent-gold;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: background 0.2s;
-
-      &:hover {
-        background: rgba(245, 176, 65, 0.1);
-      }
-    }
-  }
-
-  .plan-features {
-    margin-bottom: 1.5rem;
-
-    .features-title {
-      font-size: 0.875rem;
-      color: $text-secondary;
-      margin-bottom: 0.75rem;
-    }
-
-    ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      li {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: #d1d5db;
-
-        .check-icon {
-          width: 16px;
-          height: 16px;
-          color: $success-green;
-        }
-      }
-    }
-  }
-
-  .plan-renewal {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background-color: $bg-item;
-    padding: 1rem;
-    border-radius: 8px;
-
-    .renewal-title {
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-  }
-}
-
-// History Card Specific
-.history-card {
-  .history-title {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: $bg-item;
-    padding: 1rem;
-    border-radius: 8px;
-
-    .history-desc {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-
-      p {
-        font-size: 0.875rem;
-        font-weight: 500;
-      }
-    }
-
-    .history-points {
-      color: $success-green;
-      font-weight: bold;
-      font-size: 0.875rem;
-    }
-  }
-}
 // Nuevas variables sugeridas al principio del archivo
 $accent-cyan: #0ab5c3;
 $danger-color: #ef4444;
@@ -685,8 +543,6 @@ $danger-color: #ef4444;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
-
-    .points-info { text-align: left; }
   }
 
   .admin-identity-card { gap: 1rem; }
@@ -701,14 +557,6 @@ $danger-color: #ef4444;
   .gym-stat-card__value { font-size: 1.4rem; }
 
   .admin-identity-card { flex-direction: column; align-items: flex-start; }
-
-  .plan-card .plan-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-
-    .btn-upgrade { width: 100%; justify-content: center; }
-  }
 
   .admin-plan-card__header { flex-direction: column; align-items: flex-start; }
 }
