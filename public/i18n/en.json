@@ -994,6 +994,11 @@
     }
   },
   "membership": {
+    "page": {
+      "title":    "Membership Plans",
+      "subtitle": "Manage your plans and venue access",
+      "loading":  "Loading membership…"
+    },
     "lifecycle": {
       "renewsOn": "Renews on",
       "cancelAtPeriodEndNotice": "Cancels at end of current period ({{date}}). No further charges.",
