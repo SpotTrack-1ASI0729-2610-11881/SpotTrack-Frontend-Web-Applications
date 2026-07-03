@@ -37,6 +37,6 @@ export class FinancialImpactApiEndpoint {
   }
 
   getMaintenanceQuotes(): Observable<MaintenanceQuoteResource[]> {
-    return this.http.get<MaintenanceQuoteResource[]>(`${this.base}/maintenance-quotes`);
+    return this.http.get<MaintenanceQuoteResource[]>(`${this.base}/maintenance-quotes/me`);
   }
 }
