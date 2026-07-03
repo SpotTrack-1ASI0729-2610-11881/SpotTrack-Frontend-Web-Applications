@@ -8,11 +8,4 @@ export const membershipRoutes: Routes = [
         m => m.MembershipListComponent
       ),
   },
-  {
-    path: 'membership/:id',
-    loadComponent: () =>
-      import('./presentation/views/membership-detail/membership-detail.component').then(
-        m => m.MembershipDetailComponent
-      ),
-  },
 ];
