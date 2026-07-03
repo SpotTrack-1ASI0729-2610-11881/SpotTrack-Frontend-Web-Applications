@@ -12,6 +12,7 @@ export class RoutineSession implements BaseEntity {
   private _clientId:  number;
   private _status:    RoutineSessionStatus;
   private _startedAt: string;
+  private _completedExerciseBlockIds: number[];
 
   constructor(props: {
     id:        number;
@@ -19,12 +20,14 @@ export class RoutineSession implements BaseEntity {
     clientId:  number;
     status:    RoutineSessionStatus;
     startedAt: string;
+    completedExerciseBlockIds: number[];
   }) {
     this._id        = props.id;
     this._routineId = props.routineId;
     this._clientId  = props.clientId;
     this._status    = props.status;
     this._startedAt = props.startedAt;
+    this._completedExerciseBlockIds = props.completedExerciseBlockIds;
   }
 
   get id():        number               { return this._id; }
@@ -32,4 +35,9 @@ export class RoutineSession implements BaseEntity {
   get clientId():  number               { return this._clientId; }
   get status():    RoutineSessionStatus { return this._status; }
   get startedAt(): string               { return this._startedAt; }
+  get completedExerciseBlockIds(): number[] { return this._completedExerciseBlockIds; }
+
+  isBlockCompleted(exerciseBlockId: number): boolean {
+    return this._completedExerciseBlockIds.includes(exerciseBlockId);
+  }
 }

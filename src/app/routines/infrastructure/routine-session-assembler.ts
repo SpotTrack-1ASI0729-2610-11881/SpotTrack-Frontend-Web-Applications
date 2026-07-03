@@ -15,6 +15,7 @@ export class RoutineSessionAssembler implements BaseAssembler<RoutineSession, Ro
       clientId:  r.clientId,
       status:    r.status as RoutineSessionStatus,
       startedAt: r.startedAt,
+      completedExerciseBlockIds: r.completedExerciseBlockIds ?? [],
     });
   }
 
@@ -25,6 +26,7 @@ export class RoutineSessionAssembler implements BaseAssembler<RoutineSession, Ro
       clientId:  e.clientId,
       status:    e.status,
       startedAt: e.startedAt,
+      completedExerciseBlockIds: e.completedExerciseBlockIds,
     };
   }
 }

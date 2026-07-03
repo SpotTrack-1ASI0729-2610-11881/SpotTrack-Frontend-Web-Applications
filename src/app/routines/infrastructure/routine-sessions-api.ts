@@ -37,4 +37,13 @@ export class RoutineSessionsApi {
       map(resource => this.sessionAssembler.toEntityFromResource(resource))
     );
   }
+
+  setExerciseCompletion(sessionId: number, exerciseBlockId: number, completed: boolean): Observable<RoutineSession> {
+    return this.http.patch<RoutineSessionResource>(
+      `${this.sessionsUrl}/${sessionId}/exercise-blocks/${exerciseBlockId}`,
+      { completed }
+    ).pipe(
+      map(resource => this.sessionAssembler.toEntityFromResource(resource))
+    );
+  }
 }

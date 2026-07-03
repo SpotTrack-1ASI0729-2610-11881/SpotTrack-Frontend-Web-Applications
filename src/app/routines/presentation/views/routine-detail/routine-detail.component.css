@@ -185,6 +185,20 @@
   flex-shrink: 0;
 }
 
+.block-checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: #4caf50;
+  cursor: pointer;
+}
+
+.block-card--completed {
+  background: rgba(76,175,80,.08);
+
+  .block-exercise { color: #9ca3af; text-decoration: line-through; }
+}
+
 .block-info { flex: 1; min-width: 120px; }
 .block-exercise { margin: 0; font-weight: 600; color: #fff; font-size: 0.9rem; }
 

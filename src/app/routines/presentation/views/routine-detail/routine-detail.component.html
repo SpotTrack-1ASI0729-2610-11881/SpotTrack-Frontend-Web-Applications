@@ -63,8 +63,16 @@
 
       <div class="blocks-list">
         @for (block of blocks(); track block.id) {
-          <div class="block-card">
+          <div class="block-card" [class.block-card--completed]="isBlockCompleted(block.id)">
             <span class="block-order">{{ block.order }}</span>
+            @if (activeSession()) {
+              <input
+                type="checkbox"
+                class="block-checkbox"
+                [checked]="isBlockCompleted(block.id)"
+                (change)="toggleBlockCompletion(block.id)"
+              />
+            }
             <div class="block-info">
               <p class="block-exercise">{{ block.exerciseName }}</p>
             </div>

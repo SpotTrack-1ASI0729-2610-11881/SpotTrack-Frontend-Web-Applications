@@ -21,11 +21,12 @@ export interface ExerciseBlockResource extends BaseResource {
 export type ExerciseBlockResponse = ExerciseBlockResource[];
 
 export interface RoutineSessionResource extends BaseResource {
-  id:        number;
-  routineId: number;
-  clientId:  number;
-  status:    'STARTED' | 'COMPLETED' | 'MISSED';
-  startedAt: string;
+  id:                      number;
+  routineId:               number;
+  clientId:                number;
+  status:                  'STARTED' | 'COMPLETED' | 'MISSED';
+  startedAt:               string;
+  completedExerciseBlockIds: number[];
 }
 
 export type RoutineSessionResponse = RoutineSessionResource[];
