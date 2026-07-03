@@ -36,6 +36,10 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  goBack(): void {
+    this.router.navigate(['/map']);
+  }
+
   readonly currentUser = this.authStore.currentUser;
   readonly isAdmin     = this.authStore.isAdmin;
 
