@@ -999,6 +999,7 @@
       "cancelAtPeriodEndNotice": "Se cancela al fin del período actual ({{date}}). No se generarán más cobros.",
       "pendingDowngradeNotice": "El plan bajará a {{tier}} al fin del período actual.",
       "cancelBtn": "Cancelar Membresía",
+      "undoCancelBtn": "Retomar suscripción",
       "payDebtBtn": "Pagar Deuda",
       "resubscribeBtn": "Resubscribirse",
       "upgradeBtn": "Subir Plan",
@@ -1023,6 +1024,7 @@
       },
       "error": {
         "cancelFailed": "No se pudo cancelar la membresía. Inténtalo de nuevo.",
+        "undoCancelFailed": "No se pudo retomar la suscripción. Inténtalo de nuevo.",
         "payDebtFailed": "No se pudo iniciar el pago de la deuda. Inténtalo de nuevo.",
         "upgradeFailed": "No se pudo iniciar el upgrade del plan. Inténtalo de nuevo.",
         "downgradeFailed": "No se pudo programar el downgrade del plan. Inténtalo de nuevo.",

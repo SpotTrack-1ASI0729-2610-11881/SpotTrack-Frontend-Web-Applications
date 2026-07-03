@@ -999,6 +999,7 @@
       "cancelAtPeriodEndNotice": "Cancels at end of current period ({{date}}). No further charges.",
       "pendingDowngradeNotice": "Plan will downgrade to {{tier}} at end of current period.",
       "cancelBtn": "Cancel Membership",
+      "undoCancelBtn": "Resume subscription",
       "payDebtBtn": "Pay Debt",
       "resubscribeBtn": "Resubscribe",
       "upgradeBtn": "Upgrade",
@@ -1023,6 +1024,7 @@
       },
       "error": {
         "cancelFailed": "Could not cancel membership. Please try again.",
+        "undoCancelFailed": "Could not resume subscription. Please try again.",
         "payDebtFailed": "Could not initiate debt payment. Please try again.",
         "upgradeFailed": "Could not initiate plan upgrade. Please try again.",
         "downgradeFailed": "Could not schedule plan downgrade. Please try again.",
