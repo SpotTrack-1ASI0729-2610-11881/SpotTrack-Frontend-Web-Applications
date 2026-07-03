@@ -70,6 +70,7 @@
             </div>
             <div class="block-meta">
               <span class="meta-badge">{{ 'routines.exerciseType.' + block.exerciseType | translate }}</span>
+              <span class="meta-badge">{{ block.sets }} {{ 'routines.detail.addBlock.setsAbbrev' | translate }} × {{ block.reps }} {{ 'routines.detail.addBlock.repsAbbrev' | translate }}</span>
             </div>
           </div>
         }
@@ -130,6 +131,17 @@
           </select>
         </div>
 
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">{{ 'routines.detail.addBlock.sets' | translate }}</label>
+            <input type="number" class="field-input" min="1" [(ngModel)]="newSets" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">{{ 'routines.detail.addBlock.reps' | translate }}</label>
+            <input type="number" class="field-input" min="1" [(ngModel)]="newReps" />
+          </div>
+        </div>
+
         @if (blockError()) {
           <p class="error-banner">{{ blockError() }}</p>
         }
@@ -137,7 +149,7 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeAddBlock()">{{ 'routines.modal.cancel' | translate }}</button>
-        <button class="btn-create" [disabled]="!newExerciseName.trim()" (click)="submitAddBlock()">
+        <button class="btn-create" [disabled]="!newExerciseName.trim() || newSets <= 0 || newReps <= 0" (click)="submitAddBlock()">
           {{ 'routines.detail.addBlock.submit' | translate }}
         </button>
       </div>

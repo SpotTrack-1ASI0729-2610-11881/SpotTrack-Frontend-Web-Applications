@@ -14,6 +14,8 @@ export interface ExerciseBlockResource extends BaseResource {
   exerciseName: string;
   exerciseType: 'CARDIO' | 'STRENGTH' | 'FLEXIBILITY';
   order:        number;
+  sets:         number;
+  reps:         number;
 }
 
 export type ExerciseBlockResponse = ExerciseBlockResource[];

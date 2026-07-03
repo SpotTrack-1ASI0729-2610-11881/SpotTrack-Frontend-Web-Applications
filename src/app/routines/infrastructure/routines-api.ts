@@ -35,9 +35,9 @@ export class RoutinesApi {
     );
   }
 
-  addExerciseBlock(routineId: number, exerciseName: string, exerciseType: string, order: number): Observable<ExerciseBlock> {
+  addExerciseBlock(routineId: number, exerciseName: string, exerciseType: string, order: number, sets: number, reps: number): Observable<ExerciseBlock> {
     return this.http.post<ExerciseBlockResource>(`${this.routinesUrl}/${routineId}/exercise-blocks`, {
-      routineId, exerciseName, exerciseType, order,
+      routineId, exerciseName, exerciseType, order, sets, reps,
     }).pipe(
       map(resource => this.exerciseBlockAssembler.toEntityFromResource(resource))
     );

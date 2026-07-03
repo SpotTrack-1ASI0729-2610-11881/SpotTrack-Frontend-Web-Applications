@@ -14,6 +14,8 @@ export class ExerciseBlockAssembler implements BaseAssembler<ExerciseBlock, Exer
       exerciseName: r.exerciseName,
       exerciseType: r.exerciseType as ExerciseType,
       order:        r.order,
+      sets:         r.sets,
+      reps:         r.reps,
     });
   }
 
@@ -23,6 +25,8 @@ export class ExerciseBlockAssembler implements BaseAssembler<ExerciseBlock, Exer
       exerciseName: e.exerciseName,
       exerciseType: e.exerciseType,
       order:        e.order,
+      sets:         e.sets,
+      reps:         e.reps,
     };
   }
 }

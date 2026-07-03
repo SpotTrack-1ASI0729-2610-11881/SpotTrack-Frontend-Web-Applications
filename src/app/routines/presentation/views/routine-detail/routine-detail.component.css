@@ -276,6 +276,13 @@
 .field-group { display: flex; flex-direction: column; gap: 6px; }
 .field-label { font-size: 13px; font-weight: 600; color: #fff; }
 
+.field-row {
+  display: flex;
+  gap: 12px;
+
+  .field-group { flex: 1; }
+}
+
 .field-input, .field-select {
   background-color: #111111;
   border: 1px solid #2e2e2e;

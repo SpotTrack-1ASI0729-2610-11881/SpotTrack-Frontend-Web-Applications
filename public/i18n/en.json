@@ -864,6 +864,10 @@
         "title": "Add Exercise",
         "name": "Exercise Name",
         "type": "Type",
+        "sets": "Sets",
+        "reps": "Reps",
+        "setsAbbrev": "sets",
+        "repsAbbrev": "reps",
         "submit": "Add"
       }
     },
