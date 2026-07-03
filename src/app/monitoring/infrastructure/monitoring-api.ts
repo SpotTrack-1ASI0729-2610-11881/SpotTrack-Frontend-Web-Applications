@@ -26,11 +26,11 @@ export class MonitoringApi {
   constructor(private readonly http: HttpClient) {}
 
   getAllCameraSensors(): Observable<CameraSensorResource[]> {
-    return this.http.get<CameraSensorResource[]>(this.cameraSensorsUrl);
+    return this.http.get<CameraSensorResource[]>(`${this.cameraSensorsUrl}/me`);
   }
 
   getAllMotionSensors(): Observable<MotionSensorResource[]> {
-    return this.http.get<MotionSensorResource[]>(this.motionSensorsUrl);
+    return this.http.get<MotionSensorResource[]>(`${this.motionSensorsUrl}/me`);
   }
 
   registerCameraSensor(body: RegisterCameraSensorRequest): Observable<CameraSensorResource> {
@@ -54,7 +54,7 @@ export class MonitoringApi {
   }
 
   getAllSessionTrackers(): Observable<SessionTrackerResource[]> {
-    return this.http.get<SessionTrackerResource[]>(this.sessionTrackerUrl);
+    return this.http.get<SessionTrackerResource[]>(`${this.sessionTrackerUrl}/me`);
   }
 
   verifySessionUsage(sessionTrackerId: string): Observable<SessionTrackerResource> {
