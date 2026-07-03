@@ -11,14 +11,16 @@ export class ActiveGymStore {
 
   private readonly associationsSignal   = signal<ClientGymAssociationResource[]>([]);
   private readonly loadingSignal        = signal(false);
+  private readonly loadedSignal         = signal(false);
   private readonly errorSignal          = signal<string | null>(null);
   // Separate signal for associateToGym so the association screen can show
   // whitelist-denial errors without interfering with general load/switch errors.
   private readonly associateErrorSignal = signal<string | null>(null);
 
-  readonly associations  = this.associationsSignal.asReadonly();
-  readonly loading       = this.loadingSignal.asReadonly();
-  readonly error         = this.errorSignal.asReadonly();
+  readonly associations   = this.associationsSignal.asReadonly();
+  readonly loading        = this.loadingSignal.asReadonly();
+  readonly loaded         = this.loadedSignal.asReadonly();
+  readonly error          = this.errorSignal.asReadonly();
   readonly associateError = this.associateErrorSignal.asReadonly();
 
   // The currently active gym, derived from the list. Null when list is empty
@@ -45,10 +47,12 @@ export class ActiveGymStore {
       next: list => {
         this.associationsSignal.set(list);
         this.loadingSignal.set(false);
+        this.loadedSignal.set(true);
       },
       error: () => {
         this.errorSignal.set('gym.error.loadFailed');
         this.loadingSignal.set(false);
+        this.loadedSignal.set(true);
       },
     });
   }
@@ -100,6 +104,7 @@ export class ActiveGymStore {
     this.errorSignal.set(null);
     this.associateErrorSignal.set(null);
     this.loadingSignal.set(false);
+    this.loadedSignal.set(false);
   }
 
   clearError(): void          { this.errorSignal.set(null); }

@@ -7,7 +7,7 @@ import { membershipRoutes } from './membership/membership.routes';
 import { alertsRoutes } from './alerts/alerts.routes';
 import { routinesRoutes } from './routines/routines.routes';
 import { reservationRoutes } from './reservation/reservation.routes';
-import { authGuard, adminGuard, clientGuard, hasGymGuard } from './auth/guards/auth.guard';
+import { authGuard, adminGuard, clientGuard, hasGymGuard, hasClientGymGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -124,26 +124,35 @@ export const routes: Routes = [
         path: '',
         canMatch: [clientGuard],
         children: [
-          { path: '', redirectTo: 'map', pathMatch: 'full' },
+          // Accessible to clients without an active gym — must stay outside hasClientGymGuard.
           {
             path: 'gym/associate',
             loadComponent: () =>
               import('./auth/presentation/views/gym-associate/gym-associate').then(m => m.GymAssociateComponent),
           },
+
+          // All other client routes require an active gym association.
           {
-            path: 'client',
-            loadComponent: () =>
-              import('./auth/presentation/views/client-home/client-home.component').then(
-                m => m.ClientHomeComponent
-              ),
+            path: '',
+            canActivate: [hasClientGymGuard],
+            children: [
+              { path: '', redirectTo: 'map', pathMatch: 'full' },
+              {
+                path: 'client',
+                loadComponent: () =>
+                  import('./auth/presentation/views/client-home/client-home.component').then(
+                    m => m.ClientHomeComponent
+                  ),
+              },
+              {
+                path: 'map',
+                loadComponent: () =>
+                  import('./shared/presentation/components/map/map.component').then(m => m.MapComponent),
+              },
+              ...reservationRoutes,
+              ...routinesRoutes,
+            ],
           },
-          {
-            path: 'map',
-            loadComponent: () =>
-              import('./shared/presentation/components/map/map.component').then(m => m.MapComponent),
-          },
-          ...reservationRoutes,
-          ...routinesRoutes,
         ],
       },
     ],
