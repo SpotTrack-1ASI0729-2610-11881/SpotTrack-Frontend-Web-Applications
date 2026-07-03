@@ -84,6 +84,18 @@ export class RoutineSessionsStore {
       });
   }
 
+  setExerciseCompletion(sessionId: number, exerciseBlockId: number, completed: boolean): void {
+    this._actionError.set(null);
+    this.api.setExerciseCompletion(sessionId, exerciseBlockId, completed)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: updated => this.replaceSession(updated),
+        error: (err: unknown) => {
+          this._actionError.set(err instanceof Error ? err.message : 'Error al actualizar el ejercicio');
+        },
+      });
+  }
+
   private replaceSession(updated: RoutineSession): void {
     this._sessions.update(list => list.map(s => s.id === updated.id ? updated : s));
   }
