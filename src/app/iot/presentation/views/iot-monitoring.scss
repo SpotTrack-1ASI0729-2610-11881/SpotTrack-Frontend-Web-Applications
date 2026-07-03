@@ -280,7 +280,12 @@
   mat-icon { font-size: 14px; width: 14px; height: 14px; }
 }
 
-.badge--online { background: rgba(102,187,106,.15); color: #66bb6a; }
+.badge--status-available      { background: rgba(102,187,106,.15); color: #66bb6a; }
+.badge--status-occupied       { background: rgba(20,184,166,.15);  color: #14b8a6; }
+.badge--status-active         { background: rgba(20,184,166,.15);  color: #14b8a6; }
+.badge--status-maintenance    { background: rgba(245,158,11,.15);  color: #f59e0b; }
+.badge--status-out_of_service { background: rgba(244,63,94,.15);   color: #f43f5e; }
+.badge--status-decommissioned { background: rgba(244,63,94,.15);   color: #f43f5e; }
 
 .btn-simulate-motion {
   display: inline-flex;

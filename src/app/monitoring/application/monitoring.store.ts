@@ -36,6 +36,12 @@ export class MonitoringStore {
   /** Result of the last "calculate time" peek — read-only, doesn't affect the tracker. */
   readonly lastCalculatedTime = this._lastCalculatedTime.asReadonly();
 
+  private static readonly POLL_INTERVAL_MS = 15000;
+
+  constructor() {
+    setInterval(() => this.refreshSessionTrackers(), MonitoringStore.POLL_INTERVAL_MS);
+  }
+
   loadCameraSensors(): void {
     this._actionLoading.set(true);
     this._actionError.set(null);
@@ -236,6 +242,19 @@ export class MonitoringStore {
   }
 
   clearLastCalculatedTime(): void { this._lastCalculatedTime.set(null); }
+
+  /**
+   * Silent background refresh — no loading/error signal churn, so the
+   * Active/Inactive badges reflect the backend's inactivity scheduler
+   * (SessionTrackerScheduler, every 60s) without the user having to click
+   * "Verify" or "Refresh" themselves.
+   */
+  private refreshSessionTrackers(): void {
+    this.api.getAllSessionTrackers().subscribe({
+      next: sessions => this._trackedSessions.set(sessions),
+      error: () => {},
+    });
+  }
 
   private upsertTrackedSession(session: SessionTrackerResource): void {
     this._trackedSessions.update(list => {
