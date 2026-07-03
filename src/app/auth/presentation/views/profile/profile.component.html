@@ -247,7 +247,7 @@
         </div>
         <div class="form-group">
           <label for="phone">{{ 'profile.account.phone' | translate }}</label>
-          <input type="tel" id="phone" value="+51 999 888 777" class="form-control">
+          <input type="tel" id="phone" [value]="profile()?.phoneNumber ?? ''" class="form-control">
         </div>
       </section>
 
