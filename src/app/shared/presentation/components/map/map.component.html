@@ -56,8 +56,16 @@
 
   @if (!dataLoading()) {
 
+    <!-- ── LOAD ERROR (e.g. 403 on admin-only endpoints) ─────────── -->
+    @if (dataError()) {
+      <div class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ dataError()! | translate }}</p>
+      </div>
+    }
+
     <!-- ── NO BRANCHES EMPTY STATE ───────────────────────────────── -->
-    @if (branches().length === 0) {
+    @if (!dataError() && branches().length === 0) {
       <div class="empty-state">
         <mat-icon class="empty-icon">location_off</mat-icon>
         <p>{{ 'map.branches.noBranches' | translate }}</p>
