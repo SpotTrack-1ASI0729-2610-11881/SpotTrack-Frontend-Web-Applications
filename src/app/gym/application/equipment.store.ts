@@ -71,6 +71,21 @@ export class EquipmentStore {
     });
   }
 
+  defineMaintenanceThreshold(uuid: string, threshold: string): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.api.defineMaintenanceThreshold(uuid, threshold).pipe(retry(2)).subscribe({
+      next: updated => {
+        this.equipmentSignal.update(list => list.map(e => e.uuid === updated.uuid ? updated : e));
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Failed to define maintenance threshold'));
+        this.loadingSignal.set(false);
+      },
+    });
+  }
+
   decommissionEquipment(uuid: string): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
