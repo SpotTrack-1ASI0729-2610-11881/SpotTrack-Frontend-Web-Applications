@@ -14,6 +14,7 @@ import { AdminGymStore } from '../../../../gym/application/admin-gym.store';
 import { EquipmentStore } from '../../../../gym/application/equipment.store';
 import { WhitelistStore } from '../../../../gym/application/whitelist.store';
 import { BranchStore } from '../../../../gym/application/branch.store';
+import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 import { GymSwitcherComponent } from '../../components/gym-switcher/gym-switcher';
@@ -37,6 +38,7 @@ export class ProfileComponent implements OnInit {
   readonly equipmentStore = inject(EquipmentStore);
   readonly whitelistStore = inject(WhitelistStore);
   readonly branchStore    = inject(BranchStore);
+  readonly monitoringStore = inject(MonitoringStore);
 
   readonly pageMenu: ContextMenuItem[] = [
     { label: 'Logout', icon: 'logout', action: () => this.logout() },
@@ -105,6 +107,8 @@ export class ProfileComponent implements OnInit {
     if (this.isAdmin()) {
       this.profileStore.loadAdminProfile();
       this.adminGymStore.load();
+      this.monitoringStore.loadMotionSensors();
+      this.monitoringStore.loadCameraSensors();
       if (!this.membershipStore.myMembership()) {
         this.membershipStore.loadMyMembership();
       }
@@ -150,6 +154,12 @@ export class ProfileComponent implements OnInit {
 
   readonly memberCount = computed(() =>
     !this.whitelistStore.loading() ? this.whitelistStore.whitelist().length : null
+  );
+
+  readonly sensorCount = computed(() =>
+    !this.monitoringStore.actionLoading()
+      ? this.monitoringStore.motionSensors().length + this.monitoringStore.cameraSensors().length
+      : null
   );
 
   readonly gymData = {

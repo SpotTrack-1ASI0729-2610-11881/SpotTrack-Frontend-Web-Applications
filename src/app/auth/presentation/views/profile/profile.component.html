@@ -60,7 +60,7 @@
             <mat-icon>sensors</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">—</span>
+            <span class="gym-stat-card__value">{{ sensorCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.sensors' | translate }}</span>
           </div>
         </a>
