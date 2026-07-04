@@ -67,8 +67,13 @@ export class ActiveGymStore {
           list.map(a => ({ ...a, active: a.gymId === updated.gymId }))
         );
       },
-      error: () => {
-        this.errorSignal.set('gym.error.switchFailed');
+      error: (err: unknown) => {
+        // 403: the admin removed this client from the gym's whitelist after association.
+        const isForbidden =
+          err instanceof HttpErrorResponse && err.status === 403;
+        this.errorSignal.set(
+          isForbidden ? 'gym.error.access.revoked' : 'gym.error.switchFailed'
+        );
       },
     });
   }
@@ -83,16 +88,13 @@ export class ActiveGymStore {
         this.associationsSignal.update(list => [...list, created]);
       },
       error: (err: unknown) => {
-        // 403 from the whitelist guard: DNI not whitelisted for this gym.
-        // All other errors get the generic key so the screen always has a
-        // translateable string to display.
-        const isForbidden =
-          err instanceof HttpErrorResponse && err.status === 403;
-        this.associateErrorSignal.set(
-          isForbidden
-            ? 'gym.error.access.notWhitelisted'
-            : 'gym.error.associateFailed'
-        );
+        // 403: DNI not whitelisted. 409: association already exists.
+        const status = err instanceof HttpErrorResponse ? err.status : 0;
+        const key =
+          status === 403 ? 'gym.error.access.notWhitelisted' :
+          status === 409 ? 'gym.error.associateAlreadyExists' :
+          'gym.error.associateFailed';
+        this.associateErrorSignal.set(key);
       },
     });
   }
