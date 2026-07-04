@@ -16,13 +16,14 @@ import { WhitelistStore } from '../../../../gym/application/whitelist.store';
 import { BranchStore } from '../../../../gym/application/branch.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
+import { GymSwitcherComponent } from '../../components/gym-switcher/gym-switcher';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
-  imports: [LanguageSwitcher, MatIconModule, TranslateModule, ContextMenuDirective, FormsModule, RouterLink],
+  imports: [LanguageSwitcher, MatIconModule, TranslateModule, ContextMenuDirective, FormsModule, RouterLink, GymSwitcherComponent],
 })
 export class ProfileComponent implements OnInit {
   private authStore      = inject(AuthStore);
