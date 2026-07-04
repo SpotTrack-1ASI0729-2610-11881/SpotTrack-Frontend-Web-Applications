@@ -60,4 +60,9 @@ export class GymSwitcherComponent {
     this.activeGymStore.clearAssociateError();
     this.activeGymStore.associateToGym(gymId);
   }
+
+  gymName(gymId: string): string {
+    if (this.gymListStore.loading()) return '…';
+    return this.gymListStore.gyms().find(g => g.gymId === gymId)?.name ?? '—';
+  }
 }
