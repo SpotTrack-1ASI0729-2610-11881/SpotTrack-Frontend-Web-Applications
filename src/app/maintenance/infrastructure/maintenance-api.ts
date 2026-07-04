@@ -44,15 +44,16 @@ export class MaintenanceApi extends BaseApi {
     return this.scheduleEndpoint.delete(id);
   }
 
-  createMaintenanceRequest(equipmentId: string, description: string): Observable<any> {
-    return this.http.post(`${environment.apiBase}/maintenance/requests`, {
+  createMaintenanceRequest(equipmentId: string, requestedBy: string, description: string): Observable<{ id: string }> {
+    return this.http.post<{ id: string }>(`${environment.apiBase}/maintenance/requests`, {
       equipmentId,
+      requestedBy,
       description,
     });
   }
 
-  createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): Observable<MaintenanceTicket> {
-    return this.http.post<MaintenanceTicketResource>(this.ticketsUrl, { equipmentId, description, priority, type }).pipe(
+  createTicket(maintenanceId: string, priority: TicketPriority, type: TicketType): Observable<MaintenanceTicket> {
+    return this.http.post<MaintenanceTicketResource>(this.ticketsUrl, { maintenanceId, priority, type }).pipe(
       map(r => this.ticketAssembler.toEntityFromResource(r))
     );
   }

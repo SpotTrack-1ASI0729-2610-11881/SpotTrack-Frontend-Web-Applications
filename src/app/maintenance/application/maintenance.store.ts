@@ -1,5 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { MaintenanceApi } from '../infrastructure/maintenance-api';
 import { MaintenanceTicket, TicketStatus, TicketPriority, TicketType } from '../domain/model/maintenance-ticket.entity';
@@ -65,7 +66,7 @@ export class MaintenanceStore {
           this.ticketActionLoadingSignal.set(false);
         },
         error: err => {
-          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to assign ticket');
+          this.ticketActionErrorSignal.set(this.formatError(err, 'Failed to assign ticket'));
           this.ticketActionLoadingSignal.set(false);
         },
       });
@@ -86,7 +87,7 @@ export class MaintenanceStore {
           this.ticketActionLoadingSignal.set(false);
         },
         error: err => {
-          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to complete ticket');
+          this.ticketActionErrorSignal.set(this.formatError(err, 'Failed to complete ticket'));
           this.ticketActionLoadingSignal.set(false);
         },
       });
@@ -96,18 +97,22 @@ export class MaintenanceStore {
     return this.api.getCompletionLogs(ticketId);
   }
 
-  createTicket(equipmentId: string, description: string, priority: TicketPriority, type: TicketType): void {
+  /** Ticket creation is a two-step backend flow: request maintenance for the equipment first, then open a ticket against the resulting maintenanceId. */
+  createTicket(equipmentId: string, requestedBy: string, description: string, priority: TicketPriority, type: TicketType): void {
     this.ticketActionLoadingSignal.set(true);
     this.ticketActionErrorSignal.set(null);
-    this.api.createTicket(equipmentId, description, priority, type)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.api.createMaintenanceRequest(equipmentId, requestedBy, description)
+      .pipe(
+        switchMap(({ id: maintenanceId }) => this.api.createTicket(maintenanceId, priority, type)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: created => {
           this.ticketsSignal.update(list => [created, ...list]);
           this.ticketActionLoadingSignal.set(false);
         },
         error: err => {
-          this.ticketActionErrorSignal.set(err instanceof Error ? err.message : 'Failed to create ticket');
+          this.ticketActionErrorSignal.set(this.formatError(err, 'Failed to create ticket'));
           this.ticketActionLoadingSignal.set(false);
         },
       });
@@ -130,7 +135,7 @@ export class MaintenanceStore {
           this.loadingSignal.set(false);
         },
         error: err => {
-          this.errorSignal.set(err instanceof Error ? err.message : 'Failed');
+          this.errorSignal.set(this.formatError(err, 'Failed to schedule maintenance'));
           this.loadingSignal.set(false);
         },
       });
@@ -138,6 +143,12 @@ export class MaintenanceStore {
 
   clearLastScheduled(): void { this.lastScheduledSignal.set(null); }
   clearTicketActionError(): void { this.ticketActionErrorSignal.set(null); }
+
+  private formatError(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) return error.error?.message ?? error.message ?? fallback;
+    if (error instanceof Error) return error.message || fallback;
+    return fallback;
+  }
 
   private replaceTicket(updated: MaintenanceTicket): void {
     this.ticketsSignal.update(list => list.map(t => t.id === updated.id ? updated : t));

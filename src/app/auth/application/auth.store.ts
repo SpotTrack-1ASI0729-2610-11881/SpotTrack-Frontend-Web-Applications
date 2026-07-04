@@ -7,6 +7,7 @@ import { ActiveGymStore } from './active-gym.store';
 import { AdminGymStore } from '../../gym/application/admin-gym.store';
 import { AnalyticsStore } from '../../analytics/application/analytics.store';
 import { FinancialImpactStore } from '../../analytics/application/financial-impact.store';
+import { AlertsStore } from '../../alerts/application/alerts.store';
 import { User, UserRole } from '../domain/model/user.model';
 
 const TOKEN_KEY   = 'spottrack_token';
@@ -51,6 +52,7 @@ export class AuthStore {
   private readonly adminGymStore         = inject(AdminGymStore);
   private readonly analyticsStore        = inject(AnalyticsStore);
   private readonly financialImpactStore  = inject(FinancialImpactStore);
+  private readonly alertsStore           = inject(AlertsStore);
 
   private readonly userSignal  = signal<User | null>(this.loadUser());
   private readonly tokenSignal = signal<string | null>(
@@ -240,6 +242,7 @@ export class AuthStore {
     this.adminGymStore.reset();
     this.analyticsStore.reset();
     this.financialImpactStore.reset();
+    this.alertsStore.reset();
     this.userSignal.set(null);
     this.tokenSignal.set(null);
     this.errorSignal.set(null);

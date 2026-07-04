@@ -41,7 +41,7 @@ export class FinancialImpactStore {
    */
   readonly inactivityLoss = computed<InactivityRow[]>(() => {
     return this._financialStats()
-      .filter(s => s.status === 'MAINTENANCE')
+      .filter(s => s.downtimeCost > 0)
       .map(s => {
         const hours       = Math.max(1, Math.round(s.totalUsageHours));
         const total        = s.downtimeCost;
