@@ -195,13 +195,17 @@
         <p class="modal__subtitle">{{ ticketId(t) }} · {{ equipmentName(t.equipmentId) }}</p>
         <p class="modal__hint">{{ 'maintenance.controlPoint.startHint' | translate }}</p>
         <label class="modal__label">{{ 'maintenance.controlPoint.technician' | translate }} *</label>
-        <input
+        <select
           class="modal__input"
           [ngModel]="technicianInput()"
           (ngModelChange)="technicianInput.set($event)"
           name="technicianId"
-          [placeholder]="'maintenance.controlPoint.technicianPlaceholder' | translate"
         >
+          <option value="" disabled>{{ 'maintenance.controlPoint.technicianPlaceholder' | translate }}</option>
+          @for (technician of technicianStore.technicians(); track technician.id) {
+            <option [value]="technician.id">{{ technician.name }}</option>
+          }
+        </select>
         @if (actionError()) {
           <p class="modal__error">{{ actionError() }}</p>
         }
