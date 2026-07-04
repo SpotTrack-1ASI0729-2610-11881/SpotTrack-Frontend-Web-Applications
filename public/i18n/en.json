@@ -899,7 +899,6 @@
       "totalTickets": "Total Tickets"
     },
     "charts": {
-      "peakCapacityHours": "Peak Capacity Hours",
       "machineUsage": "Machine Usage",
       "noUsageData": "No usage data available"
     },
