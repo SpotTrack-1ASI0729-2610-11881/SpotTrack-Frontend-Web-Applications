@@ -76,9 +76,9 @@ export class MaintenanceApi extends BaseApi {
     ).pipe(map(r => this.ticketAssembler.toEntityFromResource(r)));
   }
 
-  registerCompletionLog(ticketId: string, maintenanceId: string, notes: string): Observable<MaintenanceLogResource> {
+  registerCompletionLog(ticketId: string, maintenanceId: string, notes: string, cost: number): Observable<MaintenanceLogResource> {
     return this.http.post<MaintenanceLogResource>(
-      `${this.ticketsUrl}/${ticketId}/completion-log`, { maintenanceId, notes }
+      `${this.ticketsUrl}/${ticketId}/completion-log`, { maintenanceId, notes, cost }
     );
   }
 
