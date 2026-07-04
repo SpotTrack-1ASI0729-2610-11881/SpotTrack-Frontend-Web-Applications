@@ -6,6 +6,7 @@ import { AlertResource } from '../infrastructure/alerts-response';
 export interface AppAlert {
   id: string;
   backendId?: number;       // present only for alerts sourced from the backend
+  severity?: 'WARNING' | 'CRITICAL'; // present only for alerts sourced from the backend
   title?: string;           // plain text (for dynamically generated alerts)
   titleKey?: string;        // i18n key (for seeded/static alerts)
   description?: string;
@@ -54,6 +55,7 @@ export class AlertsService {
     return {
       id:          `BE-${r.id}`,
       backendId:   r.id,
+      severity:    r.severity,
       titleKey:    isWarning ? 'alerts.backend.maintenanceThreshold.title' : 'alerts.backend.anomalyReported.title',
       description: r.message,
       type:        'admin',
