@@ -581,11 +581,13 @@
         "name": "Nombre del equipo",
         "brand": "Marca / Fabricante",
         "model": "Modelo",
-        "zoneId": "ID de zona",
+        "zoneId": "Zona",
         "purchaseCurrency": "Moneda",
         "purchaseAmount": "Monto de compra",
         "status": "Estado"
       },
+      "zonesLoading": "Cargando zonas…",
+      "noZones": "Sin zonas disponibles. Crea zonas en Gestión de Sedes primero.",
       "validation": {
         "required": "Este campo es obligatorio",
         "min": "El valor debe ser 0 o mayor"
@@ -1070,6 +1072,19 @@
       "noActiveMembership": "Sin membresía activa. Regulariza tu cuenta para gestionar sedes.",
       "upgradePlanLink": "Mejorar plan →",
       "manageMembershipLink": "Gestionar membresía →"
+    },
+    "zones": {
+      "manageBtn": "Gestionar Zonas",
+      "addTitle": "Agregar zona",
+      "namePlaceholder": "Nombre de la zona",
+      "occupancyPlaceholder": "Aforo máximo",
+      "addBtn": "Agregar zona",
+      "count": "{{ count }} zona(s)",
+      "empty": "Aún no hay zonas en esta sede.",
+      "occupancy": "Máx: {{ max }} personas",
+      "error": {
+        "createFailed": "No se pudo crear la zona. Inténtalo de nuevo."
+      }
     }
   },
   "whitelist": {

@@ -76,14 +76,37 @@
           <span>{{ 'equipment.dialog.sections.configuration' | translate }}</span>
         </div>
 
-        <mat-form-field appearance="outline" class="form-field form-field--full">
-          <mat-label>{{ 'equipment.dialog.fields.zoneId' | translate }}</mat-label>
-          <mat-icon matPrefix>location_on</mat-icon>
-          <input matInput type="text" formControlName="zoneId" />
-          @if (form.controls.zoneId.hasError('required')) {
-            <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
-          }
-        </mat-form-field>
+        <!-- Zone: select in create mode, disabled text in edit mode -->
+        @if (isEditMode) {
+          <mat-form-field appearance="outline" class="form-field form-field--full">
+            <mat-label>{{ 'equipment.dialog.fields.zoneId' | translate }}</mat-label>
+            <mat-icon matPrefix>location_on</mat-icon>
+            <input matInput formControlName="zoneId" />
+          </mat-form-field>
+        } @else {
+          <mat-form-field appearance="outline" class="form-field form-field--full">
+            <mat-label>{{ 'equipment.dialog.fields.zoneId' | translate }}</mat-label>
+            <mat-icon matPrefix>location_on</mat-icon>
+            <mat-select formControlName="zoneId">
+              @if (zoneStore.loading()) {
+                <mat-option disabled>{{ 'equipment.dialog.zonesLoading' | translate }}</mat-option>
+              } @else if (groupedZones().length === 0) {
+                <mat-option disabled>{{ 'equipment.dialog.noZones' | translate }}</mat-option>
+              } @else {
+                @for (group of groupedZones(); track group.branch.branchId) {
+                  <mat-optgroup [label]="group.branch.name">
+                    @for (zone of group.zones; track zone.zoneId) {
+                      <mat-option [value]="zone.zoneId">{{ zone.zoneName }}</mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              }
+            </mat-select>
+            @if (form.controls.zoneId.hasError('required')) {
+              <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        }
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field form-field--currency">
