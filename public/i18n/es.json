@@ -314,6 +314,7 @@
     "emptyState": "No tienes alertas pendientes",
     "detailsBtn": "Ver detalles →",
     "deleteTitle": "Eliminar alerta",
+    "clearAll": "Limpiar todo",
     "severity": {
       "WARNING": "Advertencia",
       "CRITICAL": "Crítico"
