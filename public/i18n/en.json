@@ -940,7 +940,11 @@
       "title": "Account Information",
       "email": "Email",
       "gymName": "Gym Name",
-      "phone": "Phone"
+      "phone": "Phone",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dni": "National ID (DNI)",
+      "saveSuccess": "Profile updated successfully."
     },
     "language": {
       "title": "Language Preferences",

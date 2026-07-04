@@ -142,12 +142,41 @@
         </div>
         <div class="form-group">
           <label for="admin-email">{{ 'profile.account.email' | translate }}</label>
-          <input type="email" id="admin-email" [value]="currentUser()?.email ?? ''" class="form-control">
+          <input type="email" id="admin-email" [value]="currentUser()?.email ?? ''" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+          <label for="admin-firstName">{{ 'profile.account.firstName' | translate }}</label>
+          <input type="text" id="admin-firstName" [(ngModel)]="accountFirstName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-lastName">{{ 'profile.account.lastName' | translate }}</label>
+          <input type="text" id="admin-lastName" [(ngModel)]="accountLastName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-phone">{{ 'profile.account.phone' | translate }}</label>
+          <input type="tel" id="admin-phone" [(ngModel)]="accountPhoneNumber" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-dni">{{ 'profile.account.dni' | translate }}</label>
+          <input type="text" id="admin-dni" [value]="accountDni" class="form-control" disabled>
         </div>
         <div class="form-group">
           <label for="admin-gym">{{ 'profile.account.gymName' | translate }}</label>
-          <input type="text" id="admin-gym" [value]="adminGymStore.primaryGym()?.name ?? ''" class="form-control">
+          <input type="text" id="admin-gym" [value]="adminGymStore.primaryGym()?.name ?? ''" class="form-control" disabled>
         </div>
+
+        @if (saveSuccess()) {
+          <div class="cpwd-success">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'profile.account.saveSuccess' | translate }}
+          </div>
+        }
+        @if (saveError()) {
+          <div class="cpwd-error">
+            <mat-icon>error_outline</mat-icon>
+            {{ saveError() }}
+          </div>
+        }
       </section>
 
       <!-- Language -->
@@ -221,7 +250,7 @@
         }
       </section>
 
-      <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
+      <button class="btn-primary" [disabled]="saving()" (click)="saveAccountInfo()">{{ 'profile.saveChanges' | translate }}</button>
     </main>
 
   } @else {
@@ -272,12 +301,37 @@
         </div>
         <div class="form-group">
           <label for="email">{{ 'profile.account.email' | translate }}</label>
-          <input type="email" id="email" [value]="currentUser()?.email ?? ''" class="form-control">
+          <input type="email" id="email" [value]="currentUser()?.email ?? ''" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+          <label for="firstName">{{ 'profile.account.firstName' | translate }}</label>
+          <input type="text" id="firstName" [(ngModel)]="accountFirstName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="lastName">{{ 'profile.account.lastName' | translate }}</label>
+          <input type="text" id="lastName" [(ngModel)]="accountLastName" class="form-control">
         </div>
         <div class="form-group">
           <label for="phone">{{ 'profile.account.phone' | translate }}</label>
-          <input type="tel" id="phone" [value]="profile()?.phoneNumber ?? ''" class="form-control">
+          <input type="tel" id="phone" [(ngModel)]="accountPhoneNumber" class="form-control">
         </div>
+        <div class="form-group">
+          <label for="dni">{{ 'profile.account.dni' | translate }}</label>
+          <input type="text" id="dni" [value]="accountDni" class="form-control" disabled>
+        </div>
+
+        @if (saveSuccess()) {
+          <div class="cpwd-success">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'profile.account.saveSuccess' | translate }}
+          </div>
+        }
+        @if (saveError()) {
+          <div class="cpwd-error">
+            <mat-icon>error_outline</mat-icon>
+            {{ saveError() }}
+          </div>
+        }
       </section>
 
       <section class="card settings-card">
@@ -390,7 +444,7 @@
         }
       </section>
 
-      <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
+      <button class="btn-primary" [disabled]="saving()" (click)="saveAccountInfo()">{{ 'profile.saveChanges' | translate }}</button>
     </main>
 
   }
