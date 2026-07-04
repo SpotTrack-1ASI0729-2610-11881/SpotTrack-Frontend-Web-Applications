@@ -18,6 +18,16 @@ export class DashboardComponent {
   readonly store  = inject(DashboardStore);
   private  router = inject(Router);
 
+  // ── SVG dimensions (must match store) ─────────────────────────────────
+  readonly SVG_W = 680;
+  readonly SVG_H = 160;
+
+  // ── Y-axis ticks for line chart ───────────────────────────────────────
+  readonly yTicks = [0, 25, 50, 75, 100].map((v) => ({
+    label: String(v),
+    y: this.SVG_H - (v / 100) * this.SVG_H,
+  }));
+
   // ── Bar chart Y reference ticks ────────────────────────────────────────
   readonly barYTicks = [600, 450, 300, 150, 0];
 
