@@ -1058,7 +1058,8 @@
       "notifyOnCritical": "Notify me on critical alerts",
       "notifyOnWarning": "Notify me on warning alerts",
       "emailPlaceholder": "Notification email (optional)",
-      "saveBtn": "Save"
+      "saveBtn": "Save",
+      "savedMessage": "Preferences saved"
     }
   },
   "whitelist": {

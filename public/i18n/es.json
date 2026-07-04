@@ -1058,7 +1058,8 @@
       "notifyOnCritical": "Notificarme ante alertas críticas",
       "notifyOnWarning": "Notificarme ante alertas de advertencia",
       "emailPlaceholder": "Email de notificación (opcional)",
-      "saveBtn": "Guardar"
+      "saveBtn": "Guardar",
+      "savedMessage": "Preferencias guardadas"
     }
   },
   "whitelist": {
