@@ -770,6 +770,8 @@
       "completeHint": "Describe what was fixed. This entry is logged permanently and tied to the assigned technician, so incomplete or incorrect work can be traced back later.",
       "notes": "Completion notes",
       "notesPlaceholder": "What was inspected, repaired or replaced...",
+      "cost": "Completion cost",
+      "costPlaceholder": "0.00",
       "confirmStart": "Assign & start",
       "confirmComplete": "Confirm & resolve",
       "cancel": "Cancel",

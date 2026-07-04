@@ -770,6 +770,8 @@
       "completeHint": "Describe qué se reparó. Este registro queda guardado permanentemente y vinculado al técnico asignado, para poder rastrear trabajos incompletos o incorrectos más adelante.",
       "notes": "Notas de finalización",
       "notesPlaceholder": "Qué se inspeccionó, reparó o reemplazó...",
+      "cost": "Costo de finalización",
+      "costPlaceholder": "0.00",
       "confirmStart": "Asignar e iniciar",
       "confirmComplete": "Confirmar y resolver",
       "cancel": "Cancelar",
