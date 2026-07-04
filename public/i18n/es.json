@@ -900,7 +900,9 @@
     },
     "charts": {
       "machineUsage": "Uso de Máquinas",
-      "noUsageData": "Sin datos de uso disponibles"
+      "noUsageData": "Sin datos de uso disponibles",
+      "peakCapacityHours": "Horas Pico de Capacidad",
+      "noCapacityData": "Aún no hay datos de reservas disponibles"
     },
     "table": {
       "title": "Equipos Infrautilizados",
