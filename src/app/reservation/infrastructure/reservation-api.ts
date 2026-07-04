@@ -46,4 +46,9 @@ export class ReservationApi {
   getAllReservations(): Observable<ReservationResource[]> {
     return this.http.get<ReservationResource[]>(this.base);
   }
+
+  /** Admin-only: every reservation across the gym, not just the caller's own. */
+  getAllReservationsAdmin(): Observable<ReservationResource[]> {
+    return this.http.get<ReservationResource[]>(`${this.base}/all`);
+  }
 }
