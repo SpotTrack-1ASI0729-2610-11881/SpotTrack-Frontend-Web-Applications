@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,11 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MonitoringStore } from '../../../application/monitoring.store';
 import { EquipmentStore } from '../../../../gym/application/equipment.store';
+import { ReservationApi } from '../../../../reservation/infrastructure/reservation-api';
+import { ReservationResource } from '../../../../reservation/infrastructure/reservation-response';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 interface AnomalyForm {
-  reservationId: string;
-  equipmentId: string | null;
-  zoneId: string;
+  reservationId: string | null;
   anomalyDescription: string;
 }
 
@@ -32,48 +33,74 @@ interface AnomalyForm {
   templateUrl: './anomaly-report.html',
   styleUrl: './anomaly-report.scss',
 })
-export class AnomalyReportComponent {
-  private readonly router = inject(Router);
-  readonly store = inject(MonitoringStore);
-  readonly equipmentStore = inject(EquipmentStore);
+export class AnomalyReportComponent implements OnInit {
+  private readonly router         = inject(Router);
+  private readonly reservationApi = inject(ReservationApi);
+  private readonly authStore      = inject(AuthStore);
+  readonly store           = inject(MonitoringStore);
+  readonly equipmentStore  = inject(EquipmentStore);
 
-  readonly loading = this.store.actionLoading;
-  readonly error = this.store.actionError;
+  readonly loading        = this.store.actionLoading;
+  readonly error          = this.store.actionError;
   readonly anomalyReports = this.store.anomalyReports;
-  readonly equipment = this.equipmentStore.equipment;
+  readonly equipment      = this.equipmentStore.equipment;
+
+  readonly isAdmin = this.authStore.isAdmin;
+
+  reservations: ReservationResource[] = [];
+  reservationsLoading = false;
 
   form: AnomalyForm = {
-    reservationId: '',
-    equipmentId: null,
-    zoneId: '',
+    reservationId: null,
     anomalyDescription: '',
   };
 
+  ngOnInit(): void {
+    this.reservationsLoading = true;
+    const source$ = this.isAdmin()
+      ? this.reservationApi.getAllReservationsAdmin()
+      : this.reservationApi.getAllReservations();
+    source$.subscribe({
+      next: reservations => {
+        this.reservations = reservations;
+        this.reservationsLoading = false;
+      },
+      error: () => { this.reservationsLoading = false; },
+    });
+  }
+
+  get selectedReservation(): ReservationResource | null {
+    return this.reservations.find(r => r.id === this.form.reservationId) ?? null;
+  }
+
   get isValid(): boolean {
-    return !!(
-      this.form.reservationId.trim() &&
-      this.form.equipmentId &&
-      this.form.zoneId.trim() &&
-      this.form.anomalyDescription.trim()
-    );
+    return !!(this.form.reservationId && this.form.anomalyDescription.trim());
   }
 
   submit(): void {
-    if (!this.isValid || !this.form.equipmentId) return;
+    const reservation = this.selectedReservation;
+    if (!this.isValid || !reservation) return;
+
+    const zoneId = this.equipment().find(e => e.uuid === reservation.equipmentId)?.zoneId ?? '';
+
     this.store.reportAnomaly({
-      reservationId: this.form.reservationId.trim(),
-      equipmentId: this.form.equipmentId,
-      zoneId: this.form.zoneId.trim(),
+      reservationId: reservation.id,
+      equipmentId: reservation.equipmentId,
+      zoneId,
       anomalyDescription: this.form.anomalyDescription.trim(),
     });
-    this.form = { reservationId: '', equipmentId: null, zoneId: '', anomalyDescription: '' };
+    this.form = { reservationId: null, anomalyDescription: '' };
   }
 
   equipmentName(uuid: string): string {
     return this.equipment().find(e => e.uuid === uuid)?.name ?? uuid;
   }
 
+  reservationLabel(r: ReservationResource): string {
+    return `${this.equipmentName(r.equipmentId)} · ${r.startTime}-${r.endTime}`;
+  }
+
   back(): void {
-    this.router.navigate(['/monitoring']);
+    this.router.navigate([this.isAdmin() ? '/monitoring' : '/map']);
   }
 }
