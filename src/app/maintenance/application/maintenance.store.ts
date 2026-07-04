@@ -73,10 +73,10 @@ export class MaintenanceStore {
   }
 
   /** Registers a completion log entry (accountability record) before resolving the ticket. */
-  completeTicket(ticketId: string, maintenanceId: string, notes: string): void {
+  completeTicket(ticketId: string, maintenanceId: string, notes: string, cost: number): void {
     this.ticketActionLoadingSignal.set(true);
     this.ticketActionErrorSignal.set(null);
-    this.api.registerCompletionLog(ticketId, maintenanceId, notes)
+    this.api.registerCompletionLog(ticketId, maintenanceId, notes, cost)
       .pipe(
         switchMap(() => this.api.completeTicket(ticketId)),
         takeUntilDestroyed(this.destroyRef),

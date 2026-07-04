@@ -55,6 +55,7 @@ export class MaintenanceComponent {
   readonly modalTicket    = signal<MaintenanceTicket | null>(null);
   readonly technicianInput = signal('');
   readonly notesInput     = signal('');
+  readonly costInput      = signal('');
   readonly logEntries     = signal<MaintenanceLogResource[]>([]);
   readonly logLoading     = signal(false);
 
@@ -97,6 +98,7 @@ export class MaintenanceComponent {
   openCompleteModal(t: MaintenanceTicket): void {
     this.modalTicket.set(t);
     this.notesInput.set('');
+    this.costInput.set('');
     this.store.clearTicketActionError();
     this.modalMode.set('complete');
   }
@@ -128,9 +130,10 @@ export class MaintenanceComponent {
   confirmComplete(): void {
     const t = this.modalTicket();
     const notes = this.notesInput().trim();
-    if (!t || !notes) return;
+    const cost = Number(this.costInput());
+    if (!t || !notes || !this.costInput().trim() || Number.isNaN(cost) || cost < 0) return;
     this.submitting = true;
-    this.store.completeTicket(t.id, t.maintenanceId, notes);
+    this.store.completeTicket(t.id, t.maintenanceId, notes, cost);
   }
 
   pendingMenu(t: MaintenanceTicket): ContextMenuItem[] {
