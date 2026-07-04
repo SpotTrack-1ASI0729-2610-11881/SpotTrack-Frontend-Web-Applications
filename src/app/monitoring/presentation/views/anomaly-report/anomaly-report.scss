@@ -84,6 +84,7 @@ $red:      #fb2c36;
 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field__label { font-size: .8125rem; font-weight: 600; color: $text; }
+.field__hint { font-size: .8125rem; color: $muted; margin: 0; }
 .field__mat {
   width: 100%;
   ::ng-deep {

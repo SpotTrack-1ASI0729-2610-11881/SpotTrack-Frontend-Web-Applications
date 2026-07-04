@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -26,6 +27,7 @@ import { QrScannerComponent } from '../../../../shared/presentation/components/q
     TranslateModule,
     ContextMenuDirective,
     QrScannerComponent,
+    RouterLink,
   ],
   templateUrl: './reservation-list.component.html',
   styleUrl: './reservation-list.component.css',

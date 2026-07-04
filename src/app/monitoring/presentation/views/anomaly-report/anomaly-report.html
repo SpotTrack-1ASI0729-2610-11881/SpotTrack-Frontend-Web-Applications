@@ -26,30 +26,17 @@
       </div>
       <form class="reg-form" (ngSubmit)="submit()">
         <div class="field">
-          <label class="field__label">{{ 'monitoring.anomalyReport.reservationId' | translate }} *</label>
+          <label class="field__label">{{ 'monitoring.anomalyReport.reservation' | translate }} *</label>
           <mat-form-field appearance="outline" class="field__mat">
-            <input matInput [(ngModel)]="form.reservationId" name="reservationId"
-                   [placeholder]="'monitoring.anomalyReport.reservationIdPlaceholder' | translate" required />
-          </mat-form-field>
-        </div>
-
-        <div class="field">
-          <label class="field__label">{{ 'monitoring.anomalyReport.equipment' | translate }} *</label>
-          <mat-form-field appearance="outline" class="field__mat">
-            <mat-select [(ngModel)]="form.equipmentId" name="equipmentId" required>
-              @for (eq of equipment(); track eq.uuid) {
-                <mat-option [value]="eq.uuid">{{ eq.name }}</mat-option>
+            <mat-select [(ngModel)]="form.reservationId" name="reservationId" required [disabled]="reservationsLoading">
+              @for (r of reservations; track r.id) {
+                <mat-option [value]="r.id">{{ reservationLabel(r) }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
-        </div>
-
-        <div class="field">
-          <label class="field__label">{{ 'monitoring.anomalyReport.zoneId' | translate }} *</label>
-          <mat-form-field appearance="outline" class="field__mat">
-            <input matInput [(ngModel)]="form.zoneId" name="zoneId"
-                   [placeholder]="'monitoring.anomalyReport.zoneIdPlaceholder' | translate" required />
-          </mat-form-field>
+          @if (!reservationsLoading && reservations.length === 0) {
+            <p class="field__hint">{{ 'monitoring.anomalyReport.noReservations' | translate }}</p>
+          }
         </div>
 
         <div class="field">

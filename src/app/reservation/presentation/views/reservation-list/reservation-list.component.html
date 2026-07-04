@@ -6,10 +6,16 @@
       <h1 class="booking-title">{{ 'reservation.title' | translate }}</h1>
       <p class="booking-subtitle">{{ 'reservation.subtitle' | translate }}</p>
     </div>
-    <button class="new-booking-btn" (click)="openModal()" [disabled]="hasActiveReservation()">
-      <mat-icon>add</mat-icon>
-      {{ 'reservation.newReservation' | translate }}
-    </button>
+    <div class="booking-header__actions">
+      <button class="new-booking-btn" (click)="openModal()" [disabled]="hasActiveReservation()">
+        <mat-icon>add</mat-icon>
+        {{ 'reservation.newReservation' | translate }}
+      </button>
+      <a class="report-issue-btn" routerLink="/anomalies/report">
+        <mat-icon>warning_amber</mat-icon>
+        {{ 'reservation.reportIssue' | translate }}
+      </a>
+    </div>
   </header>
 
   <!-- ===== RESERVATION CARDS (real-time from backend) ===== -->
