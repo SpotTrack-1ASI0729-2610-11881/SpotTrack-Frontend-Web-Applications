@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { EquipmentStatus } from '../../../domain/model/equipment.entity';
 import { EquipmentStore } from '../../../application/equipment.store';
+import { AdminGymStore } from '../../../application/admin-gym.store';
+import { ZoneStore } from '../../../application/zone.store';
 import { ContextMenuDirective } from '../../../../shared/presentation/directives/context-menu.directive';
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
@@ -50,8 +52,10 @@ export interface EquipmentRow {
   styleUrl: './equipment-management.scss',
 })
 export class EquipmentManagementComponent {
-  private router = inject(Router);
-  private store  = inject(EquipmentStore);
+  private router         = inject(Router);
+  private store          = inject(EquipmentStore);
+  private adminGymStore  = inject(AdminGymStore);
+  readonly zoneStore     = inject(ZoneStore);
 
   readonly EquipmentStatus   = EquipmentStatus;
   readonly equipmentStatuses = Object.values(EquipmentStatus);
@@ -59,6 +63,16 @@ export class EquipmentManagementComponent {
 
   readonly qrTarget    = signal<EquipmentRow | null>(null);
   readonly testQrUuid  = signal<string | null>(null);
+
+  private readonly gymId = computed(() => this.adminGymStore.primaryGym()?.gymId ?? null);
+
+  constructor() {
+    this.adminGymStore.load();
+    effect(() => {
+      const id = this.gymId();
+      if (id) this.zoneStore.load(id);
+    });
+  }
 
   searchQuery    = signal('');
   selectedStatus = signal<EquipmentStatus | ''>('');
@@ -91,6 +105,11 @@ export class EquipmentManagementComponent {
         status:           e.status,
       } as EquipmentRow));
   });
+
+  zoneName(zoneId: string): string {
+    if (!this.zoneStore.loaded()) return '…';
+    return this.zoneStore.zones().find(z => z.zoneId === zoneId)?.zoneName ?? '—';
+  }
 
   openQrModal(row: EquipmentRow): void  { this.qrTarget.set(row); }
   closeQrModal(): void                  { this.qrTarget.set(null); this.testQrUuid.set(null); }
