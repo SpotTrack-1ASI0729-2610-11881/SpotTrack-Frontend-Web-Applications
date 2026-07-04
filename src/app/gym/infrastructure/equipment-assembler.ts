@@ -30,6 +30,7 @@ export class EquipmentAssembler {
       manufacturerId:   e.brand,
       purchaseCurrency: e.purchaseCurrency,
       purchaseAmount:   e.purchaseAmount,
+      maintenanceThreshold: e.maintenanceThreshold ?? undefined,
     };
   }
 }
