@@ -1001,14 +1001,26 @@
       "namePlaceholder": "e.g. Power Gym",
       "submitBtn": "Create Gym"
     },
+    "switcher": {
+      "title": "My Gyms",
+      "active": "Active",
+      "switchBtn": "Switch to this gym",
+      "addGymBtn": "Add another gym",
+      "addGymTitle": "Join a new gym",
+      "addGymEmpty": "No other gyms available to join.",
+      "joinBtn": "Join",
+      "cancelBtn": "Cancel"
+    },
     "error": {
       "loadFailed": "Could not load your gym associations. Please try again.",
       "switchFailed": "Could not switch the active gym. Please try again.",
       "associateFailed": "Could not associate with this gym. Please try again.",
+      "associateAlreadyExists": "You already have an association with this gym.",
       "myGymsFailed": "Could not load your gym information. Please try again.",
       "createFailed": "Could not create the gym. Please try again.",
       "access": {
-        "notWhitelisted": "Your account is not authorized to access this gym. Contact the gym administrator."
+        "notWhitelisted": "Your account is not authorized to access this gym. Contact the gym administrator.",
+        "revoked": "You no longer have access to this gym. Contact the gym administrator."
       }
     }
   },

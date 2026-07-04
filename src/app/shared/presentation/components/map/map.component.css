@@ -801,6 +801,20 @@
   .gym-cards-grid { grid-template-columns: 1fr; }
 }
 
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 24px;
+  color: #ef9a9a;
+  background: rgba(229, 57, 53, 0.08);
+  border: 1px solid rgba(229, 57, 53, 0.25);
+  border-radius: 12px;
+}
+
+.error-state mat-icon { font-size: 22px; width: 22px; height: 22px; flex-shrink: 0; }
+.error-state p        { margin: 0; font-size: 14px; }
+
 @media (max-width: 480px) {
   .map-root     { padding: 10px 10px 0; gap: 8px; }
   .map-title    { font-size: 15px; }

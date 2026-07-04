@@ -1001,14 +1001,26 @@
       "namePlaceholder": "ej. Power Gym",
       "submitBtn": "Crear Gimnasio"
     },
+    "switcher": {
+      "title": "Mis Gimnasios",
+      "active": "Activo",
+      "switchBtn": "Cambiar a este gimnasio",
+      "addGymBtn": "Agregar otro gimnasio",
+      "addGymTitle": "Unirse a un nuevo gimnasio",
+      "addGymEmpty": "No hay otros gimnasios disponibles para unirse.",
+      "joinBtn": "Unirse",
+      "cancelBtn": "Cancelar"
+    },
     "error": {
       "loadFailed": "No se pudieron cargar tus asociaciones de gimnasio. Inténtalo de nuevo.",
       "switchFailed": "No se pudo cambiar el gimnasio activo. Inténtalo de nuevo.",
       "associateFailed": "No se pudo asociar con este gimnasio. Inténtalo de nuevo.",
+      "associateAlreadyExists": "Ya tenés una asociación con este gimnasio.",
       "myGymsFailed": "No se pudo cargar la información de tu gimnasio. Inténtalo de nuevo.",
       "createFailed": "No se pudo crear el gimnasio. Inténtalo de nuevo.",
       "access": {
-        "notWhitelisted": "Tu cuenta no está autorizada para acceder a este gimnasio. Contacta al administrador del gimnasio."
+        "notWhitelisted": "Tu cuenta no está autorizada para acceder a este gimnasio. Contacta al administrador del gimnasio.",
+        "revoked": "Ya no tenés acceso a este gimnasio. Contactá al administrador del gimnasio."
       }
     }
   },

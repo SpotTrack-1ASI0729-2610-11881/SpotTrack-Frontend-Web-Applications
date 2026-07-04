@@ -63,6 +63,7 @@ export class MapComponent implements OnInit {
 
   readonly branches    = this.branchStore.branches;
   readonly dataLoading = computed(() => this.branchStore.loading() || this.zoneStore.loading());
+  readonly dataError   = computed(() => this.branchStore.error() ?? this.zoneStore.error() ?? null);
 
   constructor() {
     // Default selectedBranchId to the first branch once branches load.
