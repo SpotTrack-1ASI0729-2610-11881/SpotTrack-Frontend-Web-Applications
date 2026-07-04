@@ -342,7 +342,6 @@
     "maintenance": "Mantenimiento",
     "analytics": "Analítica",
     "alerts": "Alertas",
-    "configuration": "Configuración",
     "map": "Mapa",
     "routines": "Rutinas",
     "bookings": "Mis Reservas",
@@ -443,74 +442,6 @@
       "actions": "Acciones",
       "simulateMotion": "Simular Movimiento",
       "noData": "No se encontraron sensores"
-    }
-  },
-  "configuration": {
-    "title": "Configuración",
-    "subtitle": "Gestiona los parámetros del sistema y preferencias de mantenimiento",
-    "cancel": "Cancelar",
-    "saveChanges": "Guardar Cambios",
-    "maintenanceThresholds": {
-      "title": "Umbrales de Mantenimiento",
-      "subtitle": "Configura los límites que activan alertas de mantenimiento preventivo",
-      "criticalHour": "Horas de Uso Críticas",
-      "descriptionCriticalHour": "Genera ticket automático cuando una máquina alcanza este umbral",
-      "inactiveTime": "Tiempo Inactivo Máximo (min)",
-      "descriptionInactiveTime": "Alerta si una máquina está inactiva durante este tiempo en horas pico",
-      "peakHourBuffer": "Buffer de Horas Pico (horas)",
-      "descriptionPeakHourBuffer": "Evita programar mantenimiento dentro de este rango antes/después de horas pico",
-      "note": "Calendario Inteligente",
-      "descriptionNote": "El sistema automáticamente programa mantenimientos evitando las horas pico (6-9am, 6-9pm) y respetando el buffer configurado"
-    },
-    "configurationIoT": {
-      "title": "Configuración IoT",
-      "subtitle": "Parámetros de telemetría y sensores Edge",
-      "lowBattery": "Umbral de Batería Baja (%)",
-      "descriptionLowBattery": "Alerta cuando la batería de un sensor cae por debajo de este nivel",
-      "ping": "Intervalo de Ping (segundos)",
-      "DescriptionPing": "Frecuencia de actualización de estado de sensores",
-      "pingOptions": {
-        "5s": "5 segundos",
-        "10": "10 segundos (recomendado)",
-        "15": "15 segundos",
-        "30": "30 segundos",
-        "60": "60 segundos"
-      },
-      "graceTime": "Tiempo de Gracia Offline (minutos)",
-      "descriptionGraceTime": "Tiempo antes de marcar un sensor como desconectado"
-    },
-    "notifications": {
-      "title": "Notificaciones",
-      "subtitle": "Configura las alertas y destinatarios",
-      "emailNotification": "Email de Notificaciones",
-      "descriptionEmailNotification": "Dirección principal para recibir alertas del sistema",
-      "alertType": {
-        "title": "Tipos de Alertas Habilitadas",
-        "preventiveMaintenance": "Mantenimiento Preventivo",
-        "descriptionPreventiveMaintenance": "Umbral de horas alcanzado",
-        "offlineSensors": "Sensores Offline",
-        "descriptionOfflineSensors": "Conectividad perdida",
-        "lowBattery": "Batería Baja",
-        "descriptionLowBattery": "Nivel crítico en sensores",
-        "weeklyReports": "Reportes Semanales",
-        "descriptionWeeklyReports": "Resumen de actividad"
-      }
-    },
-    "financialConfiguration": {
-      "title": "Configuración Financiera",
-      "subtitle": "Parámetros para cálculo de ROI e impacto financiero",
-      "averageCostHourDowntime": "Costo Promedio por Hora de Downtime",
-      "descriptionAverageCostHourDowntime": "Pérdida estimada por hora de máquina fuera de servicio",
-      "averageMonthlyMembership": "Membresía Promedio Mensual",
-      "descriptionAverageMonthlyMembership": "Usado para cálculo de ROI en proyecciones",
-      "systemCurrency": "Moneda del Sistema",
-      "moneySystemCurrency": {
-        "USD": "USD - Dólar Estadounidense",
-        "EUR": "EUR - Euro",
-        "PEN": "PEN - Sol Peruano",
-        "MXN": "MXN - Peso Mexicano",
-        "COP": "COP - Peso Colombiano"
-      }
     }
   },
   "equipment": {

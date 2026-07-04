@@ -109,11 +109,6 @@ export const routes: Routes = [
               ...analyticsRoutes,
               ...monitoringRoutes,
               ...membershipRoutes,
-              {
-                path: 'configuration',
-                loadComponent: () =>
-                  import('./configuration/presentation/views/configuration').then(m => m.ConfigurationComponent),
-              },
             ],
           },
         ],
