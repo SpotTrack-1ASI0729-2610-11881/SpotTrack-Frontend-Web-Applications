@@ -56,6 +56,7 @@ export class AddEquipmentDialogComponent {
     purchaseAmount:   [{ value: this.existing?.purchaseAmount ?? (null as unknown as number), disabled: this.isEditMode }, [Validators.required, Validators.min(0)]],
     purchaseCurrency: [{ value: this.existing?.purchaseCurrency ?? 'USD', disabled: this.isEditMode }, Validators.required],
     status:           [this.existing?.status ?? EquipmentStatus.AVAILABLE, Validators.required],
+    maintenanceThreshold: [this.existing?.maintenanceThreshold ?? ''],
   });
 
   readonly groupedZones = computed(() => {
@@ -87,16 +88,20 @@ export class AddEquipmentDialogComponent {
 
     if (this.isEditMode && this.existing?.uuid) {
       this.store.updateEquipmentStatus(this.existing.uuid, val.status);
+      if (val.maintenanceThreshold && val.maintenanceThreshold !== this.existing.maintenanceThreshold) {
+        this.store.defineMaintenanceThreshold(this.existing.uuid, val.maintenanceThreshold);
+      }
     } else {
       const entity = new Equipment({
-        uuid:             '',
-        name:             val.name,
-        brand:            val.brand,
-        model:            val.model,
-        zoneId:           val.zoneId,
-        purchaseAmount:   val.purchaseAmount,
-        purchaseCurrency: val.purchaseCurrency,
-        status:           val.status,
+        uuid:                 '',
+        name:                 val.name,
+        brand:                val.brand,
+        model:                val.model,
+        zoneId:               val.zoneId,
+        purchaseAmount:       val.purchaseAmount,
+        purchaseCurrency:     val.purchaseCurrency,
+        status:               val.status,
+        maintenanceThreshold: val.maintenanceThreshold || null,
       });
       this.store.addEquipment(entity);
     }

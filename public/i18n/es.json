@@ -584,7 +584,12 @@
         "zoneId": "Zona",
         "purchaseCurrency": "Moneda",
         "purchaseAmount": "Monto de compra",
-        "status": "Estado"
+        "status": "Estado",
+        "maintenanceThreshold": "Fecha de umbral de mantenimiento"
+      },
+      "hints": {
+        "maintenanceThresholdNew": "Déjalo vacío para que quede en hoy por defecto; puedes ajustarlo después.",
+        "maintenanceThresholdEdit": "Editar esto reinicia la alerta de mantenimiento preventivo de este equipo."
       },
       "zonesLoading": "Cargando zonas…",
       "noZones": "Sin zonas disponibles. Crea zonas en Gestión de Sedes primero.",

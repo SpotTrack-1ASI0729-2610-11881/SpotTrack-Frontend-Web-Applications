@@ -584,7 +584,12 @@
         "zoneId": "Zone",
         "purchaseCurrency": "Currency",
         "purchaseAmount": "Purchase amount",
-        "status": "Status"
+        "status": "Status",
+        "maintenanceThreshold": "Maintenance threshold date"
+      },
+      "hints": {
+        "maintenanceThresholdNew": "Leave empty to default to today; you can adjust it later.",
+        "maintenanceThresholdEdit": "Editing this resets the preventive maintenance alert for this equipment."
       },
       "zonesLoading": "Loading zones…",
       "noZones": "No zones available. Create zones in Branch Management first.",
