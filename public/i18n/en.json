@@ -327,17 +327,17 @@
       "days":    "{{count}} days ago"
     },
     "seeded": {
-      "alr001": {
-        "title":       "Restocking Alert: Critical Level",
-        "description": "The \"XT-500 Transmission Belt\" inventory has reached the minimum safety level after the last repair."
-      },
-      "alr002": {
-        "title":       "IoT Sensor Disconnected",
-        "description": "Treadmill #4 (Main Branch) has lost connection with the main network."
-      },
       "alr003": {
         "title":       "Client Routine Update",
         "description": "Client Juan Pérez has requested a review of their current training plan."
+      }
+    },
+    "backend": {
+      "maintenanceThreshold": {
+        "title": "Maintenance Threshold Reached"
+      },
+      "anomalyReported": {
+        "title": "Anomaly Reported"
       }
     }
   },

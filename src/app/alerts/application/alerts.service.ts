@@ -1,8 +1,11 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { AlertsApi } from '../infrastructure/alerts-api';
+import { AlertResource } from '../infrastructure/alerts-response';
 
 export interface AppAlert {
   id: string;
+  backendId?: number;       // present only for alerts sourced from the backend
   title?: string;           // plain text (for dynamically generated alerts)
   titleKey?: string;        // i18n key (for seeded/static alerts)
   description?: string;
@@ -17,28 +20,9 @@ export interface AppAlert {
 @Injectable({ providedIn: 'root' })
 export class AlertsService {
   private translate = inject(TranslateService);
+  private api        = inject(AlertsApi);
 
   alerts = signal<AppAlert[]>([
-    {
-      id: 'ALR-001',
-      titleKey:       'alerts.seeded.alr001.title',
-      descriptionKey: 'alerts.seeded.alr001.description',
-      type:        'admin',
-      icon:        'warning',
-      date:        new Date(Date.now() - 5 * 60000),
-      targetRoute: '/maintenance',
-      read:        true,
-    },
-    {
-      id: 'ALR-002',
-      titleKey:       'alerts.seeded.alr002.title',
-      descriptionKey: 'alerts.seeded.alr002.description',
-      type:        'system',
-      icon:        'wifi_off',
-      date:        new Date(Date.now() - 120 * 60000),
-      targetRoute: '/iot',
-      read:        true,
-    },
     {
       id: 'ALR-003',
       titleKey:       'alerts.seeded.alr003.title',
@@ -50,6 +34,35 @@ export class AlertsService {
       read:        true,
     },
   ]);
+
+  constructor() {
+    this.loadBackendAlerts();
+  }
+
+  private loadBackendAlerts(): void {
+    this.api.getAlerts().subscribe({
+      next: resources => {
+        const mapped = resources.map(r => this.toAppAlert(r));
+        this.alerts.update(list => [...mapped, ...list]);
+      },
+      error: () => { /* alert bell stays local-only if the backend call fails */ },
+    });
+  }
+
+  private toAppAlert(r: AlertResource): AppAlert {
+    const isWarning = r.severity === 'WARNING';
+    return {
+      id:          `BE-${r.id}`,
+      backendId:   r.id,
+      titleKey:    isWarning ? 'alerts.backend.maintenanceThreshold.title' : 'alerts.backend.anomalyReported.title',
+      description: r.message,
+      type:        'admin',
+      icon:        isWarning ? 'build' : 'report_problem',
+      date:        new Date(r.createdAt),
+      targetRoute: '/maintenance',
+      read:        r.isResolved,
+    };
+  }
 
   // Called when a pending reservation is not activated within 5 minutes
   addReservationAutoCancelledAlert(nameKey: string): void {
@@ -88,6 +101,10 @@ export class AlertsService {
   }
 
   deleteAlert(id: string): void {
+    const alert = this.alerts().find(a => a.id === id);
+    if (alert?.backendId) {
+      this.api.resolveAlert(alert.backendId).subscribe();
+    }
     this.alerts.update(list => list.filter(a => a.id !== id));
   }
 

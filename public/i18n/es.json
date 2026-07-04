@@ -327,17 +327,17 @@
       "days":    "Hace {{count}} días"
     },
     "seeded": {
-      "alr001": {
-        "title":       "Alerta de reabastecimiento: Nivel crítico",
-        "description": "El inventario de \"Correa de transmisión XT-500\" ha llegado al nivel mínimo de seguridad tras la última reparación."
-      },
-      "alr002": {
-        "title":       "Desconexión de sensor IoT",
-        "description": "La Cinta de Correr #4 (Sede Central) ha perdido conexión con la red principal."
-      },
       "alr003": {
         "title":       "Actualización de rutina de cliente",
         "description": "El cliente Juan Pérez ha solicitado una revisión de su plan de entrenamiento actual."
+      }
+    },
+    "backend": {
+      "maintenanceThreshold": {
+        "title": "Umbral de mantenimiento alcanzado"
+      },
+      "anomalyReported": {
+        "title": "Anomalía reportada"
       }
     }
   },
