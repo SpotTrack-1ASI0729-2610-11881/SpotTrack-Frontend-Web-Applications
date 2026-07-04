@@ -1048,6 +1048,14 @@
       "error": {
         "nameRequired": "Ingresa un nombre para el técnico"
       }
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "subtitle": "Elige sobre qué alertas quieres ser notificado",
+      "notifyOnCritical": "Notificarme ante alertas críticas",
+      "notifyOnWarning": "Notificarme ante alertas de advertencia",
+      "emailPlaceholder": "Email de notificación (opcional)",
+      "saveBtn": "Guardar"
     }
   },
   "whitelist": {

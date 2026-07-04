@@ -1048,6 +1048,14 @@
       "error": {
         "nameRequired": "Enter a name for the technician"
       }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Choose which alerts you want to be notified about",
+      "notifyOnCritical": "Notify me on critical alerts",
+      "notifyOnWarning": "Notify me on warning alerts",
+      "emailPlaceholder": "Notification email (optional)",
+      "saveBtn": "Save"
     }
   },
   "whitelist": {
