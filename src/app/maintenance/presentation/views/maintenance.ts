@@ -55,7 +55,7 @@ export class MaintenanceComponent {
   readonly modalTicket    = signal<MaintenanceTicket | null>(null);
   readonly technicianInput = signal('');
   readonly notesInput     = signal('');
-  readonly costInput      = signal('');
+  readonly costInput      = signal<number | null>(null);
   readonly logEntries     = signal<MaintenanceLogResource[]>([]);
   readonly logLoading     = signal(false);
 
@@ -98,7 +98,7 @@ export class MaintenanceComponent {
   openCompleteModal(t: MaintenanceTicket): void {
     this.modalTicket.set(t);
     this.notesInput.set('');
-    this.costInput.set('');
+    this.costInput.set(null);
     this.store.clearTicketActionError();
     this.modalMode.set('complete');
   }
@@ -127,11 +127,16 @@ export class MaintenanceComponent {
     this.store.startTicket(t.id, technicianId);
   }
 
+  isCostValid(): boolean {
+    const cost = this.costInput();
+    return cost !== null && cost >= 0;
+  }
+
   confirmComplete(): void {
     const t = this.modalTicket();
     const notes = this.notesInput().trim();
-    const cost = Number(this.costInput());
-    if (!t || !notes || !this.costInput().trim() || Number.isNaN(cost) || cost < 0) return;
+    const cost = this.costInput();
+    if (!t || !notes || cost === null || cost < 0) return;
     this.submitting = true;
     this.store.completeTicket(t.id, t.maintenanceId, notes, cost);
   }

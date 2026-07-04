@@ -251,7 +251,7 @@
         }
         <div class="modal__actions">
           <button class="modal__btn modal__btn--secondary" (click)="closeModal()">{{ 'maintenance.controlPoint.cancel' | translate }}</button>
-          <button class="modal__btn modal__btn--primary" [disabled]="!notesInput().trim() || !costInput().trim() || actionLoading()" (click)="confirmComplete()">
+          <button class="modal__btn modal__btn--primary" [disabled]="!notesInput().trim() || !isCostValid() || actionLoading()" (click)="confirmComplete()">
             {{ 'maintenance.controlPoint.confirmComplete' | translate }}
           </button>
         </div>
