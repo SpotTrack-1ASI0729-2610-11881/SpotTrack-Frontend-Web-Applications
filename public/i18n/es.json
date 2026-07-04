@@ -347,7 +347,8 @@
     "bookings": "Mis Reservas",
     "reservations": "Mis Reservas",
     "profile": "Mi Perfil",
-    "financial": "Impacto Financiero"
+    "financial": "Impacto Financiero",
+    "settings": "Configuración"
   },
   "monitoring": {
     "sensors": {
@@ -1028,6 +1029,20 @@
       "occupancy": "Máx: {{ max }} personas",
       "error": {
         "createFailed": "No se pudo crear la zona. Inténtalo de nuevo."
+      }
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona tu equipo de mantenimiento",
+    "technicians": {
+      "title": "Técnicos",
+      "subtitle": "Técnicos disponibles para asignar a tickets de mantenimiento",
+      "namePlaceholder": "Nombre del técnico",
+      "addBtn": "Agregar",
+      "empty": "Aún no hay técnicos registrados. Agrega uno arriba para asignar tickets de mantenimiento.",
+      "error": {
+        "nameRequired": "Ingresa un nombre para el técnico"
       }
     }
   },

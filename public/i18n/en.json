@@ -347,7 +347,8 @@
     "bookings": "My Bookings",
     "reservations": "My Reservations",
     "profile": "My Profile",
-    "financial": "Financial Impact"
+    "financial": "Financial Impact",
+    "settings": "Settings"
   },
   "monitoring": {
     "sensors": {
@@ -1028,6 +1029,20 @@
       "occupancy": "Max: {{ max }} people",
       "error": {
         "createFailed": "Could not create the zone. Please try again."
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your maintenance team",
+    "technicians": {
+      "title": "Technicians",
+      "subtitle": "Technicians available to assign to maintenance tickets",
+      "namePlaceholder": "Technician name",
+      "addBtn": "Add",
+      "empty": "No technicians registered yet. Add one above to assign maintenance tickets.",
+      "error": {
+        "nameRequired": "Enter a name for the technician"
       }
     }
   },
