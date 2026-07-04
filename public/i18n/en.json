@@ -901,7 +901,9 @@
     },
     "charts": {
       "machineUsage": "Machine Usage",
-      "noUsageData": "No usage data available"
+      "noUsageData": "No usage data available",
+      "peakCapacityHours": "Peak Capacity Hours",
+      "noCapacityData": "No reservation data available yet"
     },
     "table": {
       "title": "Underutilized Equipment",
