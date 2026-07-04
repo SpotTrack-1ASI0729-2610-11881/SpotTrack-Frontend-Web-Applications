@@ -19,7 +19,7 @@
       <li class="gym-switcher__item" [class.gym-switcher__item--active]="assoc.active">
         <div class="gym-switcher__item-info">
           <mat-icon class="gym-switcher__item-icon">storefront</mat-icon>
-          <span class="gym-switcher__item-name">{{ assoc.gymId }}</span>
+          <span class="gym-switcher__item-name">{{ gymName(assoc.gymId) }}</span>
         </div>
         @if (assoc.active) {
           <span class="gym-switcher__badge">{{ 'gym.switcher.active' | translate }}</span>
