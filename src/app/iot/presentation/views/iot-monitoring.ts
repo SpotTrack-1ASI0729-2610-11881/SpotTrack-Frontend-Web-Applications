@@ -20,6 +20,7 @@ interface SensorRow {
   equipmentName: string | null;
   equipmentStatus: string | null;
   registeredAt: string;
+  online?: boolean; // only populated for motion sensors — camera sensors don't track connectivity yet
 }
 
 @Component({
@@ -46,7 +47,7 @@ export class IotMonitoringComponent {
     this.refreshAll();
   }
 
-  readonly displayedColumns = ['sensorId', 'type', 'equipment', 'status', 'registeredAt', 'actions'];
+  readonly displayedColumns = ['sensorId', 'type', 'equipment', 'status', 'connectivity', 'registeredAt', 'actions'];
 
   readonly isLoading = this.sessionStore.actionLoading;
 
@@ -66,6 +67,7 @@ export class IotMonitoringComponent {
       equipmentName: s.equipmentName,
       equipmentStatus: s.equipmentStatus,
       registeredAt: s.registeredAt,
+      online: s.online,
     })),
   ]);
 

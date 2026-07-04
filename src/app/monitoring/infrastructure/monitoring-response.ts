@@ -11,13 +11,15 @@ export interface CameraSensorResource extends BaseResource {
 }
 
 export interface MotionSensorResource extends BaseResource {
-  id:              number;
-  motionSensorId:  string;
-  equipmentId:     string;
-  equipmentName:   string | null;
-  equipmentModel:  string | null;
-  equipmentStatus: string | null;
-  registeredAt:    string;
+  id:                 number;
+  motionSensorId:     string;
+  equipmentId:        string;
+  equipmentName:      string | null;
+  equipmentModel:     string | null;
+  equipmentStatus:    string | null;
+  registeredAt:       string;
+  online:             boolean;
+  lastStatusChangeAt: string;
 }
 
 export interface AnomalyResource extends BaseResource {

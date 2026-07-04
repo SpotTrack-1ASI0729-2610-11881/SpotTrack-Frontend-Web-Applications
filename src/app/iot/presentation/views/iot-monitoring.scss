@@ -287,6 +287,9 @@
 .badge--status-out_of_service { background: rgba(244,63,94,.15);   color: #f43f5e; }
 .badge--status-decommissioned { background: rgba(244,63,94,.15);   color: #f43f5e; }
 
+.badge--online  { background: rgba(102,187,106,.15); color: #66bb6a; }
+.badge--offline { background: rgba(244,63,94,.15);    color: #f43f5e; }
+
 .btn-simulate-motion {
   display: inline-flex;
   align-items: center;
