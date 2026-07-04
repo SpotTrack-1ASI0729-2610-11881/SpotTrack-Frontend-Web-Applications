@@ -314,6 +314,7 @@
     "emptyState": "No pending alerts",
     "detailsBtn": "View details →",
     "deleteTitle": "Delete alert",
+    "clearAll": "Clear all",
     "severity": {
       "WARNING": "Warning",
       "CRITICAL": "Critical"

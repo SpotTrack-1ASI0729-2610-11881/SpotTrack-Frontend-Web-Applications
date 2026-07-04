@@ -82,6 +82,15 @@ export class AlertsService {
     this.alerts.update(list => list.filter(a => a.id !== id));
   }
 
+  /** Resolves every backend-sourced alert belonging to the given role, then clears them from the inbox. */
+  clearAllForRole(role: 'admin' | 'client'): void {
+    const toClear = this.alerts().filter(a => role === 'client' ? a.type === 'client' : a.type !== 'client');
+    for (const alert of toClear) {
+      if (alert.backendId) this.api.resolveAlert(alert.backendId).subscribe();
+    }
+    this.alerts.update(list => list.filter(a => !toClear.includes(a)));
+  }
+
   // Only marks alerts that belong to the given role as read
   markReadForRole(role: 'admin' | 'client'): void {
     this.alerts.update(list =>
