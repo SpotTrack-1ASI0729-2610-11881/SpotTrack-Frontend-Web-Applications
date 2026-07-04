@@ -1,4 +1,12 @@
 <div class="alerts-container">
+  @if (alertsList.length > 0) {
+    <div class="alerts-toolbar">
+      <button class="clear-all-btn" (click)="clearAll()">
+        <mat-icon>clear_all</mat-icon>
+        {{ 'alerts.clearAll' | translate }}
+      </button>
+    </div>
+  }
   <div class="alerts-grid">
     @for (alert of alertsList; track alert.id) {
       <div class="alert-card" [appContextMenu]="alertMenu(alert)">

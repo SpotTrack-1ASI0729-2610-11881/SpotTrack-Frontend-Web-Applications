@@ -43,6 +43,10 @@ export class AlertInboxComponent implements OnInit {
     this.store.deleteAlert(id);
   }
 
+  clearAll(): void {
+    this.store.clearAllForRole(this.currentRole);
+  }
+
   resolveTitle(alert: AppAlert): string {
     return alert.titleKey ? this.translate.instant(alert.titleKey) : (alert.title ?? '');
   }
