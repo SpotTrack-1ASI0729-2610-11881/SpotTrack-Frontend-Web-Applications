@@ -91,4 +91,9 @@ export class AlertsService {
       })
     );
   }
+
+  /** Called by AuthStore on logout to prevent stale alert data from bleeding into the next session. */
+  reset(): void {
+    this.alerts.set([]);
+  }
 }
