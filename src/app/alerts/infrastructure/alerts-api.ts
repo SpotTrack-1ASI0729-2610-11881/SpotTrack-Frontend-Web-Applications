@@ -13,4 +13,8 @@ export class AlertsApi {
   getAlerts(): Observable<AlertResource[]> {
     return this.http.get<AlertResource[]>(this.alertsUrl);
   }
+
+  resolveAlert(alertId: number): Observable<AlertResource> {
+    return this.http.patch<AlertResource>(`${this.alertsUrl}/${alertId}/resolve`, {});
+  }
 }
