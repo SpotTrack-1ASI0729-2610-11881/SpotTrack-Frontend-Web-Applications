@@ -151,6 +151,13 @@ export const routes: Routes = [
               },
               ...reservationRoutes,
               ...routinesRoutes,
+              {
+                path: 'anomalies/report',
+                loadComponent: () =>
+                  import('./monitoring/presentation/views/anomaly-report/anomaly-report').then(
+                    m => m.AnomalyReportComponent
+                  ),
+              },
             ],
           },
         ],
