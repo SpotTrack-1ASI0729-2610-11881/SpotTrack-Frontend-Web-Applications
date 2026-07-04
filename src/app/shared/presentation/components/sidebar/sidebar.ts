@@ -20,6 +20,7 @@ const ADMIN_NAV: NavItem[] = [
   { path: '/analytics', icon: 'bar_chart', labelKey: 'nav.analytics' },
   { path: '/financial-impact', icon: 'attach_money', labelKey: 'nav.financial' }, // <-- AQUÍ ESTÁ EL BOTÓN AÑADIDO
 //  { path: '/alerts', icon: 'notifications', labelKey: 'nav.alerts' },
+  { path: '/settings', icon: 'settings', labelKey: 'nav.settings' },
 ];
 
 const CLIENT_NAV: NavItem[] = [
