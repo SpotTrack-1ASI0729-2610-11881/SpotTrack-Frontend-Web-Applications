@@ -60,4 +60,44 @@
     }
   </div>
 
+  <!-- Notification preferences -->
+  <div class="set-card">
+    <div class="set-card__header">
+      <h2 class="set-card__title">{{ 'settings.notifications.title' | translate }}</h2>
+      <p class="set-card__subtitle">{{ 'settings.notifications.subtitle' | translate }}</p>
+    </div>
+
+    @if (notificationPreferencesStore.loading()) {
+      <div class="set-loading">
+        <mat-icon class="set-spinner">autorenew</mat-icon>
+      </div>
+    } @else {
+      <label class="set-toggle-row">
+        <input type="checkbox" [(ngModel)]="notifyOnCritical" />
+        {{ 'settings.notifications.notifyOnCritical' | translate }}
+      </label>
+      <label class="set-toggle-row">
+        <input type="checkbox" [(ngModel)]="notifyOnWarning" />
+        {{ 'settings.notifications.notifyOnWarning' | translate }}
+      </label>
+
+      <div class="set-add-row">
+        <input
+          class="set-add-input"
+          type="email"
+          maxlength="255"
+          [placeholder]="'settings.notifications.emailPlaceholder' | translate"
+          [(ngModel)]="notificationEmailInput"
+        />
+        <button class="btn-add" [disabled]="notificationPreferencesStore.saving()" (click)="saveNotificationPreferences()">
+          <mat-icon>save</mat-icon>
+          {{ 'settings.notifications.saveBtn' | translate }}
+        </button>
+      </div>
+    }
+    @if (notificationPreferencesStore.error()) {
+      <span class="set-field-error">{{ notificationPreferencesStore.error() }}</span>
+    }
+  </div>
+
 </div>

@@ -56,6 +56,18 @@ $red:          #f43f5e;
   color: $text-muted;
 }
 
+// ─── Toggle row (checkbox preference) ────────────────────────────────────────
+.set-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: $text-primary;
+  cursor: pointer;
+
+  input[type="checkbox"] { accent-color: $accent; width: 16px; height: 16px; }
+}
+
 // ─── Add technician row ──────────────────────────────────────────────────────
 .set-add-row {
   display: flex;
