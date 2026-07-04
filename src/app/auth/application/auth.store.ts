@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Injector, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { AuthApiService } from '../infrastructure/auth-api.service';
@@ -52,7 +52,11 @@ export class AuthStore {
   private readonly adminGymStore         = inject(AdminGymStore);
   private readonly analyticsStore        = inject(AnalyticsStore);
   private readonly financialImpactStore  = inject(FinancialImpactStore);
-  private readonly alertsStore           = inject(AlertsStore);
+  // AlertsService's constructor eagerly fires an HTTP call, whose interceptor
+  // injects AuthStore — eagerly injecting AlertsStore here (like the stores
+  // above) would construct it mid-way through AuthStore's own construction,
+  // triggering NG0200. Resolve it lazily instead, only when actually needed.
+  private readonly injector = inject(Injector);
 
   private readonly userSignal  = signal<User | null>(this.loadUser());
   private readonly tokenSignal = signal<string | null>(
@@ -242,7 +246,7 @@ export class AuthStore {
     this.adminGymStore.reset();
     this.analyticsStore.reset();
     this.financialImpactStore.reset();
-    this.alertsStore.reset();
+    this.injector.get(AlertsStore).reset();
     this.userSignal.set(null);
     this.tokenSignal.set(null);
     this.errorSignal.set(null);
