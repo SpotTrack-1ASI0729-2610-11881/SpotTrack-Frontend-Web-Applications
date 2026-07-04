@@ -317,6 +317,10 @@
     "emptyState": "No pending alerts",
     "detailsBtn": "View details →",
     "deleteTitle": "Delete alert",
+    "severity": {
+      "WARNING": "Warning",
+      "CRITICAL": "Critical"
+    },
     "time": {
       "moment":  "Just now",
       "minute":  "{{count}} minute ago",

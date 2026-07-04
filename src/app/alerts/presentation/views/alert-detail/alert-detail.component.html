@@ -17,6 +17,11 @@
         <div class="alert-meta">
           <h1 class="alert-title">{{ resolveTitle(alert) }}</h1>
           <span class="alert-type-badge">{{ alert.type | uppercase }}</span>
+          @if (alert.severity) {
+            <span class="severity-badge" [ngClass]="'severity-' + alert.severity.toLowerCase()">
+              {{ 'alerts.severity.' + alert.severity | translate }}
+            </span>
+          }
         </div>
       </div>
 

@@ -85,11 +85,31 @@
       flex: 1;
       padding-right: 32px;
 
-      .alert-title {
+      .alert-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         margin: 0 0 4px 0;
+      }
+
+      .alert-title {
+        margin: 0;
         font-size: 1rem;
         font-weight: 500;
         color: #ffffff;
+      }
+
+      .severity-badge {
+        flex-shrink: 0;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+
+        &.severity-warning { background-color: rgba(255, 152, 0, 0.15); color: #ff9800; }
+        &.severity-critical { background-color: rgba(244, 67, 54, 0.15); color: #f44336; }
       }
 
       .alert-description {

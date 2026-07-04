@@ -317,6 +317,10 @@
     "emptyState": "No tienes alertas pendientes",
     "detailsBtn": "Ver detalles →",
     "deleteTitle": "Eliminar alerta",
+    "severity": {
+      "WARNING": "Advertencia",
+      "CRITICAL": "Crítico"
+    },
     "time": {
       "moment":  "Hace un momento",
       "minute":  "Hace {{count}} minuto",
