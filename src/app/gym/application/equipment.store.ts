@@ -1,11 +1,15 @@
-import { computed, Injectable, Signal, signal } from '@angular/core';
-import { retry } from 'rxjs';
+import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { Observable, retry } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Equipment, EquipmentStatus } from '../domain/model/equipment.entity';
 import { EquipmentApi } from '../infrastructure/equipment-api';
+import { ActiveGymStore } from '../../auth/application/active-gym.store';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentStore {
+
+  private readonly activeGymStore = inject(ActiveGymStore);
+  private readonly destroyRef     = inject(DestroyRef);
 
   private readonly equipmentSignal = signal<Equipment[]>([]);
   readonly equipment = this.equipmentSignal.asReadonly();
@@ -34,8 +38,21 @@ export class EquipmentStore {
   private static readonly POLL_INTERVAL_MS = 15000;
 
   constructor(private api: EquipmentApi) {
-    this.loadEquipment();
+    // A client sees only their active gym's equipment via the association-guarded
+    // gym-scoped endpoint; an admin has no client-gym association, so activeGym() stays
+    // null and they fall back to the admin "my equipment" endpoint. Reloading whenever
+    // activeGym() changes makes the map/reservation views populate on login and gym switch.
+    effect(() => {
+      this.activeGymStore.activeGym();
+      untracked(() => this.loadEquipment());
+    });
     setInterval(() => this.refreshEquipment(), EquipmentStore.POLL_INTERVAL_MS);
+  }
+
+  /** Client → gym-scoped endpoint (their active gym); admin → the admin-owned equipment endpoint. */
+  private equipmentSource(): Observable<Equipment[]> {
+    const gymId = this.activeGymStore.activeGym()?.gymId;
+    return gymId ? this.api.getEquipmentByGym(gymId) : this.api.getEquipment();
   }
 
   addEquipment(entity: Equipment): void {
@@ -104,7 +121,7 @@ export class EquipmentStore {
   private loadEquipment(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.api.getEquipment().pipe(takeUntilDestroyed()).subscribe({
+    this.equipmentSource().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: list => {
         this.equipmentSignal.set(list);
         this.loadingSignal.set(false);
@@ -117,7 +134,7 @@ export class EquipmentStore {
 
   /** Silent background refresh — no loading/error signal churn, so status cards update without flicker. */
   private refreshEquipment(): void {
-    this.api.getEquipment().subscribe({
+    this.equipmentSource().subscribe({
       next: list => this.equipmentSignal.set(list),
       error: () => {},
     });
