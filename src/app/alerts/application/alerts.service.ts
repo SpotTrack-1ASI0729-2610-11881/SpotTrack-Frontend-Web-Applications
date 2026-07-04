@@ -23,18 +23,7 @@ export class AlertsService {
   private translate = inject(TranslateService);
   private api        = inject(AlertsApi);
 
-  alerts = signal<AppAlert[]>([
-    {
-      id: 'ALR-003',
-      titleKey:       'alerts.seeded.alr003.title',
-      descriptionKey: 'alerts.seeded.alr003.description',
-      type:        'client',
-      icon:        'person',
-      date:        new Date(Date.now() - 1440 * 60000),
-      targetRoute: '/dashboard',
-      read:        true,
-    },
-  ]);
+  alerts = signal<AppAlert[]>([]);
 
   constructor() {
     this.loadBackendAlerts();
@@ -66,32 +55,15 @@ export class AlertsService {
     };
   }
 
-  // Called when a pending reservation is not activated within 5 minutes
-  addReservationAutoCancelledAlert(nameKey: string): void {
-    const machine = this.translate.instant('machines.names.' + nameKey);
-    this.alerts.update(list => [
-      {
-        id:          `RES-CANCEL-${Date.now()}`,
-        title:       this.translate.instant('clientAlerts.reservationAutoCancelled.title',       { machine }),
-        description: this.translate.instant('clientAlerts.reservationAutoCancelled.description', { machine }),
-        type:        'client',
-        icon:        'event_busy',
-        date:        new Date(),
-        targetRoute: '/bookings',
-        read:        false,
-      },
-      ...list,
-    ]);
-  }
-
-  // Called when a reservation timer expires
-  addReservationExpiredAlert(nameKey: string): void {
-    const machine = this.translate.instant('machines.names.' + nameKey);
+  // Called when a reservation timer expires. `machineName` is the equipment's
+  // real display name — not a `machines.names.*` translation key, since real
+  // equipment names come straight from the database, already human-readable.
+  addReservationExpiredAlert(machineName: string): void {
     this.alerts.update(list => [
       {
         id:          `RES-EXP-${Date.now()}`,
-        title:       this.translate.instant('clientAlerts.reservationExpired.title',       { machine }),
-        description: this.translate.instant('clientAlerts.reservationExpired.description', { machine }),
+        title:       this.translate.instant('clientAlerts.reservationExpired.title',       { machine: machineName }),
+        description: this.translate.instant('clientAlerts.reservationExpired.description', { machine: machineName }),
         type:        'client',
         icon:        'event_busy',
         date:        new Date(),

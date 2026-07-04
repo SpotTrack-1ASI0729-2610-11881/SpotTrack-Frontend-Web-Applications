@@ -307,10 +307,6 @@
     "reservationExpired": {
       "title": "Reservation Expired: {{machine}}",
       "description": "Your reservation for {{machine}} has ended. The machine is now available for other users."
-    },
-    "reservationAutoCancelled": {
-      "title": "Reservation Cancelled: {{machine}}",
-      "description": "Your reservation for {{machine}} was not activated within 5 minutes and has been automatically cancelled."
     }
   },
   "alerts": {
@@ -329,12 +325,6 @@
       "hours":   "{{count}} hours ago",
       "day":     "{{count}} day ago",
       "days":    "{{count}} days ago"
-    },
-    "seeded": {
-      "alr003": {
-        "title":       "Client Routine Update",
-        "description": "Client Juan Pérez has requested a review of their current training plan."
-      }
     },
     "backend": {
       "maintenanceThreshold": {

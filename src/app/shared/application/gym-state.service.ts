@@ -49,7 +49,6 @@ export class GymStateService {
   constructor() {
     setInterval(() => {
       const expiring: ExpiredReservation[] = [];
-      const autoCancelled: ExpiredReservation[] = [];
 
       this.machines.update(ms =>
         ms.map(m => {
@@ -64,7 +63,6 @@ export class GymStateService {
           if (m.status === 'PENDING') {
             if (m.activationTimerSeconds === undefined) return m;
             if (m.activationTimerSeconds <= 1) {
-              autoCancelled.push({ machineId: m.id, nameKey: m.nameKey, icon: m.icon, category: m.category });
               return { ...m, status: 'AVAILABLE', activationTimerSeconds: undefined, timerSeconds: undefined };
             }
             return { ...m, activationTimerSeconds: m.activationTimerSeconds - 1 };
@@ -75,10 +73,6 @@ export class GymStateService {
 
       if (expiring.length > 0) {
         this.expiredReservations.update(list => [...list, ...expiring]);
-        expiring.forEach(e => this.alertsService.addReservationExpiredAlert(e.nameKey));
-      }
-      if (autoCancelled.length > 0) {
-        autoCancelled.forEach(e => this.alertsService.addReservationAutoCancelledAlert(e.nameKey));
       }
     }, 1000);
   }
