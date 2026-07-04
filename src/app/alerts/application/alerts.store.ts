@@ -35,4 +35,8 @@ export class AlertsStore {
   addReservationExpiredAlert(nameKey: string): void {
     this.service.addReservationExpiredAlert(nameKey);
   }
+
+  reset(): void {
+    this.service.reset();
+  }
 }
