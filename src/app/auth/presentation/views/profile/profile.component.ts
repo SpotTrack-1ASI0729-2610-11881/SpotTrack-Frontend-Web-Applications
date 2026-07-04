@@ -101,12 +101,6 @@ export class ProfileComponent implements OnInit {
   readonly profile        = this.profileStore.profile;
   readonly profileLoading = this.profileStore.loading;
 
-  readonly activeGymName = computed(() => {
-    const gymId = this.activeGymStore.activeGym()?.gymId;
-    if (!gymId) return null;
-    return this.gymListStore.gyms().find(g => g.gymId === gymId)?.name ?? null;
-  });
-
   ngOnInit(): void {
     if (this.isAdmin()) {
       this.profileStore.loadAdminProfile();

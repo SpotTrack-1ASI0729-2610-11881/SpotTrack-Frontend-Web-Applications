@@ -919,7 +919,6 @@
     "client": {
       "title": "Mi Perfil",
       "roleBadge": "Cliente",
-      "gym": "Gimnasio",
       "notifications": {
         "title": "Notificaciones",
         "availability": {

@@ -282,9 +282,6 @@
           <div class="user-details">
             <h2>{{ profile()?.fullName }}</h2>
             <p class="text-muted">{{ profile()?.email }}</p>
-            @if (activeGymName()) {
-              <p class="text-muted">{{ 'profile.client.gym' | translate }}: {{ activeGymName() }}</p>
-            }
             <span class="badge badge-outline">{{ 'profile.client.roleBadge' | translate }}</span>
           </div>
         </div>
