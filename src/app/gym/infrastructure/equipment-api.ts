@@ -20,6 +20,7 @@ export class EquipmentApi extends BaseApi {
   }
 
   getEquipment(): Observable<Equipment[]>                      { return this.endpoint.getAll(); }
+  getEquipmentByGym(gymId: string): Observable<Equipment[]>    { return this.endpoint.getByGym(gymId); }
   registerEquipment(entity: Equipment): Observable<Equipment>  { return this.endpoint.create(entity); }
 
   updateEquipmentStatus(uuid: string, status: EquipmentStatus): Observable<Equipment> {

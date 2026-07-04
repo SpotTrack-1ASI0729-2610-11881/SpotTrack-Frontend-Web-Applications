@@ -21,6 +21,18 @@ export class EquipmentApiEndpoint {
     );
   }
 
+  /** Gym-scoped list — the client-accessible endpoint, guarded by gym association on the backend. */
+  getByGym(gymId: string): Observable<Equipment[]> {
+    return this.http.get<EquipmentResponse | EquipmentResource[]>(
+      `${environment.apiBase}/gyms/${gymId}/equipments`
+    ).pipe(
+      map(response => Array.isArray(response)
+        ? response.map(r => this.assembler.toEntityFromResource(r))
+        : this.assembler.toEntitiesFromResponse(response as EquipmentResponse)),
+      catchError(() => throwError(() => new Error('Failed to fetch gym equipment')))
+    );
+  }
+
   create(entity: Equipment): Observable<Equipment> {
     const resource = this.assembler.toResourceFromEntity(entity);
     return this.http.post<EquipmentResource>(this.url, resource).pipe(
