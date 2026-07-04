@@ -156,6 +156,13 @@
             <mat-error>{{ 'equipment.dialog.validation.required' | translate }}</mat-error>
           }
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field form-field--full">
+          <mat-label>{{ 'equipment.dialog.fields.maintenanceThreshold' | translate }}</mat-label>
+          <mat-icon matPrefix>event</mat-icon>
+          <input matInput type="date" formControlName="maintenanceThreshold" />
+          <mat-hint>{{ (isEditMode ? 'equipment.dialog.hints.maintenanceThresholdEdit' : 'equipment.dialog.hints.maintenanceThresholdNew') | translate }}</mat-hint>
+        </mat-form-field>
       </div>
 
       <div class="form-actions">

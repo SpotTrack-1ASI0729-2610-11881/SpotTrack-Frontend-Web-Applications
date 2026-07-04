@@ -20,14 +20,15 @@ import { ContextMenuDirective } from '../../../../shared/presentation/directives
 import { ContextMenuItem } from '../../../../shared/application/context-menu.service';
 
 export interface EquipmentRow {
-  uuid:             string;
-  zoneId:           string;
-  name:             string;
-  brand:            string;
-  model:            string;
-  purchaseAmount:   number;
-  purchaseCurrency: string;
-  status:           EquipmentStatus;
+  uuid:                 string;
+  zoneId:               string;
+  name:                 string;
+  brand:                string;
+  model:                string;
+  purchaseAmount:       number;
+  purchaseCurrency:     string;
+  status:               EquipmentStatus;
+  maintenanceThreshold: string | null;
 }
 
 @Component({
@@ -95,14 +96,15 @@ export class EquipmentManagementComponent {
         (!status || e.status === status)
       )
       .map(e => ({
-        uuid:             e.uuid,
-        zoneId:           e.zoneId,
-        name:             e.name,
-        brand:            e.brand,
-        model:            e.model,
-        purchaseAmount:   e.purchaseAmount,
-        purchaseCurrency: e.purchaseCurrency,
-        status:           e.status,
+        uuid:                 e.uuid,
+        zoneId:               e.zoneId,
+        name:                 e.name,
+        brand:                e.brand,
+        model:                e.model,
+        purchaseAmount:       e.purchaseAmount,
+        purchaseCurrency:     e.purchaseCurrency,
+        status:               e.status,
+        maintenanceThreshold: e.maintenanceThreshold,
       } as EquipmentRow));
   });
 

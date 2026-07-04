@@ -40,4 +40,14 @@ export class EquipmentApi extends BaseApi {
       catchError(() => throwError(() => new Error('Failed to decommission equipment')))
     );
   }
+
+  defineMaintenanceThreshold(uuid: string, threshold: string): Observable<Equipment> {
+    return this.http.patch<EquipmentResource>(
+      `${environment.apiBase}/equipments/${uuid}/maintenance-threshold`,
+      { equipmentId: { uuid }, threshold }
+    ).pipe(
+      map(r => this.assembler.toEntityFromResource(r)),
+      catchError(() => throwError(() => new Error('Failed to define maintenance threshold')))
+    );
+  }
 }

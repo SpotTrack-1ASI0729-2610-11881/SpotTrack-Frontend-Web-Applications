@@ -307,16 +307,16 @@
     "reservationExpired": {
       "title": "Reserva Expirada: {{machine}}",
       "description": "Tu reserva de {{machine}} ha finalizado. La máquina ya está disponible para otros usuarios."
-    },
-    "reservationAutoCancelled": {
-      "title": "Reserva Cancelada: {{machine}}",
-      "description": "Tu reserva de {{machine}} no fue activada en 5 minutos y ha sido cancelada automáticamente."
     }
   },
   "alerts": {
     "emptyState": "No tienes alertas pendientes",
     "detailsBtn": "Ver detalles →",
     "deleteTitle": "Eliminar alerta",
+    "severity": {
+      "WARNING": "Advertencia",
+      "CRITICAL": "Crítico"
+    },
     "time": {
       "moment":  "Hace un momento",
       "minute":  "Hace {{count}} minuto",
@@ -326,18 +326,12 @@
       "day":     "Hace {{count}} día",
       "days":    "Hace {{count}} días"
     },
-    "seeded": {
-      "alr001": {
-        "title":       "Alerta de reabastecimiento: Nivel crítico",
-        "description": "El inventario de \"Correa de transmisión XT-500\" ha llegado al nivel mínimo de seguridad tras la última reparación."
+    "backend": {
+      "maintenanceThreshold": {
+        "title": "Umbral de mantenimiento alcanzado"
       },
-      "alr002": {
-        "title":       "Desconexión de sensor IoT",
-        "description": "La Cinta de Correr #4 (Sede Central) ha perdido conexión con la red principal."
-      },
-      "alr003": {
-        "title":       "Actualización de rutina de cliente",
-        "description": "El cliente Juan Pérez ha solicitado una revisión de su plan de entrenamiento actual."
+      "anomalyReported": {
+        "title": "Anomalía reportada"
       }
     }
   },
@@ -584,7 +578,12 @@
         "zoneId": "Zona",
         "purchaseCurrency": "Moneda",
         "purchaseAmount": "Monto de compra",
-        "status": "Estado"
+        "status": "Estado",
+        "maintenanceThreshold": "Fecha de umbral de mantenimiento"
+      },
+      "hints": {
+        "maintenanceThresholdNew": "Déjalo vacío para que quede en hoy por defecto; puedes ajustarlo después.",
+        "maintenanceThresholdEdit": "Editar esto reinicia la alerta de mantenimiento preventivo de este equipo."
       },
       "zonesLoading": "Cargando zonas…",
       "noZones": "Sin zonas disponibles. Crea zonas en Gestión de Sedes primero.",
@@ -919,7 +918,6 @@
     "client": {
       "title": "Mi Perfil",
       "roleBadge": "Cliente",
-      "gym": "Gimnasio",
       "notifications": {
         "title": "Notificaciones",
         "availability": {
@@ -940,7 +938,11 @@
       "title": "Información de la Cuenta",
       "email": "Email",
       "gymName": "Nombre del Gimnasio",
-      "phone": "Teléfono"
+      "phone": "Teléfono",
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "dni": "DNI",
+      "saveSuccess": "Perfil actualizado correctamente."
     },
     "language": {
       "title": "Preferencias de Idioma",

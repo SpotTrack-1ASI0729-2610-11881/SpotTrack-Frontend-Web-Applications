@@ -8,14 +8,15 @@ export class EquipmentAssembler {
 
   toEntityFromResource(r: EquipmentResource): Equipment {
     return new Equipment({
-      uuid:             r.equipmentId ?? '',
-      zoneId:           r.zoneId ?? '',
-      name:             r.equipmentName ?? '',
-      brand:            r.manufacturerId ?? '',
-      model:            r.model ?? '',
-      purchaseAmount:   r.purchaseAmount ?? 0,
-      purchaseCurrency: r.purchaseCurrency ?? 'USD',
-      status:           (r.status as EquipmentStatus) ?? EquipmentStatus.AVAILABLE,
+      uuid:                 r.equipmentId ?? '',
+      zoneId:               r.zoneId ?? '',
+      name:                 r.equipmentName ?? '',
+      brand:                r.manufacturerId ?? '',
+      model:                r.model ?? '',
+      purchaseAmount:       r.purchaseAmount ?? 0,
+      purchaseCurrency:     r.purchaseCurrency ?? 'USD',
+      status:               (r.status as EquipmentStatus) ?? EquipmentStatus.AVAILABLE,
+      maintenanceThreshold: r.maintenanceThreshold ?? null,
     });
   }
 
@@ -29,6 +30,7 @@ export class EquipmentAssembler {
       manufacturerId:   e.brand,
       purchaseCurrency: e.purchaseCurrency,
       purchaseAmount:   e.purchaseAmount,
+      maintenanceThreshold: e.maintenanceThreshold ?? undefined,
     };
   }
 }

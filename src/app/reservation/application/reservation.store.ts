@@ -3,6 +3,7 @@ import { AuthStore } from '../../auth/application/auth.store';
 import { EquipmentStore } from '../../gym/application/equipment.store';
 import { EquipmentStatus } from '../../gym/domain/model/equipment.entity';
 import { GymStateService, GymMachine } from '../../shared/application/gym-state.service';
+import { AlertsService } from '../../alerts/application/alerts.service';
 import { ReservationApi } from '../infrastructure/reservation-api';
 import { ReservationResource } from '../infrastructure/reservation-response';
 
@@ -22,6 +23,7 @@ export class ReservationStore {
   private readonly auth           = inject(AuthStore);
   private readonly gymState       = inject(GymStateService);
   private readonly equipmentStore = inject(EquipmentStore);
+  private readonly alertsService  = inject(AlertsService);
 
   private readonly tracked           = signal<Map<string, TrackedReservation>>(new Map());
   private readonly historySignal     = signal<ReservationResource[]>([]);
@@ -60,6 +62,7 @@ export class ReservationStore {
           if (!this.endedIds.has(r.id)) {
             this.endedIds.add(r.id);
             this.endReservation(r.id);
+            this.alertsService.addReservationExpiredAlert(this.getEquipmentName(r.equipmentId));
           }
         });
       });

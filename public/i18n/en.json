@@ -307,16 +307,16 @@
     "reservationExpired": {
       "title": "Reservation Expired: {{machine}}",
       "description": "Your reservation for {{machine}} has ended. The machine is now available for other users."
-    },
-    "reservationAutoCancelled": {
-      "title": "Reservation Cancelled: {{machine}}",
-      "description": "Your reservation for {{machine}} was not activated within 5 minutes and has been automatically cancelled."
     }
   },
   "alerts": {
     "emptyState": "No pending alerts",
     "detailsBtn": "View details →",
     "deleteTitle": "Delete alert",
+    "severity": {
+      "WARNING": "Warning",
+      "CRITICAL": "Critical"
+    },
     "time": {
       "moment":  "Just now",
       "minute":  "{{count}} minute ago",
@@ -326,18 +326,12 @@
       "day":     "{{count}} day ago",
       "days":    "{{count}} days ago"
     },
-    "seeded": {
-      "alr001": {
-        "title":       "Restocking Alert: Critical Level",
-        "description": "The \"XT-500 Transmission Belt\" inventory has reached the minimum safety level after the last repair."
+    "backend": {
+      "maintenanceThreshold": {
+        "title": "Maintenance Threshold Reached"
       },
-      "alr002": {
-        "title":       "IoT Sensor Disconnected",
-        "description": "Treadmill #4 (Main Branch) has lost connection with the main network."
-      },
-      "alr003": {
-        "title":       "Client Routine Update",
-        "description": "Client Juan Pérez has requested a review of their current training plan."
+      "anomalyReported": {
+        "title": "Anomaly Reported"
       }
     }
   },
@@ -584,7 +578,12 @@
         "zoneId": "Zone",
         "purchaseCurrency": "Currency",
         "purchaseAmount": "Purchase amount",
-        "status": "Status"
+        "status": "Status",
+        "maintenanceThreshold": "Maintenance threshold date"
+      },
+      "hints": {
+        "maintenanceThresholdNew": "Leave empty to default to today; you can adjust it later.",
+        "maintenanceThresholdEdit": "Editing this resets the preventive maintenance alert for this equipment."
       },
       "zonesLoading": "Loading zones…",
       "noZones": "No zones available. Create zones in Branch Management first.",
@@ -919,7 +918,6 @@
     "client": {
       "title": "My Profile",
       "roleBadge": "Client",
-      "gym": "Gym",
       "notifications": {
         "title": "Notifications",
         "availability": {
@@ -940,7 +938,11 @@
       "title": "Account Information",
       "email": "Email",
       "gymName": "Gym Name",
-      "phone": "Phone"
+      "phone": "Phone",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dni": "National ID (DNI)",
+      "saveSuccess": "Profile updated successfully."
     },
     "language": {
       "title": "Language Preferences",

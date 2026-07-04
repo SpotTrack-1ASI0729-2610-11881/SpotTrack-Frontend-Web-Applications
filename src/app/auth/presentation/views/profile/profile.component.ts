@@ -44,6 +44,16 @@ export class ProfileComponent implements OnInit {
 
   private readonly gymId = computed(() => this.adminGymStore.primaryGym()?.gymId ?? null);
 
+  // Account info form (client or admin) — seeded from profile() once it loads.
+  accountFirstName   = '';
+  accountLastName    = '';
+  accountPhoneNumber = '';
+  accountDni         = '';
+
+  readonly saving      = this.profileStore.saving;
+  readonly saveError   = this.profileStore.saveError;
+  readonly saveSuccess = this.profileStore.saveSuccess;
+
   constructor() {
     effect(() => {
       const id = this.gymId();
@@ -52,6 +62,28 @@ export class ProfileComponent implements OnInit {
         this.branchStore.load(id);
       }
     });
+
+    effect(() => {
+      const p = this.profile();
+      if (!p) return;
+      this.accountFirstName   = p.firstName ?? '';
+      this.accountLastName    = p.lastName ?? '';
+      this.accountPhoneNumber = p.phoneNumber ?? '';
+      this.accountDni         = p.dni ?? '';
+    });
+  }
+
+  saveAccountInfo(): void {
+    const firstName   = this.accountFirstName.trim();
+    const lastName    = this.accountLastName.trim();
+    const phoneNumber = this.accountPhoneNumber.trim();
+    const dni         = this.accountDni.trim();
+    if (!firstName || !lastName || !phoneNumber || !dni) return;
+    if (this.isAdmin()) {
+      this.profileStore.updateAdminProfile(firstName, lastName, phoneNumber, dni);
+    } else {
+      this.profileStore.updateClientProfile(firstName, lastName, phoneNumber, dni);
+    }
   }
 
   logout() {
@@ -68,12 +100,6 @@ export class ProfileComponent implements OnInit {
 
   readonly profile        = this.profileStore.profile;
   readonly profileLoading = this.profileStore.loading;
-
-  readonly activeGymName = computed(() => {
-    const gymId = this.activeGymStore.activeGym()?.gymId;
-    if (!gymId) return null;
-    return this.gymListStore.gyms().find(g => g.gymId === gymId)?.name ?? null;
-  });
 
   ngOnInit(): void {
     if (this.isAdmin()) {
