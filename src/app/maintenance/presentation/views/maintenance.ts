@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MaintenanceStore } from '../../application/maintenance.store';
 import { EquipmentStore } from '../../../gym/application/equipment.store';
+import { TechnicianStore } from '../../../settings/application/technician.store';
 import { MaintenanceTicket, TicketPriority, TicketStatus } from '../../domain/model/maintenance-ticket.entity';
 import { MaintenanceLogResource } from '../../infrastructure/maintenance-response';
 import { ContextMenuDirective } from '../../../shared/presentation/directives/context-menu.directive';
@@ -23,8 +24,9 @@ type ModalMode = 'start' | 'complete' | 'log' | null;
   styleUrl:    './maintenance.scss',
 })
 export class MaintenanceComponent {
-  readonly store          = inject(MaintenanceStore);
-  readonly equipmentStore = inject(EquipmentStore);
+  readonly store            = inject(MaintenanceStore);
+  readonly equipmentStore   = inject(EquipmentStore);
+  readonly technicianStore  = inject(TechnicianStore);
 
   // ── Filters ─────────────────────────────────────────────────────────────
   readonly searchQuery    = signal('');
