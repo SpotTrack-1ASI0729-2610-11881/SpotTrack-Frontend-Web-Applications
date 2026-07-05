@@ -162,7 +162,4 @@ export class ProfileComponent implements OnInit {
       : null
   );
 
-  readonly gymData = {
-    memberSince: 'Enero 2024',
-  };
 }
