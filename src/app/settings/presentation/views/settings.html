@@ -98,6 +98,9 @@
     @if (notificationPreferencesStore.error()) {
       <span class="set-field-error">{{ notificationPreferencesStore.error() }}</span>
     }
+    @if (notificationPreferencesStore.saved()) {
+      <span class="set-field-success">{{ 'settings.notifications.savedMessage' | translate }}</span>
+    }
   </div>
 
 </div>

@@ -13,11 +13,13 @@ export class NotificationPreferencesStore {
   private readonly loadingSignal     = signal(false);
   private readonly savingSignal      = signal(false);
   private readonly errorSignal       = signal<string | null>(null);
+  private readonly savedSignal       = signal(false);
 
   readonly preferences = this.preferencesSignal.asReadonly();
   readonly loading     = this.loadingSignal.asReadonly();
   readonly saving      = this.savingSignal.asReadonly();
   readonly error       = this.errorSignal.asReadonly();
+  readonly saved       = this.savedSignal.asReadonly();
 
   constructor() {
     this.load();
@@ -43,12 +45,15 @@ export class NotificationPreferencesStore {
   save(notifyOnCritical: boolean, notifyOnWarning: boolean, notificationEmail: string | null): void {
     this.savingSignal.set(true);
     this.errorSignal.set(null);
+    this.savedSignal.set(false);
     this.api.updatePreferences({ notifyOnCritical, notifyOnWarning, notificationEmail })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: resource => {
           this.preferencesSignal.set(new NotificationPreferences(resource));
           this.savingSignal.set(false);
+          this.savedSignal.set(true);
+          setTimeout(() => this.savedSignal.set(false), 4000);
         },
         error: err => {
           this.errorSignal.set(this.formatError(err, 'Failed to save notification preferences'));
