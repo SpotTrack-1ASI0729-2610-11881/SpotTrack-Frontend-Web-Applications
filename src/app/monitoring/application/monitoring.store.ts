@@ -172,6 +172,13 @@ export class MonitoringStore {
           this._actionLoading.set(false);
         },
         error: err => {
+          // session-trackers/me is admin-only; a non-admin gets 403. That's an
+          // expected "you have no tracked sessions" case, not a real error.
+          if (err?.status === 403) {
+            this._trackedSessions.set([]);
+            this._actionLoading.set(false);
+            return;
+          }
           this._actionError.set(this.formatError(err, 'No se pudieron cargar las sesiones rastreadas'));
           this._actionLoading.set(false);
         },
