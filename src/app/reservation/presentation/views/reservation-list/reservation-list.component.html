@@ -27,6 +27,14 @@
     </div>
   }
 
+  <!-- ===== CANCEL FEEDBACK ===== -->
+  @if (cancelFeedback()) {
+    <div class="scan-feedback" [class.scan-feedback--ok]="cancelFeedback() === 'ok'" [class.scan-feedback--err]="cancelFeedback() === 'error'">
+      <mat-icon>{{ cancelFeedback() === 'ok' ? 'check_circle' : 'error_outline' }}</mat-icon>
+      <span>{{ cancelFeedback() === 'ok' ? 'Reserva cancelada.' : 'No se pudo cancelar la reserva. Revisa tu conexión e inténtalo de nuevo.' }}</span>
+    </div>
+  }
+
   <div class="booking-list">
 
     @for (r of activeReservations(); track r.id) {

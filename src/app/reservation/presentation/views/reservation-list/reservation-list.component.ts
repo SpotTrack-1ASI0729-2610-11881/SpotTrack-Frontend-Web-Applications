@@ -43,6 +43,7 @@ export class ReservationListComponent implements OnInit {
   readonly reservationError     = this.store.reservationError;
   readonly creating             = this.store.creating;
   readonly hasActiveReservation = this.store.hasActiveReservation;
+  readonly cancelFeedback       = this.store.cancelFeedback;
 
   readonly pageSize  = 5;
   readonly pageIndex = signal(0);
