@@ -30,6 +30,7 @@ export class ReservationStore {
   private readonly histLoadingSignal = signal(false);
   private readonly errorSignal       = signal<string | null>(null);
   private readonly creatingSignal    = signal(false);
+  private readonly cancelFeedbackSig = signal<'ok' | 'error' | null>(null);
   private readonly nowMs             = signal(Date.now());
 
   private readonly endedIds = new Set<string>();
@@ -44,6 +45,7 @@ export class ReservationStore {
   readonly historyLoading       = this.histLoadingSignal.asReadonly();
   readonly reservationError     = this.errorSignal.asReadonly();
   readonly creating             = this.creatingSignal.asReadonly();
+  readonly cancelFeedback       = this.cancelFeedbackSig.asReadonly();
   readonly hasActiveReservation = computed(() => this.activeReservations().length > 0);
 
   private readonly justExpired = computed(() =>
@@ -184,10 +186,18 @@ export class ReservationStore {
       this.removeTracked(entry.machineId);
     }
 
+    this.cancelFeedbackSig.set(null);
     this.api.cancelReservation(reservationId).subscribe({
-      next:  () => this.loadHistory(),
-      error: () => this.loadHistory(),
+      next:  () => { this.setCancelFeedback('ok');    this.loadHistory(); },
+      // Surface the failure instead of swallowing it silently: loadHistory
+      // re-shows the still-active card so the user can retry.
+      error: () => { this.setCancelFeedback('error'); this.loadHistory(); },
     });
+  }
+
+  private setCancelFeedback(result: 'ok' | 'error'): void {
+    this.cancelFeedbackSig.set(result);
+    setTimeout(() => this.cancelFeedbackSig.set(null), 4000);
   }
 
   endReservation(reservationId: string): void {
