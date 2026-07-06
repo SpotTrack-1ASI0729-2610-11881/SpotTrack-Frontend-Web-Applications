@@ -65,7 +65,14 @@ export class QrScannerComponent implements AfterViewInit, OnDestroy {
 
   stopCamera(): void {
     if (this.camScanner && this.scanning()) {
-      this.camScanner.stop().catch(() => {});
+      // html5-qrcode throws "Cannot stop, scanner is not running or paused"
+      // synchronously if its internal state is already stopped, so guard both
+      // the running flag and a synchronous throw.
+      try {
+        this.camScanner.stop().catch(() => {});
+      } catch {
+        // scanner already stopped — nothing to do
+      }
       this.scanning.set(false);
     }
   }
@@ -122,6 +129,8 @@ export class QrScannerComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.camScanner?.stop().catch(() => {});
+    // Reuse the guarded stop so teardown never calls stop() on a scanner that
+    // was never started (the source of the console "Cannot stop" error).
+    this.stopCamera();
   }
 }
