@@ -11,7 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class App {
   constructor() {
     const translate = inject(TranslateService);
-    translate.setDefaultLang('en');
+    // Fallback language is configured via provideTranslateService (fallbackLang);
+    // here we only set the active language. setDefaultLang is deprecated in v17.
     translate.use('en');
   }
 }
