@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBase: '/api/v1',
+  apiBase: 'https://spottrack-platform-os.azurewebsites.net/api/v1',
 };

@@ -19,13 +19,13 @@ export class ReservationFormComponent {
   readonly reserved = output<void>();
   readonly cancelled = output<void>();
 
-  readonly availableMachines = this.store.availableMachines;
+  readonly availableEquipment = this.store.availableEquipment;
 
   durations = [
-    { seconds: 10,        labelKey: 'booking.modal.option10s' },
-    { seconds: 10 * 60,   labelKey: 'booking.modal.option10m' },
-    { seconds: 15 * 60,   labelKey: 'booking.modal.option15m' },
-    { seconds: 20 * 60,   labelKey: 'booking.modal.option20m' },
+    { seconds: 10,        labelKey: 'reservation.modal.option10s' },
+    { seconds: 10 * 60,   labelKey: 'reservation.modal.option10m' },
+    { seconds: 15 * 60,   labelKey: 'reservation.modal.option15m' },
+    { seconds: 20 * 60,   labelKey: 'reservation.modal.option20m' },
   ];
 
   selectedMachineId: string | null = null;

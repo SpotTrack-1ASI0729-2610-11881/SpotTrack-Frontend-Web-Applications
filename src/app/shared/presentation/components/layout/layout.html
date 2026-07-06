@@ -1,5 +1,11 @@
 <div class="shell" [class.is-client]="currentRole === 'client'" [class.sidebar-open]="sidebarOpen">
 
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
   @if (currentRole === 'admin') {
     <app-sidebar [role]="currentRole" [open]="sidebarOpen" (linkClicked)="closeSidebar()"></app-sidebar>
     <div class="sidebar-overlay" (click)="closeSidebar()"></div>

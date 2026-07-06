@@ -1,11 +1,12 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
-import { DashboardApi } from '../infrastructure/dashboard-api';
-import { EquipmentUsageStat } from '../domain/model/equipment-usage-stat.entity';
-import { UsageSessionResource } from '../infrastructure/dashboard-response';
-import { EquipmentStore } from '../../equipment/application/equipment.store';
+import { AnalyticsApi } from '../../analytics/infrastructure/analytics-api';
+import { AnalyticsStat } from '../../analytics/domain/model/analytics-stat.entity';
+import { EquipmentStore } from '../../gym/application/equipment.store';
 import { MaintenanceStore } from '../../maintenance/application/maintenance.store';
+import { ReservationApi } from '../../reservation/infrastructure/reservation-api';
+import { ReservationResource } from '../../reservation/infrastructure/reservation-response';
 
 export interface HourlyCapacityPoint {
   hour:  string;
@@ -14,55 +15,30 @@ export interface HourlyCapacityPoint {
 
 @Injectable({ providedIn: 'root' })
 export class DashboardStore {
-  private readonly api              = inject(DashboardApi);
+  private readonly api              = inject(AnalyticsApi);
+  private readonly reservationApi   = inject(ReservationApi);
   private readonly destroyRef       = inject(DestroyRef);
   private readonly equipmentStore   = inject(EquipmentStore);
   private readonly maintenanceStore = inject(MaintenanceStore);
 
-  private readonly usageStatsSignal  = signal<EquipmentUsageStat[]>([]);
-  private readonly sessionsSignal    = signal<UsageSessionResource[]>([]);
-  private readonly loadingSignal     = signal(false);
-  private readonly errorSignal       = signal<string | null>(null);
+  private readonly usageStatsSignal   = signal<AnalyticsStat[]>([]);
+  private readonly reservationsSignal = signal<ReservationResource[]>([]);
+  private readonly loadingSignal      = signal(false);
+  private readonly errorSignal        = signal<string | null>(null);
 
   readonly usageStats = this.usageStatsSignal.asReadonly();
   readonly loading    = this.loadingSignal.asReadonly();
   readonly error      = this.errorSignal.asReadonly();
 
-  // ── KPI summary cards ─────────────────────────────────────────────────────
-  readonly operationalCount = computed(() => this.equipmentStore.operationalCount());
-  readonly maintenanceCount = computed(() => this.equipmentStore.maintenanceCount());
-  readonly outOfOrderCount  = computed(() => this.equipmentStore.outOfOrderCount());
-  readonly totalTickets     = computed(() => this.maintenanceStore.totalTickets());
-
-  // ── Horas Pico de Capacidad — derived from usage_sessions ────────────────
-  /**
-   * Aggregates usage_sessions by hour-of-day and computes occupancy % as
-   * (sessions_in_that_hour / max_sessions_in_any_hour) × 100.
-   * Falls back to a default curve when the API has not returned sessions yet.
-   */
-  private readonly FALLBACK_CAPACITY: HourlyCapacityPoint[] = [
-    { hour: '6:00',  value: 40 },
-    { hour: '8:00',  value: 78 },
-    { hour: '10:00', value: 52 },
-    { hour: '12:00', value: 48 },
-    { hour: '14:00', value: 98 },
-    { hour: '16:00', value: 85 },
-    { hour: '18:00', value: 75 },
-    { hour: '20:00', value: 60 },
-    { hour: '22:00', value: 35 },
-  ];
-
+  // ── Horas Pico de Capacidad — derived from real reservation start times ──
+  /** Buckets reservations by hour-of-day (from startTime) and normalizes to 0-100% of the busiest hour. */
   readonly hourlyCapacityData = computed<HourlyCapacityPoint[]>(() => {
-    const sessions = this.sessionsSignal();
+    const reservations = this.reservationsSignal();
 
     const counts: Record<number, number> = {};
-    for (const s of sessions) {
-      const h = new Date(s.start_time).getHours();
-      counts[h] = (counts[h] ?? 0) + 1;
-    }
-
-    if (Object.keys(counts).length < 4) {
-      return this.FALLBACK_CAPACITY;
+    for (const r of reservations) {
+      const hour = Number(r.startTime.split(':')[0]);
+      counts[hour] = (counts[hour] ?? 0) + 1;
     }
 
     const maxCount = Math.max(...Object.values(counts), 1);
@@ -100,22 +76,23 @@ export class DashboardStore {
     );
   });
 
-  // ── Uso de Máquinas (bar chart from API) ──────────────────────────────────
+  // ── KPI summary cards ─────────────────────────────────────────────────────
+  readonly operationalCount = computed(() => this.equipmentStore.operationalCount());
+  readonly maintenanceCount = computed(() => this.equipmentStore.maintenanceCount());
+  readonly outOfOrderCount  = computed(() => this.equipmentStore.outOfServiceCount());
+  readonly totalTickets     = computed(() => this.maintenanceStore.totalTickets());
+
+  // ── Uso de Máquinas (bar chart from real activity-report data) ────────────
   readonly machineUsageBars = computed(() => {
-    const stats      = this.usageStats();
-    const equipments = this.equipmentStore.equipment();
-    if (!stats.length || !equipments.length) return [];
+    const stats = this.usageStats();
+    if (!stats.length) return [];
 
     const maxHours = Math.max(...stats.map(s => s.totalUsageHours), 1);
-    return stats.map(s => {
-      const eq = equipments.find(e => e.id === s.equipmentId);
-      return {
-        name:    eq?.name ?? `Equipo #${s.equipmentId}`,
-        hours:   s.totalUsageHours,
-        pct:     (s.totalUsageHours / maxHours) * 100,
-        wearPct: Math.round(s.estimatedWearLevel * 100),
-      };
-    });
+    return stats.map(s => ({
+      name:  s.equipmentName,
+      hours: s.totalUsageHours,
+      pct:   (s.totalUsageHours / maxHours) * 100,
+    }));
   });
 
   readonly maxBarHours = computed(() =>
@@ -124,21 +101,18 @@ export class DashboardStore {
 
   // ── Equipos Subutilizados ─────────────────────────────────────────────────
   readonly underutilizedEquipment = computed(() => {
-    const stats      = this.usageStats();
-    const equipments = this.equipmentStore.equipment();
+    const stats = this.usageStats();
 
     return stats
       .filter(s => s.totalUsageHours < 130)
       .map(s => {
-        const eq   = equipments.find(e => e.id === s.equipmentId);
-        const zone = eq?.zoneId === 1 ? 'Zona Cardio' : 'Zona Fuerza';
         const roi: 'Bajo' | 'Medio' | 'Alto' =
           s.totalUsageHours < 80  ? 'Bajo'  :
           s.totalUsageHours < 110 ? 'Medio' : 'Alto';
         return {
-          machineId: `M-${String(eq?.id ?? s.equipmentId).padStart(3, '0')}`,
-          name:      eq?.name ?? `Equipo #${s.equipmentId}`,
-          location:  zone,
+          machineId: s.equipmentId.slice(0, 8),
+          name:      s.equipmentName,
+          location:  `Zona ${s.zoneId}`,
           hours:     `${s.totalUsageHours}h`,
           roi,
         };
@@ -150,13 +124,13 @@ export class DashboardStore {
   readonly inProgressTickets = computed(() => this.maintenanceStore.inProgressTickets());
   readonly resolvedTickets   = computed(() => this.maintenanceStore.resolvedTickets());
 
-  ticketLabel(id: number): string {
-    return `T-${id.toString().padStart(3, '0')}`;
+  ticketLabel(id: string): string {
+    return `T-${id.slice(0, 8)}`;
   }
 
-  equipmentName(equipmentId: number): string {
-    return this.equipmentStore.equipment().find(e => e.id === equipmentId)?.name
-      ?? `Equipo #${equipmentId}`;
+  equipmentName(equipmentId: string): string {
+    return this.equipmentStore.equipment().find(e => e.uuid === equipmentId)?.name
+      ?? equipmentId;
   }
 
   constructor() {
@@ -166,20 +140,20 @@ export class DashboardStore {
   private load(): void {
     this.loadingSignal.set(true);
     forkJoin({
-      stats:    this.api.getEquipmentUsageStats(),
-      sessions: this.api.getUsageSessions(),
+      analytics:    this.api.getAnalyticsData(),
+      reservations: this.reservationApi.getAllReservationsAdmin(),
     })
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: ({ stats, sessions }) => {
-        this.usageStatsSignal.set(stats);
-        this.sessionsSignal.set(sessions);
-        this.loadingSignal.set(false);
-      },
-      error: err => {
-        this.errorSignal.set(err instanceof Error ? err.message : 'Error');
-        this.loadingSignal.set(false);
-      },
-    });
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ analytics, reservations }) => {
+          this.usageStatsSignal.set(analytics.stats);
+          this.reservationsSignal.set(reservations);
+          this.loadingSignal.set(false);
+        },
+        error: err => {
+          this.errorSignal.set(err instanceof Error ? err.message : 'Error');
+          this.loadingSignal.set(false);
+        },
+      });
   }
 }

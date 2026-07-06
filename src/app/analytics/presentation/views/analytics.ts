@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core'; // signal kept for showComparison
+import { Component, inject, OnInit, signal } from '@angular/core'; // signal kept for showComparison
 import { DecimalPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,8 +30,12 @@ import { ContextMenuItem } from '../../../shared/application/context-menu.servic
   templateUrl: './analytics.html',
   styleUrl:    './analytics.scss',
 })
-export class AnalyticsComponent {
+export class AnalyticsComponent implements OnInit {
   private readonly store = inject(AnalyticsStore);
+
+  ngOnInit(): void {
+    this.store.load();
+  }
 
   // ── Filters ──────────────────────────────────────────────────────────────
   readonly selectedPeriod = this.store.selectedPeriod;

@@ -32,7 +32,15 @@ export class AlertsStore {
     this.service.deleteAlert(id);
   }
 
+  clearAllForRole(role: 'admin' | 'client'): void {
+    this.service.clearAllForRole(role);
+  }
+
   addReservationExpiredAlert(nameKey: string): void {
     this.service.addReservationExpiredAlert(nameKey);
+  }
+
+  reset(): void {
+    this.service.reset();
   }
 }

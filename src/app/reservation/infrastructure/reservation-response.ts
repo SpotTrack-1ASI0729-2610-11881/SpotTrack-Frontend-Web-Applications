@@ -14,4 +14,5 @@ export interface ReservationRequestResource {
   clientId:    number;
   equipmentId: string;
   status:      string;
+  requestedAt: string;
 }

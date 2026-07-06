@@ -1,14 +1,12 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
 import { FinancialImpactApi } from '../infrastructure/financial-impact-api';
 import {
-  EquipmentUsageStatResource,
-  EquipmentResource,
   MaintenanceTicketResource,
   MaintenanceLogResource,
-  SparePartResource,
+  MaintenanceQuoteResource,
 } from '../infrastructure/financial-impact-response';
+import { FinancialStat } from '../domain/model/financial-impact.entity';
 
 export interface InactivityRow      { machine: string; hours: number; ratePerHour: number; total: number; }
 export interface MaintenanceTypeRow { label: string; amount: number; pct: number; color: string; }
@@ -25,28 +23,30 @@ export class FinancialImpactStore {
   private readonly api        = inject(FinancialImpactApi);
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly _usageStats  = signal<EquipmentUsageStatResource[]>([]);
-  private readonly _equipments  = signal<EquipmentResource[]>([]);
-  private readonly _tickets     = signal<MaintenanceTicketResource[]>([]);
-  private readonly _logs        = signal<MaintenanceLogResource[]>([]);
-  private readonly _spareParts  = signal<SparePartResource[]>([]);
-  private readonly _loading     = signal(false);
-  private readonly _error       = signal<string | null>(null);
+  private readonly _financialStats     = signal<FinancialStat[]>([]);
+  private readonly _tickets            = signal<MaintenanceTicketResource[]>([]);
+  private readonly _logs               = signal<MaintenanceLogResource[]>([]);
+  private readonly _maintenanceQuotes  = signal<MaintenanceQuoteResource[]>([]);
+  private readonly _loading            = signal(false);
+  private readonly _error              = signal<string | null>(null);
 
   readonly loading = this._loading.asReadonly();
   readonly error   = this._error.asReadonly();
 
+  /**
+   * downtimeCost is a real backend-computed $ figure on ActivityReport, so
+   * "total" comes straight from it rather than being reconstructed from a
+   * synthetic hours x rate calculation. hours/ratePerHour are still shown
+   * for the table's informational columns.
+   */
   readonly inactivityLoss = computed<InactivityRow[]>(() => {
-    const equips = this._equipments();
-    const stats  = this._usageStats();
-    return equips
-      .filter(e => e.status === 'MAINTENANCE')
-      .map(e => {
-        const stat        = stats.find(s => s.equipment_id === e.id);
-        const dailyCount  = stat?.usage_count_daily ?? 0;
-        const hours       = Math.max(24, Math.round(72 - dailyCount * 8));
-        const ratePerHour = Math.max(5, Math.round(e.purchase_price / 500));
-        return { machine: e.name, hours, ratePerHour, total: hours * ratePerHour };
+    return this._financialStats()
+      .filter(s => s.downtimeCost > 0)
+      .map(s => {
+        const hours       = Math.max(1, Math.round(s.totalUsageHours));
+        const total        = s.downtimeCost;
+        const ratePerHour  = Math.round(total / hours);
+        return { machine: s.equipmentName, hours, ratePerHour, total };
       });
   });
 
@@ -54,19 +54,25 @@ export class FinancialImpactStore {
     this.inactivityLoss().reduce((sum, row) => sum + row.total, 0)
   );
 
+  /**
+   * Corrective/preventive costs come from completed MaintenanceLog entries
+   * (per-ticket, maintenance bounded context). Inventory cost comes from
+   * MaintenanceQuote.sparePartsCost (analytics bounded context) — spare
+   * parts are a cost line item on a quote, not a separate inventory concept.
+   */
   readonly maintenanceTypes = computed<MaintenanceTypeRow[]>(() => {
     const tickets = this._tickets();
     const logs    = this._logs();
-    const parts   = this._spareParts();
+    const quotes  = this._maintenanceQuotes();
 
-    if (!tickets.length && !parts.length) return [];
+    if (!tickets.length && !quotes.length) return [];
 
-    const costOf = (ticketId: number) =>
-      logs.filter(l => l.ticket_id === ticketId).reduce((s, l) => s + l.cost, 0);
+    const costOf = (ticketId: string) =>
+      logs.filter(l => l.ticketId === ticketId).reduce((s, l) => s + l.cost, 0);
 
     const corrective = tickets.filter(t => t.type === 'CORRECTIVE').reduce((s, t) => s + costOf(t.id), 0);
     const preventive = tickets.filter(t => t.type === 'PREVENTIVE').reduce((s, t) => s + costOf(t.id), 0);
-    const inventory  = parts.reduce((s, p) => s + p.stock_quantity * p.unit_cost, 0);
+    const inventory  = quotes.reduce((s, q) => s + q.sparePartsCost, 0);
 
     const total = corrective + preventive + inventory || 1;
     return [
@@ -95,31 +101,34 @@ export class FinancialImpactStore {
 
   constructor() { this.load(); }
 
-  private load(): void {
+  load(): void {
     this._loading.set(true);
     this._error.set(null);
 
-    forkJoin({
-      stats:      this.api.getUsageStats(),
-      equipments: this.api.getEquipments(),
-      tickets:    this.api.getMaintenanceTickets(),
-      logs:       this.api.getMaintenanceLogs(),
-      spareParts: this.api.getSpareParts(),
-    })
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: ({ stats, equipments, tickets, logs, spareParts }) => {
-        this._usageStats.set(stats);
-        this._equipments.set(equipments);
-        this._tickets.set(tickets);
-        this._logs.set(logs);
-        this._spareParts.set(spareParts);
-        this._loading.set(false);
-      },
-      error: (err: unknown) => {
-        this._error.set(err instanceof Error ? err.message : 'Error al cargar datos financieros');
-        this._loading.set(false);
-      },
-    });
+    this.api.getFinancialImpactData()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ stats, tickets, logs, quotes }) => {
+          this._financialStats.set(stats);
+          this._tickets.set(tickets);
+          this._logs.set(logs);
+          this._maintenanceQuotes.set(quotes);
+          this._loading.set(false);
+        },
+        error: (err: unknown) => {
+          this._error.set(err instanceof Error ? err.message : 'Error al cargar datos financieros');
+          this._loading.set(false);
+        },
+      });
+  }
+
+  /** Called by AuthStore on logout to prevent stale financial data from bleeding into the next session. */
+  reset(): void {
+    this._financialStats.set([]);
+    this._tickets.set([]);
+    this._logs.set([]);
+    this._maintenanceQuotes.set([]);
+    this._loading.set(false);
+    this._error.set(null);
   }
 }

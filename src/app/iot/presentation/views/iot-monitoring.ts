@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,10 +8,20 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-import { IotStore } from '../../application/iot.store';
-import { Iot, IotStatus } from '../../domain/model/iot.entity';
-import { ContextMenuDirective } from '../../../shared/presentation/directives/context-menu.directive';
-import { ContextMenuItem } from '../../../shared/application/context-menu.service';
+import { MonitoringStore } from '../../../monitoring/application/monitoring.store';
+import { SessionTrackerResource } from '../../../monitoring/infrastructure/monitoring-response';
+
+type SensorType = 'camera' | 'motion';
+
+interface SensorRow {
+  sensorId: string;
+  type: SensorType;
+  equipmentId: string;
+  equipmentName: string | null;
+  equipmentStatus: string | null;
+  registeredAt: string;
+  online?: boolean; // only populated for motion sensors — camera sensors don't track connectivity yet
+}
 
 @Component({
   selector: 'app-iot-monitoring',
@@ -18,104 +29,136 @@ import { ContextMenuItem } from '../../../shared/application/context-menu.servic
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     TranslateModule,
     MatTableModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatSelectModule,
-    ContextMenuDirective,
   ],
   templateUrl: './iot-monitoring.html',
   styleUrl: './iot-monitoring.scss',
 })
 export class IotMonitoringComponent {
-  private store = inject(IotStore);
+  readonly sessionStore = inject(MonitoringStore);
 
-  readonly IotStatus = IotStatus;
-  readonly displayedColumns = [
-    'id', 'equipmentId', 'location', 'status',
-    'lastHeartbeat', 'batteryLevel', 'signalStrength', 'firmwareVersion',
-  ];
+  constructor() {
+    this.refreshAll();
+  }
 
-  readonly isLoading        = this.store.loading;
-  readonly deviceCount      = this.store.deviceCount;
-  readonly onlineCount      = this.store.onlineCount;
-  readonly offlineCount     = this.store.offlineCount;
-  readonly avgBattery       = this.store.avgBattery;
-  readonly activeAlerts     = this.store.activeAlerts;
-  readonly reconnectedDevice = this.store.reconnectedDevice;
+  readonly displayedColumns = ['sensorId', 'type', 'equipment', 'status', 'connectivity', 'registeredAt', 'actions'];
 
-  searchQuery  = signal('');
-  statusFilter = signal<IotStatus | ''>('');
+  readonly isLoading = this.sessionStore.actionLoading;
 
-  readonly filteredDevices = computed(() => {
-    const q      = this.searchQuery().toLowerCase();
-    const status = this.statusFilter();
-    return this.store.devices().filter(d => {
+  readonly sensorRows = computed<SensorRow[]>(() => [
+    ...this.sessionStore.cameraSensors().map(s => ({
+      sensorId: s.cameraSensorId,
+      type: 'camera' as SensorType,
+      equipmentId: s.equipmentId,
+      equipmentName: s.equipmentName,
+      equipmentStatus: s.equipmentStatus,
+      registeredAt: s.registeredAt,
+    })),
+    ...this.sessionStore.motionSensors().map(s => ({
+      sensorId: s.motionSensorId,
+      type: 'motion' as SensorType,
+      equipmentId: s.equipmentId,
+      equipmentName: s.equipmentName,
+      equipmentStatus: s.equipmentStatus,
+      registeredAt: s.registeredAt,
+      online: s.online,
+    })),
+  ]);
+
+  readonly cameraSensorCount = computed(() => this.sessionStore.cameraSensors().length);
+  readonly motionSensorCount = computed(() => this.sessionStore.motionSensors().length);
+  readonly totalSensorCount  = computed(() => this.cameraSensorCount() + this.motionSensorCount());
+  readonly activeSessionCount = computed(() =>
+    this.sessionStore.trackedSessions().filter(s => s.sessionIsActive).length
+  );
+
+  searchQuery = signal('');
+  typeFilter  = signal<SensorType | ''>('');
+
+  readonly filteredSensors = computed(() => {
+    const q    = this.searchQuery().toLowerCase();
+    const type = this.typeFilter();
+    return this.sensorRows().filter(s => {
       const matchesSearch =
         !q ||
-        d.location.toLowerCase().includes(q) ||
-        d.equipmentId.toString().includes(q) ||
-        `sns-${d.id.toString().padStart(3, '0')}`.includes(q);
-      const matchesStatus = !status || d.status === status;
-      return matchesSearch && matchesStatus;
+        s.sensorId.toLowerCase().includes(q) ||
+        (s.equipmentName ?? '').toLowerCase().includes(q);
+      const matchesType = !type || s.type === type;
+      return matchesSearch && matchesType;
     });
   });
 
-  sensorId(id: number): string {
-    return `SNS-${id.toString().padStart(3, '0')}`;
+  onSearchChange(v: string): void { this.searchQuery.set(v); }
+  onTypeFilterChange(v: string): void { this.typeFilter.set(v as SensorType | ''); }
+
+  onRefresh(): void { this.refreshAll(); }
+
+  /**
+   * Simulates a real sensor detecting movement on its equipment — the same
+   * capture-motion call a physical camera/motion sensor would make. Works for
+   * any registered sensor regardless of whether a session tracker already
+   * exists for its equipment: the backend either updates the existing one or
+   * auto-creates a walk-up tracker on the first detection.
+   */
+  simulateMotion(row: SensorRow): void {
+    if (row.type === 'camera') {
+      this.sessionStore.captureCameraMotion(row.equipmentId, true);
+    } else {
+      this.sessionStore.captureMotionSensorReading(row.equipmentId, true);
+    }
   }
 
-  statusIcon(status: IotStatus): string {
-    if (status === IotStatus.ONLINE)  return 'sensors';
-    if (status === IotStatus.WARNING) return 'warning';
-    return 'sensors_off';
+  private refreshAll(): void {
+    this.sessionStore.loadCameraSensors();
+    this.sessionStore.loadMotionSensors();
+    this.sessionStore.loadSessionTrackers();
   }
 
-  batteryIcon(level: number): string {
-    if (level === 0)  return 'battery_0_bar';
-    if (level < 20)   return 'battery_1_bar';
-    if (level < 40)   return 'battery_2_bar';
-    if (level < 60)   return 'battery_3_bar';
-    if (level < 80)   return 'battery_5_bar';
-    return 'battery_full';
+  // ── Session monitoring (usage detection, inactivity, session time) ─────────
+
+  readonly sessionLoading = this.sessionStore.actionLoading;
+  readonly sessionError = this.sessionStore.actionError;
+  readonly trackedSessions = this.sessionStore.trackedSessions;
+  readonly lastCalculatedTime = this.sessionStore.lastCalculatedTime;
+
+  readonly selectedSessionId = signal<string | null>(null);
+  readonly selectedSession = computed<SessionTrackerResource | undefined>(() =>
+    this.trackedSessions().find(s => s.sessionTrackerId === this.selectedSessionId())
+  );
+
+  selectSession(sessionTrackerId: string): void {
+    this.selectedSessionId.set(sessionTrackerId);
+    this.sessionStore.clearLastCalculatedTime();
   }
 
-  batteryClass(level: number): string {
-    if (level < 20) return 'battery--critical';
-    if (level < 50) return 'battery--low';
-    return 'battery--ok';
+  verifySession(): void {
+    const id = this.selectedSessionId();
+    if (id) this.sessionStore.verifySessionUsage(id);
   }
 
-  onSearchChange(v: string): void        { this.searchQuery.set(v); }
-  onStatusFilterChange(v: string): void  { this.statusFilter.set(v as IotStatus | ''); }
-
-  onRefresh(): void { this.store.refresh(); }
-
-  onInvestigate(sensor: Iot): void { this.store.investigateAlert(sensor); }
-
-  onScheduleReplacement(sensorId: number): void { this.store.scheduleReplacement(sensorId); }
-
-  onDismissModal(): void { this.store.dismissReconnectedModal(); }
-
-  rowMenu(row: Iot): ContextMenuItem[] {
-    return [
-      { label: 'Refresh',             icon: 'refresh',       action: () => this.onRefresh() },
-      { label: '', icon: '', separator: true, action: () => {} },
-      { label: 'Investigate alert',   icon: 'search',        action: () => this.onInvestigate(row) },
-      { label: 'Schedule replacement',icon: 'battery_alert', action: () => this.onScheduleReplacement(row.id) },
-      { label: '', icon: '', separator: true, action: () => {} },
-      { label: 'Copy sensor ID',      icon: 'content_copy',  action: () => navigator.clipboard.writeText(this.sensorId(row.id)) },
-    ];
+  endSession(): void {
+    const id = this.selectedSessionId();
+    if (id) this.sessionStore.endUsageSession(id);
   }
 
-  alertMenu(row: Iot): ContextMenuItem[] {
-    return [
-      { label: 'Investigate',          icon: 'search',        action: () => this.onInvestigate(row) },
-      { label: 'Schedule replacement', icon: 'battery_alert', action: () => this.onScheduleReplacement(row.id) },
-      { label: '', icon: '', separator: true, action: () => {} },
-      { label: 'Copy sensor ID',       icon: 'content_copy',  action: () => navigator.clipboard.writeText(this.sensorId(row.id)) },
-    ];
+  calculateSessionTime(): void {
+    const id = this.selectedSessionId();
+    if (id) this.sessionStore.calculateSessionTime(id);
+  }
+
+  captureCameraMotion(detected: boolean): void {
+    const equipmentId = this.selectedSession()?.equipmentId;
+    if (equipmentId) this.sessionStore.captureCameraMotion(equipmentId, detected);
+  }
+
+  captureMotionReading(detected: boolean): void {
+    const equipmentId = this.selectedSession()?.equipmentId;
+    if (equipmentId) this.sessionStore.captureMotionSensorReading(equipmentId, detected);
   }
 }

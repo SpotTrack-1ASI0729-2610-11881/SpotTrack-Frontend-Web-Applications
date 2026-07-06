@@ -1,9 +1,10 @@
 export enum UserRole {
-  ADMIN  = 'ADMIN',
-  CLIENT = 'CLIENT',
+  ADMIN  = 'ROLE_ADMIN',
+  CLIENT = 'ROLE_CLIENT',
 }
 
 export interface User {
+  id:    number;
   email: string;
   name:  string;
   role:  UserRole;

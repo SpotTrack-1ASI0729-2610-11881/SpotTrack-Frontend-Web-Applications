@@ -7,11 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MaintenanceStore } from '../../../application/maintenance.store';
-import { EquipmentStore } from '../../../../equipment/application/equipment.store';
+import { EquipmentStore } from '../../../../gym/application/equipment.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 import { TicketPriority, TicketType } from '../../../domain/model/maintenance-ticket.entity';
 
 interface NewTicketForm {
-  equipmentId:     number | null;
+  equipmentId:     string | null;
   description:     string;
   priority:        TicketPriority | '';
   type:            TicketType | '';
@@ -27,7 +28,8 @@ interface NewTicketForm {
   styleUrl:    './new-ticket.scss',
 })
 export class NewTicketComponent {
-  private readonly router         = inject(Router);
+  private readonly router     = inject(Router);
+  private readonly authStore  = inject(AuthStore);
   readonly store          = inject(MaintenanceStore);
   readonly equipmentStore = inject(EquipmentStore);
 
@@ -49,8 +51,7 @@ export class NewTicketComponent {
   };
 
   get selectedEquipmentId(): string {
-    const eq = this.equipmentStore.equipment().find(e => e.id === this.form.equipmentId);
-    return eq ? `M-${eq.id.toString().padStart(3, '0')}` : '';
+    return this.form.equipmentId ?? '';
   }
 
   onTimeChange(): void { this.selectedTime.set(this.form.time); }
@@ -59,8 +60,10 @@ export class NewTicketComponent {
 
   submit(): void {
     if (!this.form.equipmentId || !this.form.description || !this.form.priority || !this.form.type) return;
+    const requestedBy = this.authStore.currentUser()?.email ?? '';
     this.store.createTicket(
       this.form.equipmentId,
+      requestedBy,
       this.form.description,
       this.form.priority as TicketPriority,
       this.form.type     as TicketType,

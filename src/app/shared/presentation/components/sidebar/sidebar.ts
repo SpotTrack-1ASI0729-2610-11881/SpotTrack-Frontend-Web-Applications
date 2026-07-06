@@ -20,11 +20,11 @@ const ADMIN_NAV: NavItem[] = [
   { path: '/analytics', icon: 'bar_chart', labelKey: 'nav.analytics' },
   { path: '/financial-impact', icon: 'attach_money', labelKey: 'nav.financial' }, // <-- AQUÍ ESTÁ EL BOTÓN AÑADIDO
 //  { path: '/alerts', icon: 'notifications', labelKey: 'nav.alerts' },
-  { path: '/configuration', icon: 'settings', labelKey: 'nav.configuration' },
+  { path: '/settings', icon: 'settings', labelKey: 'nav.settings' },
 ];
 
 const CLIENT_NAV: NavItem[] = [
-  { path: '/dashboard', icon: 'home', labelKey: 'nav.dashboard' },
+  { path: '/client', icon: 'home', labelKey: 'nav.dashboard' },
   { path: '/map', icon: 'map', labelKey: 'nav.map' },
   { path: '/routines', icon: 'fitness_center', labelKey: 'nav.routines' },
   { path: '/bookings', icon: 'event_available', labelKey: 'nav.bookings' }, // Nota: si quitaste las reservas del proyecto, capaz luego te toque comentar esta línea también.

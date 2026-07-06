@@ -1,38 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import {
-  EquipmentUsageStatResource,
-  EquipmentResource,
-  MaintenanceTicketResource,
-  MaintenanceLogResource,
-  SparePartResource,
-} from './financial-impact-response';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { FinancialStat } from '../domain/model/financial-impact.entity';
+import { FinancialImpactApiEndpoint } from './financial-impact-api-endpoint';
+import { FinancialImpactAssembler } from './financial-impact-assembler';
+import { MaintenanceTicketResource, MaintenanceLogResource, MaintenanceQuoteResource } from './financial-impact-response';
+
+export interface FinancialImpactData {
+  stats:   FinancialStat[];
+  tickets: MaintenanceTicketResource[];
+  logs:    MaintenanceLogResource[];
+  quotes:  MaintenanceQuoteResource[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class FinancialImpactApi {
-  private readonly equipUrl = `${environment.apiBase}/equipments`;
+  private readonly endpoint:  FinancialImpactApiEndpoint;
+  private readonly assembler = new FinancialImpactAssembler();
 
-  constructor(private readonly http: HttpClient) {}
-
-  getUsageStats(): Observable<EquipmentUsageStatResource[]> {
-    return of([]);
+  constructor(private readonly http: HttpClient) {
+    this.endpoint = new FinancialImpactApiEndpoint(http);
   }
 
-  getEquipments(): Observable<EquipmentResource[]> {
-    return this.http.get<EquipmentResource[]>(this.equipUrl);
-  }
-
-  getMaintenanceTickets(): Observable<MaintenanceTicketResource[]> {
-    return of([]);
-  }
-
-  getMaintenanceLogs(): Observable<MaintenanceLogResource[]> {
-    return of([]);
-  }
-
-  getSpareParts(): Observable<SparePartResource[]> {
-    return of([]);
+  /**
+   * Fetches equipments + activity reports + maintenance data in one round
+   * trip. Equipment/activity-report resources are joined into FinancialStat
+   * entities; tickets/logs/quotes stay raw since there's no domain entity
+   * for them yet.
+   */
+  getFinancialImpactData(): Observable<FinancialImpactData> {
+    return forkJoin({
+      equipments: this.endpoint.getEquipments(),
+      reports:    this.endpoint.getActivityReports(),
+      tickets:    this.endpoint.getMaintenanceTickets(),
+      logs:       this.endpoint.getMaintenanceLogs(),
+      quotes:     this.endpoint.getMaintenanceQuotes(),
+    }).pipe(
+      map(({ equipments, reports, tickets, logs, quotes }) => ({
+        stats: this.assembler.toEntitiesFromResources(equipments, reports),
+        tickets,
+        logs,
+        quotes,
+      }))
+    );
   }
 }

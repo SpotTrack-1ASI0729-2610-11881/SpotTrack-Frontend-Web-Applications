@@ -12,6 +12,11 @@ app-layout {
   height: 100%;
 }
 
+/* CDK overlay must sit above all custom modals (modal-backdrop z-index: 2000) */
+.cdk-overlay-container {
+  z-index: 2001 !important;
+}
+
 /* Mat-select panel dark theme */
 .mat-mdc-select-panel {
   background: #1e1e1e !important;
@@ -46,6 +51,24 @@ app-layout {
 
 .mat-mdc-no-data-row td {
   color: #aaa !important;
+}
+
+/* mat-select trigger text — component CSS can't pierce mat-select's encapsulation */
+.booking-select .mat-mdc-select-trigger,
+.booking-select .mat-mdc-select-value,
+.form-select .mat-mdc-select-trigger,
+.form-select .mat-mdc-select-value {
+  color: #fff !important;
+}
+
+.booking-select .mat-mdc-select-placeholder,
+.form-select .mat-mdc-select-placeholder {
+  color: #6b7280 !important;
+}
+
+.booking-select .mat-mdc-select-arrow,
+.form-select .mat-mdc-select-arrow {
+  color: #9ca3af !important;
 }
 
 /* Booking modal select panel */

@@ -17,63 +17,59 @@
           <mat-icon>admin_panel_settings</mat-icon>
         </div>
         <div class="admin-identity-info">
-          <h2 class="admin-name">{{ currentUser()?.name }}</h2>
-          <p class="admin-email">{{ currentUser()?.email }}</p>
+          <h2 class="admin-name">{{ profile()?.fullName }}</h2>
+          <p class="admin-email">{{ profile()?.email }}</p>
           <span class="role-badge role-badge--admin">{{ 'profile.admin.roleBadge' | translate }}</span>
-        </div>
-        <div class="admin-since">
-          <p class="admin-since__label">{{ 'profile.admin.memberSince' | translate }}</p>
-          <p class="admin-since__value">{{ gymData.memberSince }}</p>
         </div>
       </section>
 
       <!-- Gym overview heading -->
       <div class="section-heading">
         <mat-icon class="section-heading__icon">store</mat-icon>
-        <h2 class="section-heading__title">{{ gymData.name }}</h2>
+        <h2 class="section-heading__title">{{ adminGymStore.primaryGym()?.name ?? '—' }}</h2>
       </div>
 
       <!-- Gym stat cards -->
       <div class="gym-stats">
-        <div class="gym-stat-card gym-stat-card--blue">
+        <a class="gym-stat-card gym-stat-card--blue gym-stat-card--link" routerLink="/gym/branches">
           <div class="gym-stat-card__icon">
             <mat-icon>location_on</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.locations }}</span>
+            <span class="gym-stat-card__value">{{ branchCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.locations' | translate }}</span>
           </div>
-        </div>
+        </a>
 
-        <div class="gym-stat-card gym-stat-card--yellow">
+        <a class="gym-stat-card gym-stat-card--yellow gym-stat-card--link" routerLink="/equipments">
           <div class="gym-stat-card__icon">
             <mat-icon>fitness_center</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.equipmentTotal }}</span>
+            <span class="gym-stat-card__value">{{ equipmentCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.equipment' | translate }}</span>
           </div>
-        </div>
+        </a>
 
-        <div class="gym-stat-card gym-stat-card--green">
+        <a class="gym-stat-card gym-stat-card--green gym-stat-card--link" routerLink="/iot">
           <div class="gym-stat-card__icon">
             <mat-icon>sensors</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.iotSensorsOnline }}</span>
+            <span class="gym-stat-card__value">{{ sensorCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.sensors' | translate }}</span>
           </div>
-        </div>
+        </a>
 
-        <div class="gym-stat-card gym-stat-card--teal">
+        <a class="gym-stat-card gym-stat-card--teal gym-stat-card--link" routerLink="/gym/whitelist">
           <div class="gym-stat-card__icon">
             <mat-icon>group</mat-icon>
           </div>
           <div class="gym-stat-card__body">
-            <span class="gym-stat-card__value">{{ gymData.memberCount }}</span>
+            <span class="gym-stat-card__value">{{ memberCount() ?? '—' }}</span>
             <span class="gym-stat-card__label">{{ 'profile.admin.stats.members' | translate }}</span>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- SpotTrack subscription -->
@@ -83,30 +79,55 @@
             <div class="admin-plan-card__icon">
               <mat-icon>workspace_premium</mat-icon>
             </div>
-            <div>
-              <h3 class="admin-plan-card__name">Plan {{ gymData.plan }}</h3>
-              <p class="text-muted">{{ gymData.planPrice }}</p>
-            </div>
+            @if (membershipStore.membershipLoading()) {
+              <div class="plan-loading">
+                <div class="plan-loading__line plan-loading__line--wide"></div>
+                <div class="plan-loading__line plan-loading__line--short"></div>
+              </div>
+            } @else if (membershipStore.myMembership(); as m) {
+              <div>
+                <h3 class="admin-plan-card__name">{{ m.membershipTier }}</h3>
+                <p class="text-muted">{{ m.priceCurrency }} {{ m.priceAmount }}/mes</p>
+              </div>
+            }
           </div>
-          <span class="plan-badge">{{ 'profile.admin.plan.active' | translate }}</span>
-        </div>
-
-        <ul class="admin-plan-features">
-          @for (feature of gymData.planFeatures; track feature) {
-            <li class="admin-plan-features__item">
-              <mat-icon class="admin-plan-features__check">check_circle</mat-icon>
-              {{ feature }}
-            </li>
+          @if (membershipStore.myMembership(); as m) {
+            <span class="plan-badge"
+                  [class.plan-badge--suspended]="m.status === 'SUSPENDED'"
+                  [class.plan-badge--cancelled]="m.status === 'CANCELLED' || m.status === 'EXPIRED'">
+              {{ 'membership.lifecycle.status.' + m.status | translate }}
+            </span>
           }
-        </ul>
-
-        <div class="admin-plan-renewal">
-          <mat-icon class="admin-plan-renewal__icon">event</mat-icon>
-          <div>
-            <p class="admin-plan-renewal__label">{{ 'profile.admin.plan.renewal' | translate }}</p>
-            <p class="text-muted">{{ gymData.renewalDate }}</p>
-          </div>
         </div>
+
+        @if (membershipStore.myMembership(); as m) {
+          @if (m.cancelAtPeriodEnd) {
+            <div class="plan-notice plan-notice--warn">
+              <mat-icon>event_busy</mat-icon>
+              <span>{{ 'membership.lifecycle.cancelAtPeriodEndNotice' | translate: { date: m.endDate } }}</span>
+            </div>
+          }
+          @if (m.pendingDowngradeTier) {
+            <div class="plan-notice plan-notice--info">
+              <mat-icon>arrow_downward</mat-icon>
+              <span>{{ 'membership.lifecycle.pendingDowngradeNotice' | translate: { tier: m.pendingDowngradeTier } }}</span>
+            </div>
+          }
+          @if (m.endDate) {
+            <div class="admin-plan-renewal">
+              <mat-icon class="admin-plan-renewal__icon">event</mat-icon>
+              <div>
+                <p class="admin-plan-renewal__label">{{ 'profile.admin.plan.renewal' | translate }}</p>
+                <p class="text-muted">{{ m.endDate }}</p>
+              </div>
+            </div>
+          }
+        }
+
+        <button class="membership-manage-btn" routerLink="/membership">
+          <mat-icon>open_in_new</mat-icon>
+          {{ 'profile.admin.plan.manage' | translate }}
+        </button>
       </section>
 
       <!-- Account info -->
@@ -117,12 +138,41 @@
         </div>
         <div class="form-group">
           <label for="admin-email">{{ 'profile.account.email' | translate }}</label>
-          <input type="email" id="admin-email" [value]="currentUser()?.email ?? ''" class="form-control">
+          <input type="email" id="admin-email" [value]="currentUser()?.email ?? ''" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+          <label for="admin-firstName">{{ 'profile.account.firstName' | translate }}</label>
+          <input type="text" id="admin-firstName" [(ngModel)]="accountFirstName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-lastName">{{ 'profile.account.lastName' | translate }}</label>
+          <input type="text" id="admin-lastName" [(ngModel)]="accountLastName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-phone">{{ 'profile.account.phone' | translate }}</label>
+          <input type="tel" id="admin-phone" [(ngModel)]="accountPhoneNumber" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="admin-dni">{{ 'profile.account.dni' | translate }}</label>
+          <input type="text" id="admin-dni" [value]="accountDni" class="form-control" disabled>
         </div>
         <div class="form-group">
           <label for="admin-gym">{{ 'profile.account.gymName' | translate }}</label>
-          <input type="text" id="admin-gym" [value]="gymData.name" class="form-control">
+          <input type="text" id="admin-gym" [value]="adminGymStore.primaryGym()?.name ?? ''" class="form-control" disabled>
         </div>
+
+        @if (saveSuccess()) {
+          <div class="cpwd-success">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'profile.account.saveSuccess' | translate }}
+          </div>
+        }
+        @if (saveError()) {
+          <div class="cpwd-error">
+            <mat-icon>error_outline</mat-icon>
+            {{ saveError() }}
+          </div>
+        }
       </section>
 
       <!-- Language -->
@@ -145,12 +195,58 @@
           <h3>{{ 'profile.security.title' | translate }}</h3>
         </div>
         <div class="security-actions">
-          <button class="btn-outline">{{ 'profile.security.changePassword' | translate }}</button>
+          <button class="btn-outline" (click)="toggleChangePwd()">{{ 'profile.security.changePassword' | translate }}</button>
           <button class="btn-outline btn-danger" (click)="logout()">{{ 'profile.security.logout' | translate }}</button>
         </div>
+
+        @if (showChangePwd()) {
+          <div class="change-pwd-form">
+
+            @if (pwdStore.changePwdSuccess()) {
+              <div class="cpwd-success">
+                <mat-icon>check_circle</mat-icon>
+                {{ 'auth.changePassword.success' | translate }}
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+              </div>
+
+              @if (pwdMatchError) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ 'auth.changePassword.error.noMatch' | translate }}
+                </div>
+              }
+              @if (pwdStore.changePwdError()) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ pwdStore.changePwdError()! | translate }}
+                </div>
+              }
+
+              <div class="cpwd-actions">
+                <button class="btn-outline" (click)="toggleChangePwd()">{{ 'auth.changePassword.cancelBtn' | translate }}</button>
+                <button class="btn-primary" [disabled]="pwdStore.changePwdLoading()" (click)="submitChangePassword()">
+                  {{ 'auth.changePassword.submitBtn' | translate }}
+                </button>
+              </div>
+            }
+
+          </div>
+        }
       </section>
 
-      <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
+      <button class="btn-primary" [disabled]="saving()" (click)="saveAccountInfo()">{{ 'profile.saveChanges' | translate }}</button>
     </main>
 
   } @else {
@@ -160,7 +256,7 @@
   ═══════════════════════════════════════════════════════════ -->
 
     <header class="profile-header">
-      <button class="back-btn" aria-label="Volver">
+      <button class="back-btn" aria-label="Volver" (click)="goBack()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
@@ -180,66 +276,15 @@
             </svg>
           </div>
           <div class="user-details">
-            <h2>{{ currentUser()?.name }}</h2>
-            <p class="text-muted">{{ currentUser()?.email }}</p>
+            <h2>{{ profile()?.fullName }}</h2>
+            <p class="text-muted">{{ profile()?.email }}</p>
             <span class="badge badge-outline">{{ 'profile.client.roleBadge' | translate }}</span>
           </div>
         </div>
-        <div class="points-info">
-          <p class="text-muted">{{ 'profile.client.points' | translate }}</p>
-          <span class="points-total">245</span>
-        </div>
       </section>
 
-      <section class="card plan-card">
-        <div class="plan-header">
-          <div class="plan-title-group">
-            <div class="plan-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <div class="plan-name">
-              <h3>{{ 'profile.client.plan.name' | translate }}</h3>
-              <p class="text-muted">{{ 'profile.client.plan.price' | translate }}</p>
-            </div>
-          </div>
-          <button class="btn-upgrade">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-            {{ 'profile.client.plan.upgrade' | translate }}
-          </button>
-        </div>
-
-        <div class="plan-features">
-          <p class="features-title">{{ 'profile.client.plan.featuresTitle' | translate }}</p>
-          <ul>
-            <li><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> {{ 'profile.client.plan.feature1' | translate }}</li>
-            <li><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> {{ 'profile.client.plan.feature2' | translate }}</li>
-            <li><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> {{ 'profile.client.plan.feature3' | translate }}</li>
-            <li><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> {{ 'profile.client.plan.feature4' | translate }}</li>
-          </ul>
-        </div>
-
-        <div class="plan-renewal">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          <div class="renewal-details">
-            <p class="renewal-title">{{ 'profile.client.plan.renewal' | translate }}</p>
-            <p class="text-muted">{{ 'profile.client.plan.renewalDate' | translate }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="card history-card">
-        <h3 class="history-title">{{ 'profile.client.history' | translate }}</h3>
-        <div class="history-list"></div>
+      <section class="card">
+        <app-gym-switcher></app-gym-switcher>
       </section>
 
       <section class="card form-card">
@@ -249,12 +294,37 @@
         </div>
         <div class="form-group">
           <label for="email">{{ 'profile.account.email' | translate }}</label>
-          <input type="email" id="email" [value]="currentUser()?.email ?? ''" class="form-control">
+          <input type="email" id="email" [value]="currentUser()?.email ?? ''" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+          <label for="firstName">{{ 'profile.account.firstName' | translate }}</label>
+          <input type="text" id="firstName" [(ngModel)]="accountFirstName" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="lastName">{{ 'profile.account.lastName' | translate }}</label>
+          <input type="text" id="lastName" [(ngModel)]="accountLastName" class="form-control">
         </div>
         <div class="form-group">
           <label for="phone">{{ 'profile.account.phone' | translate }}</label>
-          <input type="tel" id="phone" value="+51 999 888 777" class="form-control">
+          <input type="tel" id="phone" [(ngModel)]="accountPhoneNumber" class="form-control">
         </div>
+        <div class="form-group">
+          <label for="dni">{{ 'profile.account.dni' | translate }}</label>
+          <input type="text" id="dni" [value]="accountDni" class="form-control" disabled>
+        </div>
+
+        @if (saveSuccess()) {
+          <div class="cpwd-success">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'profile.account.saveSuccess' | translate }}
+          </div>
+        }
+        @if (saveError()) {
+          <div class="cpwd-error">
+            <mat-icon>error_outline</mat-icon>
+            {{ saveError() }}
+          </div>
+        }
       </section>
 
       <section class="card settings-card">
@@ -316,12 +386,58 @@
           <h3>{{ 'profile.security.title' | translate }}</h3>
         </div>
         <div class="security-actions">
-          <button class="btn-outline">{{ 'profile.security.changePassword' | translate }}</button>
+          <button class="btn-outline" (click)="toggleChangePwd()">{{ 'profile.security.changePassword' | translate }}</button>
           <button class="btn-outline btn-danger" (click)="logout()">{{ 'profile.security.logout' | translate }}</button>
         </div>
+
+        @if (showChangePwd()) {
+          <div class="change-pwd-form">
+
+            @if (pwdStore.changePwdSuccess()) {
+              <div class="cpwd-success">
+                <mat-icon>check_circle</mat-icon>
+                {{ 'auth.changePassword.success' | translate }}
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+              </div>
+              <div class="form-group">
+                <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
+                <input type="password" class="form-control" [(ngModel)]="confirmPassword" autocomplete="new-password" />
+              </div>
+
+              @if (pwdMatchError) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ 'auth.changePassword.error.noMatch' | translate }}
+                </div>
+              }
+              @if (pwdStore.changePwdError()) {
+                <div class="cpwd-error">
+                  <mat-icon>error_outline</mat-icon>
+                  {{ pwdStore.changePwdError()! | translate }}
+                </div>
+              }
+
+              <div class="cpwd-actions">
+                <button class="btn-outline" (click)="toggleChangePwd()">{{ 'auth.changePassword.cancelBtn' | translate }}</button>
+                <button class="btn-primary" [disabled]="pwdStore.changePwdLoading()" (click)="submitChangePassword()">
+                  {{ 'auth.changePassword.submitBtn' | translate }}
+                </button>
+              </div>
+            }
+
+          </div>
+        }
       </section>
 
-      <button class="btn-primary">{{ 'profile.saveChanges' | translate }}</button>
+      <button class="btn-primary" [disabled]="saving()" (click)="saveAccountInfo()">{{ 'profile.saveChanges' | translate }}</button>
     </main>
 
   }

@@ -3,6 +3,11 @@
     <div class="avatar">
       <span>{{ initials }}</span>
     </div>
-    <span class="user-name">{{ currentUser()?.name }}</span>
+    <div class="user-info">
+      <span class="user-name">{{ currentUser()?.name }}</span>
+      @if (primaryGymName()) {
+        <span class="gym-name">{{ primaryGymName() }}</span>
+      }
+    </div>
   </button>
 </div>

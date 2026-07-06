@@ -1,38 +1,59 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { EquipmentUsageStatResource, EquipmentResource } from './analytics-response';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AnalyticsStat } from '../domain/model/analytics-stat.entity';
+import { AnalyticsApiEndpoint } from './analytics-api-endpoint';
+import { AnalyticsAssembler } from './analytics-assembler';
+import { EquipmentResource } from './analytics-response';
+
+export interface AnalyticsData {
+  stats:      AnalyticsStat[];
+  equipments: EquipmentResource[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsApi {
-  private readonly base = environment.apiBase;
+  private readonly endpoint:  AnalyticsApiEndpoint;
+  private readonly assembler = new AnalyticsAssembler();
 
-  constructor(private readonly http: HttpClient) {}
-
-  getUsageStats(): Observable<EquipmentUsageStatResource[]> {
-    return of([]);
+  constructor(private readonly http: HttpClient) {
+    this.endpoint = new AnalyticsApiEndpoint(http);
   }
 
-  getEquipments(): Observable<EquipmentResource[]> {
-    return this.http.get<EquipmentResource[]>(`${this.base}/equipments`);
+  /**
+   * Fetches activity reports + equipments in a single round trip and joins
+   * them into AnalyticsStat entities. Equipments are also returned raw since
+   * AnalyticsStore's machine-type breakdown reads the full equipment list
+   * independently of activity reports.
+   */
+  getAnalyticsData(): Observable<AnalyticsData> {
+    return forkJoin({
+      reports:    this.endpoint.getActivityReports(),
+      equipments: this.endpoint.getEquipments(),
+    }).pipe(
+      map(({ reports, equipments }) => ({
+        stats: this.assembler.toEntitiesFromResources(reports, equipments),
+        equipments,
+      }))
+    );
   }
 
   requestActivityAnalysis(body: {
-    minutesActive: number; minutesInactive: number;
+    equipmentId: string; minutesActive: number; minutesInactive: number;
     downtimeReason: string; percentageChange: number;
   }): Observable<any> {
-    return this.http.post(`${this.base}/activity-reports`, body);
+    return this.endpoint.requestActivityAnalysis(body);
   }
 
   requestMaintenanceQuote(body: {
     amount: number; currency: string; costTypeValue: string;
     partName: string; quantity: number; unitPrice: number;
   }): Observable<any> {
-    return this.http.post(`${this.base}/maintenance-quotes`, body);
+    return this.endpoint.requestMaintenanceQuote(body);
   }
 
   requestROIProjection(body: { expectedRoiPercentage: number }): Observable<any> {
-    return this.http.post(`${this.base}/roi-projections`, body);
+    return this.endpoint.requestROIProjection(body);
   }
 }

@@ -1,25 +1,18 @@
-import { BaseResource } from '../../shared/infrastructure/base-response';
+export type { EquipmentResource, EquipmentResponse } from '../../gym/infrastructure/equipment-response';
 
-/** Shape returned by GET /equipment_usage_stats */
-export interface EquipmentUsageStatResource extends BaseResource {
+/**
+ * Shape returned by GET /activity-reports (analytics bounded context).
+ * equipmentId is a string UUID, matching EquipmentResource.equipmentId —
+ * equipment has no numeric id on the wire, only that UUID.
+ * totalUsageTime is in minutes (backend field); converted to hours on assembly.
+ */
+export interface ActivityReportResource {
   id:                   number;
-  equipment_id:         number;
-  total_usage_hours:    number;
-  usage_count_daily:    number;
-  estimated_wear_level: number;
+  activityReportId:     number;
+  equipmentId:          string;
+  totalUsageTime:       number;
+  downtimeCost:         number;
+  percentageComparison: number;
 }
 
-export type EquipmentUsageStatResponse = EquipmentUsageStatResource[];
-
-/** Shape returned by GET /equipments */
-export interface EquipmentResource extends BaseResource {
-  id:             number;
-  zone_id:        number;
-  name:           string;
-  brand:          string;
-  model:          string;
-  purchase_price: number;
-  status:         string;
-}
-
-export type EquipmentResponse = EquipmentResource[];
+export type ActivityReportResponse = ActivityReportResource[];

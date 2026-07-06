@@ -7,6 +7,10 @@ export const authRoutes: Routes = [
       import('./presentation/views/login/login').then(m => m.LoginComponent),
   },
   {
+    path:'admin',
+    loadComponent: () => import('../dashboard/presentation/views/dashboard').then(m => m.DashboardComponent),
+  },
+  {
     path: 'client',
     loadComponent: () =>
       import('./presentation/views/client-home/client-home.component').then(

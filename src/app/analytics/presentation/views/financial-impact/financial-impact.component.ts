@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe }    from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule }  from '@angular/material/icon';
@@ -22,9 +22,13 @@ const ROI_MONTHS_LABELS = ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6',
   templateUrl: './financial-impact.component.html',
   styleUrl:    './financial-impact.component.scss',
 })
-export class FinancialImpactComponent {
+export class FinancialImpactComponent implements OnInit {
 
   private readonly store = inject(FinancialImpactStore);
+
+  ngOnInit(): void {
+    this.store.load();
+  }
 
   get stats()          { return this.store.financialStats(); }
   get inactivityLoss() { return this.store.inactivityLoss(); }

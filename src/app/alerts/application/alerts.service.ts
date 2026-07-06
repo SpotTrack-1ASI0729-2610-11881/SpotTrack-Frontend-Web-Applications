@@ -1,8 +1,12 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { AlertsApi } from '../infrastructure/alerts-api';
+import { AlertResource } from '../infrastructure/alerts-response';
 
 export interface AppAlert {
   id: string;
+  backendId?: number;       // present only for alerts sourced from the backend
+  severity?: 'WARNING' | 'CRITICAL'; // present only for alerts sourced from the backend
   title?: string;           // plain text (for dynamically generated alerts)
   titleKey?: string;        // i18n key (for seeded/static alerts)
   description?: string;
@@ -17,66 +21,49 @@ export interface AppAlert {
 @Injectable({ providedIn: 'root' })
 export class AlertsService {
   private translate = inject(TranslateService);
+  private api        = inject(AlertsApi);
 
-  alerts = signal<AppAlert[]>([
-    {
-      id: 'ALR-001',
-      titleKey:       'alerts.seeded.alr001.title',
-      descriptionKey: 'alerts.seeded.alr001.description',
-      type:        'admin',
-      icon:        'warning',
-      date:        new Date(Date.now() - 5 * 60000),
-      targetRoute: '/maintenance',
-      read:        true,
-    },
-    {
-      id: 'ALR-002',
-      titleKey:       'alerts.seeded.alr002.title',
-      descriptionKey: 'alerts.seeded.alr002.description',
-      type:        'system',
-      icon:        'wifi_off',
-      date:        new Date(Date.now() - 120 * 60000),
-      targetRoute: '/iot',
-      read:        true,
-    },
-    {
-      id: 'ALR-003',
-      titleKey:       'alerts.seeded.alr003.title',
-      descriptionKey: 'alerts.seeded.alr003.description',
-      type:        'client',
-      icon:        'person',
-      date:        new Date(Date.now() - 1440 * 60000),
-      targetRoute: '/dashboard',
-      read:        true,
-    },
-  ]);
+  alerts = signal<AppAlert[]>([]);
 
-  // Called when a pending reservation is not activated within 5 minutes
-  addReservationAutoCancelledAlert(nameKey: string): void {
-    const machine = this.translate.instant('machines.names.' + nameKey);
-    this.alerts.update(list => [
-      {
-        id:          `RES-CANCEL-${Date.now()}`,
-        title:       this.translate.instant('clientAlerts.reservationAutoCancelled.title',       { machine }),
-        description: this.translate.instant('clientAlerts.reservationAutoCancelled.description', { machine }),
-        type:        'client',
-        icon:        'event_busy',
-        date:        new Date(),
-        targetRoute: '/bookings',
-        read:        false,
-      },
-      ...list,
-    ]);
+  constructor() {
+    this.loadBackendAlerts();
   }
 
-  // Called when a reservation timer expires
-  addReservationExpiredAlert(nameKey: string): void {
-    const machine = this.translate.instant('machines.names.' + nameKey);
+  private loadBackendAlerts(): void {
+    this.api.getAlerts().subscribe({
+      next: resources => {
+        const mapped = resources.map(r => this.toAppAlert(r));
+        this.alerts.update(list => [...mapped, ...list]);
+      },
+      error: () => { /* alert bell stays local-only if the backend call fails */ },
+    });
+  }
+
+  private toAppAlert(r: AlertResource): AppAlert {
+    const isWarning = r.severity === 'WARNING';
+    return {
+      id:          `BE-${r.id}`,
+      backendId:   r.id,
+      severity:    r.severity,
+      titleKey:    isWarning ? 'alerts.backend.maintenanceThreshold.title' : 'alerts.backend.anomalyReported.title',
+      description: r.message,
+      type:        'admin',
+      icon:        isWarning ? 'build' : 'report_problem',
+      date:        new Date(r.createdAt),
+      targetRoute: '/maintenance',
+      read:        r.isResolved,
+    };
+  }
+
+  // Called when a reservation timer expires. `machineName` is the equipment's
+  // real display name — not a `machines.names.*` translation key, since real
+  // equipment names come straight from the database, already human-readable.
+  addReservationExpiredAlert(machineName: string): void {
     this.alerts.update(list => [
       {
         id:          `RES-EXP-${Date.now()}`,
-        title:       this.translate.instant('clientAlerts.reservationExpired.title',       { machine }),
-        description: this.translate.instant('clientAlerts.reservationExpired.description', { machine }),
+        title:       this.translate.instant('clientAlerts.reservationExpired.title',       { machine: machineName }),
+        description: this.translate.instant('clientAlerts.reservationExpired.description', { machine: machineName }),
         type:        'client',
         icon:        'event_busy',
         date:        new Date(),
@@ -88,7 +75,20 @@ export class AlertsService {
   }
 
   deleteAlert(id: string): void {
+    const alert = this.alerts().find(a => a.id === id);
+    if (alert?.backendId) {
+      this.api.resolveAlert(alert.backendId).subscribe();
+    }
     this.alerts.update(list => list.filter(a => a.id !== id));
+  }
+
+  /** Resolves every backend-sourced alert belonging to the given role, then clears them from the inbox. */
+  clearAllForRole(role: 'admin' | 'client'): void {
+    const toClear = this.alerts().filter(a => role === 'client' ? a.type === 'client' : a.type !== 'client');
+    for (const alert of toClear) {
+      if (alert.backendId) this.api.resolveAlert(alert.backendId).subscribe();
+    }
+    this.alerts.update(list => list.filter(a => !toClear.includes(a)));
   }
 
   // Only marks alerts that belong to the given role as read
@@ -99,5 +99,10 @@ export class AlertsService {
         return { ...a, read: true };
       })
     );
+  }
+
+  /** Called by AuthStore on logout to prevent stale alert data from bleeding into the next session. */
+  reset(): void {
+    this.alerts.set([]);
   }
 }

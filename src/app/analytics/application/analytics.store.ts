@@ -1,8 +1,8 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
-import { EquipmentUsageStatResource, EquipmentResource } from '../infrastructure/analytics-response';
+import { EquipmentResource } from '../infrastructure/analytics-response';
+import { AnalyticsStat } from '../domain/model/analytics-stat.entity';
 
 // ── Hourly occupancy point ────────────────────────────────────────────────────
 export interface HourlyPoint { hour: string; occupancy: number; }
@@ -43,10 +43,10 @@ export class AnalyticsStore {
   private readonly destroyRef = inject(DestroyRef);
 
   // ── Raw signals ───────────────────────────────────────────────────────────
-  private readonly _usageStats  = signal<EquipmentUsageStatResource[]>([]);
-  private readonly _equipments  = signal<EquipmentResource[]>([]);
-  private readonly _loading     = signal(false);
-  private readonly _error       = signal<string | null>(null);
+  private readonly _analyticsStats = signal<AnalyticsStat[]>([]);
+  private readonly _equipments     = signal<EquipmentResource[]>([]);
+  private readonly _loading        = signal(false);
+  private readonly _error          = signal<string | null>(null);
 
   readonly loading = this._loading.asReadonly();
   readonly error   = this._error.asReadonly();
@@ -62,11 +62,10 @@ export class AnalyticsStore {
   // ── Filtered usage stats (reacts to selectedBranch) ─────────────────────
   private readonly _filteredStats = computed(() => {
     const branch = this.selectedBranch();
-    const stats  = this._usageStats();
-    const equips = this._equipments();
+    const stats  = this._analyticsStats();
     if (branch === 'all') return stats;
-    // 'main' → only equipment in zone_id 1 (primary zone of Main Branch)
-    return stats.filter(s => equips.find(e => e.id === s.equipment_id)?.zone_id === 1);
+    // 'main' → only equipment in zone 1 (primary zone of Main Branch)
+    return stats.filter(s => s.zoneId === 1);
   });
 
   // ── KPI stat cards ────────────────────────────────────────────────────────
@@ -79,19 +78,23 @@ export class AnalyticsStore {
                peak: 0, peakTime: '—', inactive: 0, inactiveChange: 0 };
     }
 
-    const baseHours     = stats.reduce((s, r) => s + r.total_usage_hours, 0);
+    const baseHours     = stats.reduce((s, r) => s + r.totalUsageHours, 0);
     const totalHours    = Math.round(baseHours * multiplier);
-    const avgWear       = stats.reduce((s, r) => s + r.estimated_wear_level, 0) / stats.length;
-    const occupancy     = Math.round((1 - avgWear) * 100);
-    const inactiveCount = stats.filter(r => r.estimated_wear_level >= 0.7).length;
+    // Downtime cost is a real backend-computed $ figure — used here as a
+    // proxy for "points of occupancy lost", since there's no wear-level
+    // concept on ActivityReport.
+    const avgDowntimeCost = stats.reduce((s, r) => s + r.downtimeCost, 0) / stats.length;
+    const occupancy     = Math.max(0, Math.min(100, Math.round(100 - avgDowntimeCost)));
+    const inactiveCount = stats.filter(r => r.downtimeCost >= 30).length;
     const inactive      = Math.round(inactiveCount * 24 * multiplier);
     const peakStat      = stats.reduce((a, b) =>
-      a.usage_count_daily > b.usage_count_daily ? a : b, stats[0]);
-    const peak = Math.min(100, Math.round((peakStat.usage_count_daily / 10) * 100));
+      a.totalUsageHours > b.totalUsageHours ? a : b, stats[0]);
+    const peak = Math.min(100, Math.round((peakStat.totalUsageHours / 10) * 100));
+    const hoursChange = Math.round(stats.reduce((s, r) => s + r.percentageComparison, 0) / stats.length);
 
     return {
       totalHours,
-      hoursChange:     12,
+      hoursChange,
       occupancy,
       occupancyChange:  5,
       peak,
@@ -101,18 +104,18 @@ export class AnalyticsStore {
     };
   });
 
-  // ── Bar chart: weekly usage (derived from daily counts × 7 days) ──────────
+  // ── Bar chart: weekly usage (derived from total hours × 7 days) ───────────
   readonly weeklyData = computed<WeekDay[]>(() => {
     const stats = this._filteredStats();
     if (!stats.length) return [];
 
-    const totalDaily = stats.reduce((s, r) => s + r.usage_count_daily, 0);
+    const totalHours = stats.reduce((s, r) => s + r.totalUsageHours, 0);
     const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const weights = [0.85, 1.00, 0.90, 1.10, 1.25, 1.15, 0.70];
     const wSum    = weights.reduce((a, b) => a + b, 0);
 
     return days.map((day, i) => {
-      const usage     = Math.round((weights[i] / wSum) * totalDaily * 7);
+      const usage     = Math.round((weights[i] / wSum) * totalHours * 7);
       const prevUsage = Math.round(usage * 0.88);
       return { day, usage, prevUsage };
     });
@@ -129,8 +132,8 @@ export class AnalyticsStore {
     const stats = this._filteredStats();
     if (!stats.length) return [];
 
-    const totalDaily = stats.reduce((s, r) => s + r.usage_count_daily, 0);
-    const scale      = Math.min(totalDaily / 30, 1);
+    const totalHours = stats.reduce((s, r) => s + r.totalUsageHours, 0);
+    const scale      = Math.min(totalHours / 30, 1);
 
     const base: HourlyPoint[] = [
       { hour: '06:00', occupancy: Math.round(30  * scale) },
@@ -154,7 +157,7 @@ export class AnalyticsStore {
     const branch   = this.selectedBranch();
     const allEquip = this._equipments();
     const equips   = branch === 'main'
-      ? allEquip.filter(e => e.zone_id === 1)
+      ? allEquip.filter(e => e.zoneId === '1')
       : allEquip;
 
     if (!equips.length) {
@@ -165,9 +168,9 @@ export class AnalyticsStore {
       ];
     }
 
-    const cardio    = equips.filter(e => e.zone_id === 1).length;
-    const fuerza    = equips.filter(e => e.zone_id === 2).length;
-    const funcional = equips.filter(e => e.zone_id !== 1 && e.zone_id !== 2).length;
+    const cardio    = equips.filter(e => e.zoneId === '1').length;
+    const fuerza    = equips.filter(e => e.zoneId === '2').length;
+    const funcional = equips.filter(e => e.zoneId !== '1' && e.zoneId !== '2').length;
     const total     = equips.length || 1;
 
     return [
@@ -187,28 +190,25 @@ export class AnalyticsStore {
 
   // ── Relocation recommendations ────────────────────────────────────────────
   readonly relocationData = computed<RelocationRec[]>(() => {
-    const stats  = this._filteredStats();
-    const equips = this._equipments();
-    if (!stats.length || !equips.length) return [];
+    const stats = this._filteredStats();
+    if (!stats.length) return [];
 
     const BRANCHES = ['Sede Miraflores', 'Sede San Isidro', 'Sede Surco', 'Sede Barranco'];
 
     return stats
-      .filter(s => {
-        const eq = equips.find(e => e.id === s.equipment_id);
-        // Recommend relocation for equipment that is low-usage AND operational
-        return s.total_usage_hours < 100 && eq?.status === 'OPERATIONAL';
-      })
+      // Recommend relocation for equipment that is low-usage AND in service.
+      // 'OPERATIONAL' isn't a real EquipmentStatus value (AVAILABLE/IN_USE/
+      // MAINTENANCE/OUT_OF_SERVICE) — this never matched anything before.
+      .filter(s => s.totalUsageHours < 100 && s.status === 'AVAILABLE')
       .map((s, i): RelocationRec => {
-        const eq          = equips.find(e => e.id === s.equipment_id)!;
-        const fromOcc     = Math.round(s.total_usage_hours / 2);
+        const fromOcc     = Math.round(s.totalUsageHours / 2);
         const toOcc       = Math.min(99, fromOcc + Math.round(40 + Math.random() * 30));
         const savings     = Math.round((toOcc - fromOcc) * 12);
         const priority: 'LOW' | 'MEDIUM' | 'HIGH' =
           fromOcc < 30 ? 'HIGH' : fromOcc < 50 ? 'MEDIUM' : 'LOW';
 
         return {
-          machine:         eq.name,
+          machine:         s.equipmentName,
           fromBranch:      BRANCHES[i % BRANCHES.length],
           fromOccupancy:   fromOcc,
           toBranch:        BRANCHES[(i + 2) % BRANCHES.length],
@@ -248,25 +248,30 @@ export class AnalyticsStore {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this._loading.set(true);
     this._error.set(null);
 
-    forkJoin({
-      stats:     this.api.getUsageStats(),
-      equipments: this.api.getEquipments(),
-    })
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: ({ stats, equipments }) => {
-        this._usageStats.set(stats);
-        this._equipments.set(equipments);
-        this._loading.set(false);
-      },
-      error: (err: unknown) => {
-        this._error.set(err instanceof Error ? err.message : 'Error al cargar analytics');
-        this._loading.set(false);
-      },
-    });
+    this.api.getAnalyticsData()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ stats, equipments }) => {
+          this._analyticsStats.set(stats);
+          this._equipments.set(equipments);
+          this._loading.set(false);
+        },
+        error: (err: unknown) => {
+          this._error.set(err instanceof Error ? err.message : 'Error al cargar analytics');
+          this._loading.set(false);
+        },
+      });
+  }
+
+  /** Called by AuthStore on logout to prevent stale analytics data from bleeding into the next session. */
+  reset(): void {
+    this._analyticsStats.set([]);
+    this._equipments.set([]);
+    this._loading.set(false);
+    this._error.set(null);
   }
 }
