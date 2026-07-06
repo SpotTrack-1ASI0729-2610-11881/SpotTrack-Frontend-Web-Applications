@@ -97,9 +97,13 @@ export class AuthStore {
 
         this.api.getUser(res.id).subscribe({
           next: details => {
-            const raw     = details.roles?.[0] ?? details.role ?? '';
-            const roleStr = String(raw).toUpperCase();
-            const role    = roleStr.includes('ADMIN') ? UserRole.ADMIN : UserRole.CLIENT;
+            // Check every role, not just the first: a user with multiple roles
+            // could have ADMIN in any position, and the backend grants admin
+            // access whenever ROLE_ADMIN is present at all.
+            const rawRoles = details.roles ?? (details.role ? [details.role] : []);
+            const role     = rawRoles.some((r: unknown) => String(r).toUpperCase().includes('ADMIN'))
+              ? UserRole.ADMIN
+              : UserRole.CLIENT;
             const user: User = { id: res.id, email: res.username, name: res.username, role };
             this.userSignal.set(user);
             localStorage.setItem(USER_KEY, JSON.stringify(user));
