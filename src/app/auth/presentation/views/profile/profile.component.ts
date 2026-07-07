@@ -51,6 +51,16 @@ export class ProfileComponent implements OnInit {
   accountLastName    = '';
   accountPhoneNumber = '';
   accountDni         = '';
+  accountSubmitted   = false;
+
+  private static readonly PHONE_RE = /^[0-9]{7,15}$/;
+  private static readonly MIN_PASSWORD = 8;
+
+  get accountFirstNameInvalid(): boolean { return !this.accountFirstName.trim(); }
+  get accountLastNameInvalid(): boolean { return !this.accountLastName.trim(); }
+  get accountPhoneInvalid(): boolean {
+    return !ProfileComponent.PHONE_RE.test(this.accountPhoneNumber.trim());
+  }
 
   readonly saving      = this.profileStore.saving;
   readonly saveError   = this.profileStore.saveError;
@@ -76,11 +86,12 @@ export class ProfileComponent implements OnInit {
   }
 
   saveAccountInfo(): void {
+    this.accountSubmitted = true;
     const firstName   = this.accountFirstName.trim();
     const lastName    = this.accountLastName.trim();
     const phoneNumber = this.accountPhoneNumber.trim();
     const dni         = this.accountDni.trim();
-    if (!firstName || !lastName || !phoneNumber || !dni) return;
+    if (this.accountFirstNameInvalid || this.accountLastNameInvalid || this.accountPhoneInvalid || !dni) return;
     if (this.isAdmin()) {
       this.profileStore.updateAdminProfile(firstName, lastName, phoneNumber, dni);
     } else {
@@ -128,6 +139,12 @@ export class ProfileComponent implements OnInit {
   newPassword     = '';
   confirmPassword = '';
   pwdMatchError   = false;
+  pwdSubmitted    = false;
+
+  get currentPasswordInvalid(): boolean { return !this.currentPassword; }
+  get newPasswordInvalid(): boolean {
+    return this.newPassword.length < ProfileComponent.MIN_PASSWORD;
+  }
 
   toggleChangePwd(): void {
     this.showChangePwd.update(v => !v);
@@ -136,9 +153,12 @@ export class ProfileComponent implements OnInit {
     this.newPassword     = '';
     this.confirmPassword = '';
     this.pwdMatchError   = false;
+    this.pwdSubmitted    = false;
   }
 
   submitChangePassword(): void {
+    this.pwdSubmitted = true;
+    if (this.currentPasswordInvalid || this.newPasswordInvalid) return;
     this.pwdMatchError = this.newPassword !== this.confirmPassword;
     if (this.pwdMatchError) return;
     this.pwdStore.changePassword(this.currentPassword, this.newPassword);

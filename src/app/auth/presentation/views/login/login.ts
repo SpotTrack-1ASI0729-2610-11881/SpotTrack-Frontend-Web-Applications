@@ -22,6 +22,22 @@ export class LoginComponent {
   email    = '';
   password = '';
   showPass = false;
+  submitted = false;
+
+  private static readonly EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  get emailInvalid(): boolean {
+    const value = this.email.trim();
+    return !value || !LoginComponent.EMAIL_RE.test(value);
+  }
+
+  get passwordInvalid(): boolean {
+    return !this.password;
+  }
+
+  get formInvalid(): boolean {
+    return this.emailInvalid || this.passwordInvalid;
+  }
 
   constructor() {
     effect(() => {
@@ -33,6 +49,8 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    this.submitted = true;
+    if (this.formInvalid) return;
     this.auth.login(this.email, this.password);
   }
 

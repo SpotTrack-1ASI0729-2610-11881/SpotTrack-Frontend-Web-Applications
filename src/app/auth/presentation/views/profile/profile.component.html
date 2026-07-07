@@ -143,14 +143,23 @@
         <div class="form-group">
           <label for="admin-firstName">{{ 'profile.account.firstName' | translate }}</label>
           <input type="text" id="admin-firstName" [(ngModel)]="accountFirstName" class="form-control">
+          @if (accountSubmitted && accountFirstNameInvalid) {
+            <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="admin-lastName">{{ 'profile.account.lastName' | translate }}</label>
           <input type="text" id="admin-lastName" [(ngModel)]="accountLastName" class="form-control">
+          @if (accountSubmitted && accountLastNameInvalid) {
+            <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="admin-phone">{{ 'profile.account.phone' | translate }}</label>
           <input type="tel" id="admin-phone" [(ngModel)]="accountPhoneNumber" class="form-control">
+          @if (accountSubmitted && accountPhoneInvalid) {
+            <span class="field-error">{{ 'auth.register.error.phone' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="admin-dni">{{ 'profile.account.dni' | translate }}</label>
@@ -211,10 +220,16 @@
               <div class="form-group">
                 <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
                 <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+                @if (pwdSubmitted && currentPasswordInvalid) {
+                  <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+                }
               </div>
               <div class="form-group">
                 <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
                 <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+                @if (pwdSubmitted && newPasswordInvalid) {
+                  <span class="field-error">{{ 'auth.register.error.password' | translate }}</span>
+                }
               </div>
               <div class="form-group">
                 <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
@@ -299,14 +314,23 @@
         <div class="form-group">
           <label for="firstName">{{ 'profile.account.firstName' | translate }}</label>
           <input type="text" id="firstName" [(ngModel)]="accountFirstName" class="form-control">
+          @if (accountSubmitted && accountFirstNameInvalid) {
+            <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="lastName">{{ 'profile.account.lastName' | translate }}</label>
           <input type="text" id="lastName" [(ngModel)]="accountLastName" class="form-control">
+          @if (accountSubmitted && accountLastNameInvalid) {
+            <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="phone">{{ 'profile.account.phone' | translate }}</label>
           <input type="tel" id="phone" [(ngModel)]="accountPhoneNumber" class="form-control">
+          @if (accountSubmitted && accountPhoneInvalid) {
+            <span class="field-error">{{ 'auth.register.error.phone' | translate }}</span>
+          }
         </div>
         <div class="form-group">
           <label for="dni">{{ 'profile.account.dni' | translate }}</label>
@@ -402,10 +426,16 @@
               <div class="form-group">
                 <label>{{ 'auth.changePassword.currentLabel' | translate }}</label>
                 <input type="password" class="form-control" [(ngModel)]="currentPassword" autocomplete="current-password" />
+                @if (pwdSubmitted && currentPasswordInvalid) {
+                  <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+                }
               </div>
               <div class="form-group">
                 <label>{{ 'auth.changePassword.newLabel' | translate }}</label>
                 <input type="password" class="form-control" [(ngModel)]="newPassword" autocomplete="new-password" />
+                @if (pwdSubmitted && newPasswordInvalid) {
+                  <span class="field-error">{{ 'auth.register.error.password' | translate }}</span>
+                }
               </div>
               <div class="form-group">
                 <label>{{ 'auth.changePassword.confirmLabel' | translate }}</label>
