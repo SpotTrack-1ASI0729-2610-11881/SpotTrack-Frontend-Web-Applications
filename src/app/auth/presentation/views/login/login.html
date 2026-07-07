@@ -25,6 +25,9 @@
           [placeholder]="'auth.login.emailPlaceholder' | translate"
           autocomplete="email"
         />
+        @if (submitted && emailInvalid) {
+          <span class="field-error">{{ 'auth.register.error.email' | translate }}</span>
+        }
       </div>
 
       <!-- Password -->
@@ -43,6 +46,9 @@
             <mat-icon>{{ showPass ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </div>
+        @if (submitted && passwordInvalid) {
+          <span class="field-error">{{ 'auth.register.error.required' | translate }}</span>
+        }
       </div>
 
       <!-- Error banner -->
